@@ -20,7 +20,7 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dependencies = ["toml", "langchain", "langchain-openai"]
+dependencies = ["toml", "langchain", "langchain-openai", "langchain-community"]
 
 [project.urls]
 Documentation = "https://github.com/danoan/llm-assistant#readme"

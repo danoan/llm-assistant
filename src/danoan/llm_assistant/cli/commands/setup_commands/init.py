@@ -22,11 +22,18 @@ def extend_parser(subparser_action=None):
 
     if subparser_action:
         parser = subparser_action.add_parser(
-            command_name, help=help, description=description, formatter_class=argparse.RawDescriptionHelpFormatter)
+            command_name,
+            help=help,
+            description=description,
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+        )
     else:
         parser = argparse.ArgumentParser(
-            command_name, description=description, formatter_class=argparse.RawDescriptionHelpFormatter)
+            command_name,
+            description=description,
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+        )
 
-    parser.set_defaults(func=__init_llm_assistant__)
+    parser.set_defaults(func=__init_llm_assistant__, subcommand_help=parser.print_help)
 
     return parser
