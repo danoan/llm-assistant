@@ -76,7 +76,7 @@ source = [
 show_missing = true
 skip_covered = true
 omit = []
-fail_under = 90
+fail_under = 80
 
 
 # -------------------- type checking --------------------

@@ -4,3 +4,7 @@ class EnvironmentVariableNotDefinedError(Exception):
 
 class ConfigurationFileDoesNotExistError(Exception):
     pass
+
+
+class LLMAssistantNotConfiguredError(Exception):
+    pass

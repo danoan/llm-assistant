@@ -9,5 +9,3 @@ Reviewed Text
 ---
 The artist was no fully attent to details in this work, which explains the poor quality of his photography.
 ]]
-
-

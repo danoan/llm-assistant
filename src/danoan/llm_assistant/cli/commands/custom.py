@@ -1,4 +1,4 @@
-from danoan.llm_assistant.core import api, exception, model
+from danoan.llm_assistant.core import api, model
 
 import argparse
 import logging
@@ -13,24 +13,7 @@ handler.setLevel(logging.INFO)
 logger.addHandler(handler)
 
 
-def __custom__(
-    prompt_configuration_filepath: str, prompt_instance_filepath: str, *args, **kwargs
-):
-    api.ensure_configuration_file_exist(logger)
-    prompt_configuration_filepath = Path(prompt_configuration_filepath)
-    if not prompt_configuration_filepath.exists():
-        logger.error(
-            f"The prompt configuration file: {prompt_configuration_filepath} does not exist"
-        )
-        exit(1)
-
-    prompt_instance_filepath = Path(prompt_instance_filepath)
-    if not prompt_instance_filepath.exists():
-        logger.error(
-            f"The prompt instance file: {prompt_configuration_filepath} does not exist"
-        )
-        exit(1)
-
+def custom(prompt_configuration_filepath: Path, prompt_instance_filepath: Path):
     with open(prompt_configuration_filepath, "r") as file_pc, open(
         prompt_instance_filepath, "r"
     ) as file_pi:
@@ -39,6 +22,27 @@ def __custom__(
 
         response = api.custom(prompt_configuration, **prompt_instance)
         print(response)
+
+
+def __custom__(
+    prompt_configuration_filepath: str, prompt_instance_filepath: str, *args, **kwargs
+):
+    api.ensure_configuration_file_exist(logger)
+    _prompt_configuration_filepath = Path(prompt_configuration_filepath)
+    if not _prompt_configuration_filepath.exists():
+        logger.error(
+            f"The prompt configuration file: {prompt_configuration_filepath} does not exist"
+        )
+        exit(1)
+
+    _prompt_instance_filepath = Path(prompt_instance_filepath)
+    if not _prompt_instance_filepath.exists():
+        logger.error(
+            f"The prompt instance file: {prompt_configuration_filepath} does not exist"
+        )
+        exit(1)
+
+    custom(_prompt_configuration_filepath, _prompt_instance_filepath)
 
 
 def extend_parser(subparser_action=None):

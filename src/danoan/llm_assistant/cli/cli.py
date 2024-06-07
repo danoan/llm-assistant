@@ -4,7 +4,9 @@ import argparse
 
 
 def main():
-    parser = argparse.ArgumentParser("llm-assistant", description="Collection of LLM applications")
+    parser = argparse.ArgumentParser(
+        "llm-assistant", description="Collection of LLM applications"
+    )
     subcommand_action = parser.add_subparsers()
 
     list_of_commands = [setup, custom]
