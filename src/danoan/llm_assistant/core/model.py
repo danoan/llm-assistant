@@ -1,18 +1,22 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, List
 
 
 @dataclass
 class LLMAssistantConfiguration:
     openai_key: Optional[str] = None
+    model: Optional[List[str]] = None
     use_cache: bool = False
     cache_path: Optional[str] = None
+    prompt_repository: Optional[str] = None
 
     def __str__(self):
         return (
             f"openai_key: <<HIDDEN>>\n"
+            f"model: {self.model}\n"
             f"use_cache: {self.use_cache}\n"
-            f"cache_path {self.cache_path}\n"
+            f"cache_path: {self.cache_path}\n"
+            f"prompt_repository: {self.prompt_repository}\n"
         )
 
 
@@ -21,3 +25,4 @@ class PromptConfiguration:
     name: str
     system_prompt: str
     user_prompt: str
+    model: Optional[str] = None

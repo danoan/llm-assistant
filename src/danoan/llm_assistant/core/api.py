@@ -72,7 +72,6 @@ class LLMAssistant:
 
 def custom(
     prompt_configuration: model.PromptConfiguration,
-    model: str = "gpt-3.5-turbo",
     **prompt_variables,
 ):
     """
@@ -80,17 +79,30 @@ def custom(
     """
     instance = LLMAssistant()
 
-    llm = ChatOpenAI(
-        api_key=instance.config.openai_key,
-        model=model,
-    )
+    list_priority_models = []
+    if prompt_configuration.model:
+        list_priority_models.append(prompt_configuration.model)
 
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            ("system", prompt_configuration.system_prompt),
-            ("user", prompt_configuration.user_prompt),
-        ]
-    )
+    # TODO: It may have duplicates. It is not a big deal
+    # if cache is enabled, but it is better to have
+    # unique models in the list
+    for model_name in instance.config.model:
+        list_priority_models.append(model_name)
 
-    chain = prompt | llm
-    return chain.invoke(prompt_variables)
+    for model_name in list_priority_models:
+        llm = ChatOpenAI(
+            api_key=instance.config.openai_key,
+            model=model_name,
+        )
+
+        prompt = ChatPromptTemplate.from_messages(
+            [
+                ("system", prompt_configuration.system_prompt),
+                ("user", prompt_configuration.user_prompt),
+            ]
+        )
+
+        chain = prompt | llm
+        response = chain.invoke(prompt_variables)
+        break
+    return response
