@@ -1,5 +1,5 @@
 from danoan.llm_assistant.core import api
-from danoan.llm_assistant.cli.commands.setup_commands import init
+from danoan.llm_assistant.cli.commands.setup.setup_commands import init
 
 import argparse
 

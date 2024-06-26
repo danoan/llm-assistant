@@ -1,4 +1,6 @@
-from danoan.llm_assistant.cli.commands import custom, setup
+from danoan.llm_assistant.cli.commands.custom import custom
+from danoan.llm_assistant.cli.commands.session import session
+from danoan.llm_assistant.cli.commands.setup import setup
 
 import argparse
 
@@ -9,7 +11,7 @@ def main():
     )
     subcommand_action = parser.add_subparsers()
 
-    list_of_commands = [setup, custom]
+    list_of_commands = [setup, session, custom]
     for command in list_of_commands:
         command.extend_parser(subcommand_action)
 
