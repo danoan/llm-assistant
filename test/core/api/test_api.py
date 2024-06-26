@@ -2,18 +2,15 @@ from danoan.llm_assistant.core import api, model
 
 import pytest
 
-from dataclasses import asdict
-import os
 from pathlib import Path
-from tempfile import TemporaryDirectory
 import toml
-from functools import wraps
 
 SCRIPT_FOLDER = Path(__file__).parent
 INPUT_FOLDER = SCRIPT_FOLDER / "input"
 CACHE_FILE = SCRIPT_FOLDER / "cache" / "test-api-cache"
 
 
+@pytest.mark.api
 @pytest.mark.parametrize(
     "prompt_folder,prompt_input_file,prompt_expected_file",
     [
@@ -25,8 +22,11 @@ CACHE_FILE = SCRIPT_FOLDER / "cache" / "test-api-cache"
     ],
 )
 def test_custom(openai_key, prompt_folder, prompt_input_file, prompt_expected_file):
+    # TODO: When executing via pytest, this test raises an error within
+    # the lang-chain library. If I remove the cache, it works.
+    # The same behaviour is not observed if executed out of pytest
     config = model.LLMAssistantConfiguration(
-        openai_key, True, str(CACHE_FILE.resolve())
+        openai_key, "gpt-3.5-turbo", True, str(CACHE_FILE.resolve())
     )
 
     api.LLMAssistant().setup(config)
@@ -44,7 +44,7 @@ def test_custom(openai_key, prompt_folder, prompt_input_file, prompt_expected_fi
     with open(prompt_input_file) as f_in, open(prompt_expected_file) as f_exp:
         data = toml.load(f_in)
         expected_data = toml.load(f_exp)
-        r = api.custom(prompt_configuration, model="gpt-3.5-turbo", **data)
+        r = api.custom(prompt_configuration, **data)
         assert r
         assert r.content
         assert r.content == expected_data["content"]

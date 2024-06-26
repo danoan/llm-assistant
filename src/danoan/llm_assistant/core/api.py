@@ -72,13 +72,16 @@ class LLMAssistant:
 
 def custom(
     prompt_configuration: model.PromptConfiguration,
-    model: str = "gpt-3.5-turbo",
     **prompt_variables,
 ):
     """
     Execute a custom prompt.
     """
     instance = LLMAssistant()
+
+    model = prompt_configuration.model
+    if not model:
+        model = instance.config.model
 
     llm = ChatOpenAI(
         api_key=instance.config.openai_key,
@@ -93,4 +96,6 @@ def custom(
     )
 
     chain = prompt | llm
-    return chain.invoke(prompt_variables)
+    response = chain.invoke(prompt_variables)
+
+    return response

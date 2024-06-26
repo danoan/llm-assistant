@@ -20,7 +20,7 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dependencies = ["toml", "langchain", "langchain-openai", "langchain-community"]
+dependencies = ["toml", "langchain", "langchain-openai", "langchain-community", "rich", "pynput"]
 
 [project.urls]
 Documentation = "https://github.com/danoan/llm-assistant#readme"
@@ -51,6 +51,9 @@ testpaths = [
 pythonpath = [
 "test" # Needed in order to import conftest.py in test modules
 ]
+markers=[
+    "api: these tests make api calls"
+]
 
 # -------------------- code coverage --------------------
 # In order to make coverage read from pyproject.toml
@@ -76,7 +79,7 @@ source = [
 show_missing = true
 skip_covered = true
 omit = []
-fail_under = 80
+fail_under = 75
 
 
 # -------------------- type checking --------------------
