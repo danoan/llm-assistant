@@ -1,310 +1,359 @@
+import threading
+from danoan.llm_assistant.cli import utils
 from danoan.llm_assistant.core import api, model
 
-from rich.console import Console as RichConsole
-from rich.columns import Columns
-from rich.table import Table
-from rich.panel import Panel
-from rich.text import Text
-
 import argparse
-from collections import deque
-from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 import toml
-from typing import List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 
-class SessionMode(Enum):
-    # Display menu to select a prompt from the repository
-    NoPromptSelected = "No Prompt Selected",
-    # Display menu with actions: New instance / Select Instance
-    PromptSelected = "Prompt Selected",
-    # Enter the name of the instance and the template variable values
-    NewInstance = "New Instance",
-    # Display menu with available instances
-    LoadInstance = "Load Instance",
-    # Enters in chat mode
-    StartInstance = "Start Instance",
-    # Asks if it should continue
-    ShouldContinue = "Should Continue",
-    # End the session
-    EndSession = "End Session",
+def setup_state_machine():
+    SM = utils.StateMachine()
+    RichER = utils.RichCLIEventRunner()
 
+    class StateName(Enum):
+        NoPromptSelected = ("NoPromptSelected",)
+        PromptSelected = ("PromptSelected",)
+        NewInstance = ("NewInstance",)
+        LoadInstance = ("LoadInstance",)
+        StartChat = ("StartChat",)
+        ContinueChat = "ContinueChat"
 
-@dataclass
-class SessionState:
-    mode: SessionMode
-    assets_stack: List = deque(maxlen=10)
+        def __str__(self):
+            return self.value
 
+    def is_a_prompt_config_file(
+        filepath: Path,
+    ) -> Tuple[bool, model.PromptConfiguration]:
+        try:
+            o = toml.load(filepath)
+            prompt_config = model.PromptConfiguration(**o)
+            return True, prompt_config
+        except toml.TomlDecodeError as ex:
+            raise ex
+        except ValueError:
+            return False, None
 
-def _singleton(cls):
-    instances_dict = {}
+    def validate_int(value, floor, ceiling) -> Optional[int]:
+        try:
+            v = int(value)
+            if v >= floor and v <= ceiling:
+                return v
+            else:
+                RichER.push(
+                    create_event(
+                        RichER.EventName.PrintError,
+                        callback=None,
+                        message="Index out of bound",
+                    )
+                )
+        except ValueError:
+            RichER.push(
+                create_event(
+                    RichER.EventName.PrintError,
+                    callback=None,
+                    message="Invalid integer value",
+                )
+            )
 
-    def inner(*args, **kwargs):
-        if cls not in instances_dict:
-            instances_dict[cls] = cls(*args, **kwargs)
-        return instances_dict[cls]
+        return None
 
-    return inner
+    def retry_until_valid_int(event: utils.Event, floor, ceiling) -> int:
+        RichER.push(event)
+        RichER.wait()
+        v_str = input("")
+        while not (v := validate_int(v_str, floor, ceiling)):
+            RichER.push(event)
+            RichER.wait()
+            v_str = input("")
 
+        return v
 
-@_singleton
-class Console:
-    def __init__(self):
-        self.console = RichConsole()
+    def create_event(event_name: RichER.EventName, callback, **kwargs):
+        return utils.Event(event_name, parameters=kwargs, callback=callback)
 
-    def print_menu_question(self, text: str):
-        panel = Panel(text)
-        self.console.print(panel)
+    def no_prompt_selected() -> utils.StateOutput:
+        config = api.get_configuration()
+        prompt_repository = Path(config.prompt_repository)
 
-    def print_list_table_2(self, a_list: List[str], columns: int = 3, numbered: bool = True):
-        grid = Table.grid(expand=True)
-        for _ in range(columns):
-            grid.add_column()
+        list_prompt_config = []
+        for prompt_config_filepath in prompt_repository.rglob("*config.toml"):
+            _, prompt_config = is_a_prompt_config_file(prompt_config_filepath)
+            if prompt_config:
+                list_prompt_config.append(prompt_config)
 
-        rows_per_column = len(a_list)//columns + 1
+        if len(list_prompt_config) == 0:
+            RichER.push(
+                create_event(
+                    RichER.EventName.PrintError,
+                    None,
+                    message=f"No prompt available in the repository: {prompt_repository}",
+                )
+            )
+            return utils.StateOutput("NoPromptSelected", None)
 
-        rows = []
-        for i in range(rows_per_column):
-            indexes = [i, i+rows_per_column, i+rows_per_column*2]
-            row = []
-            for index in indexes:
-                if index >= len(a_list):
-                    continue
-                if numbered:
-                    row.append(f"{index+1}. {a_list[index]}")
-                else:
-                    row.append(a_list[index])
-            rows.append(row)
+        RichER.push(
+            create_event(RichER.EventName.PrintPanel, None, message="Select prompt")
+        )
+        RichER.push(
+            create_event(
+                RichER.EventName.PrintList,
+                None,
+                list_elements=[e.name for e in list_prompt_config],
+            )
+        )
+        prompt_index_event = create_event(
+            RichER.EventName.PrintPrompt, None, message="Prompt index: "
+        )
+        prompt_index = retry_until_valid_int(
+            prompt_index_event, 1, len(list_prompt_config)
+        )
 
-        for row in rows:
-            grid.add_row(*row)
+        return utils.StateOutput(
+            StateName.PromptSelected,
+            {"prompt_config": list_prompt_config[prompt_index - 1]},
+        )
 
-        self.console.print(grid, end="\n")
-        self.console.print("")
+    SM.register(StateName.NoPromptSelected, no_prompt_selected)
 
-    def print_list_table(self, a_list: List[str], numbered: bool = True):
-        if numbered:
-            a_list = [f"{i}. {s}" for i, s in enumerate(a_list, 1)]
+    def prompt_selected(prompt_config: model.PromptConfiguration) -> utils.StateOutput:
+        RichER.push(
+            create_event(RichER.EventName.PrintPanel, None, message="Choose an option")
+        )
+        RichER.push(
+            create_event(
+                RichER.EventName.PrintList,
+                None,
+                list_elements=["New instance", "Load instance"],
+            )
+        )
 
-        columns = Columns(a_list)
-        self.console.print(columns)
-        self.console.print("")
+        option_index_event = create_event(
+            RichER.EventName.PrintPrompt, None, message="Option index: "
+        )
+        option_index = retry_until_valid_int(option_index_event, 1, 2)
 
-    def print_input_prompt(self, prompt: str):
-        text = Text(prompt)
-        text.stylize("bold")
-        self.console.print(text, end="")
+        next_state = None
+        if option_index == 1:
+            next_state = StateName.NewInstance
+        elif option_index == 2:
+            next_state = StateName.LoadInstance
 
-    def print_error(self, error: str):
-        panel = Panel(error, style="red")
-        self.console.print(panel)
+        return utils.StateOutput(next_state, {"prompt_config": prompt_config})
 
-    def print_user_message(self, message: str, title_complement: Optional[str] = None):
-        title = "HUMAN"
-        if title_complement:
-            title = f"HUMAN - {title_complement}"
-        panel = Panel(message, style="cyan", title=title)
-        self.console.print(panel)
+    SM.register(StateName.PromptSelected, prompt_selected)
 
-    def print_ai_message(self, message: str, title_complement: Optional[str] = None):
-        title = "AI"
-        if title_complement:
-            title = f"AI - {title_complement}"
+    def new_instance(prompt_config: model.PromptConfiguration) -> utils.StateOutput:
+        config_folder = api.get_configuration_folder()
+        instances_folder = (
+            config_folder / "instances" / utils.normalize_name(prompt_config.name)
+        )
+        instances_folder.mkdir(parents=True, exist_ok=True)
+        instance_filepaths = list(instances_folder.iterdir())
+        instance_names = [f.stem for f in instance_filepaths]
 
-        panel = Panel(message, style="orange1", title=title)
-        self.console.print(panel)
+        RichER.push(
+            create_event(
+                RichER.EventName.PrintPrompt,
+                callback=None,
+                message="Enter the instance name: ",
+            )
+        )
+        instance_name = input("")
+        while instance_name in instance_names:
+            RichER.push(
+                create_event(
+                    RichER.EventName.PrintError,
+                    callback=None,
+                    message="This instance name exist already. Choose another one.",
+                )
+            )
+            RichER.push(
+                create_event(
+                    RichER.EventName.PrintPrompt,
+                    callback=None,
+                    message="Enter the instance name: ",
+                )
+            )
+            instance_name = input("")
 
+        def get_assignments():
+            RichER.push(
+                create_event(
+                    RichER.EventName.PrintPrompt,
+                    callback=None,
+                    message="Enter variable assignment: ",
+                )
+            )
+            assignments_str = input("")
+            return assignments_str.split("::")
 
-def my_input(prompt: str):
-    Console().print_input_prompt(prompt)
-    return input("")
+        def validate_assignments(assignments: List[str]):
+            for e in assignments:
+                try:
+                    k, v = e.split("=")
+                except ValueError:
+                    return False
 
+                if k is None or v is None:
+                    return False
 
-def is_a_prompt_config_file(filepath: Path) -> Tuple[bool, model.PromptConfiguration]:
-    try:
-        o = toml.load(filepath)
-        prompt_config = model.PromptConfiguration(**o)
-        return True, prompt_config
-    except:
-        return False, None
+            return True
 
-
-def validate_int(value, floor, ceiling) -> Optional[int]:
-    try:
-        v = int(value)
-        if v >= floor and v <= ceiling:
-            return v
-        else:
-            Console().print_error("Index out of bound")
-    except ValueError:
-        Console().print_error("Invalid integer value")
-
-    return None
-
-
-def retry_until_valid_int(message, floor, ceiling) -> int:
-    v_str = my_input(message)
-    while not (v := validate_int(v_str, floor, ceiling)):
-        v_str = my_input(message)
-
-    return v
-
-
-def normalize_name(name: str) -> str:
-    return name.lower().replace(" ", "_")
-
-
-def no_prompt_selected(state: SessionState) -> SessionState:
-    assert (state.mode == SessionMode.NoPromptSelected)
-    config = api.get_configuration()
-    prompt_repository = Path(config.prompt_repository)
-
-    list_prompt_config = []
-    for prompt_config_filepath in prompt_repository.rglob("*config.toml"):
-        _, prompt_config = is_a_prompt_config_file(prompt_config_filepath)
-        if prompt_config:
-            list_prompt_config.append(prompt_config)
-
-    if len(list_prompt_config) == 0:
-        print(f"No prompt available in the repository: {prompt_repository}")
-        exit(0)
-
-    Console().print_menu_question("Select prompt")
-    Console().print_list_table([e.name for e in list_prompt_config])
-
-    prompt_index = retry_until_valid_int("Prompt index: ", 1, len(list_prompt_config))
-
-    state.mode = SessionMode.PromptSelected
-    state.assets_stack.appendleft(list_prompt_config[prompt_index-1])
-    return state
-
-
-def prompt_selected(state: SessionState) -> SessionState:
-    Console().print_menu_question("Choose an option")
-    Console().print_list_table(["New instance", "Load instance"])
-
-    selected_option = retry_until_valid_int("Option: ", 1, 2)
-
-    if selected_option == 1:
-        state.mode = SessionMode.NewInstance
-    elif selected_option == 2:
-        state.mode = SessionMode.LoadInstance
-
-    return state
-
-
-def new_instance(state: SessionState) -> SessionState:
-    config_folder = api.get_configuration_folder()
-    instances_folder = config_folder / "instances" / \
-        normalize_name(state.assets_stack[0].name)
-    instances_folder.mkdir(parents=True, exist_ok=True)
-    instance_filepaths = list(instances_folder.iterdir())
-    instance_names = [f.stem for f in instance_filepaths]
-
-    instance_name = my_input("Enter the instance name: ")
-    while instance_name in instance_names:
-        Console().print_error("This instance name exist already. Choose another one.")
-        instance_name = my_input("Enter the instance name: ")
-
-    def get_assignments():
-        assignments_str = my_input("Enter variable assignments: ")
-        return assignments_str.split("::")
-
-    def validate_assignments(assignments: List[str]):
-        for e in assignments:
-            try:
-                k, v = e.split("=")
-            except ValueError:
-                return False
-
-            if k is None or v is None:
-                return False
-
-        return True
-
-    assignments = get_assignments()
-    while not validate_assignments(assignments):
-        Console().print_error(
-            "Each assignment should be in the format a=b and consecutive assignments should be separated by ::")
         assignments = get_assignments()
+        while not validate_assignments(assignments):
+            RichER.push(
+                create_event(
+                    RichER.EventName.PrintError,
+                    callback=None,
+                    message="Each assignment should be in the format a=b and consecutive assignments should be separated by ::",
+                )
+            )
+            assignments = get_assignments()
 
-    instance_filepath = instances_folder / f"{instance_name}.toml"
+        instance_filepath = instances_folder / f"{instance_name}.toml"
 
-    instance = {}
-    for e in assignments:
-        k, v = e.split("=")
-        instance[k] = v
+        instance = {"name": instance_name}
+        variables = {}
+        for e in assignments:
+            k, v = e.split("=")
+            variables[k] = v
 
-    with open(instance_filepath, "w") as f:
-        toml.dump(instance, f)
+        with open(instance_filepath, "w") as f:
+            toml.dump(variables, f)
+        instance["variables"] = variables
 
-    state.mode = SessionMode.StartInstance
-    state.assets_stack.appendleft(instance)
+        return utils.StateOutput(
+            StateName.StartChat, {"prompt_config": prompt_config, "instance": instance}
+        )
 
-    return state
+    SM.register(StateName.NewInstance, new_instance)
 
+    def load_instance(prompt_config: model.PromptConfiguration) -> utils.StateOutput:
+        config_folder = api.get_configuration_folder()
+        instances_folder = (
+            config_folder / "instances" / utils.normalize_name(prompt_config.name)
+        )
+        instance_filepaths = list(instances_folder.iterdir())
+        instance_names = [f.stem for f in instance_filepaths]
 
-def load_instance(state: SessionState) -> SessionState:
-    config_folder = api.get_configuration_folder()
-    instances_folder = config_folder / "instances" / \
-        normalize_name(state.assets_stack[0].name)
-    instance_filepaths = list(instances_folder.iterdir())
-    instance_names = [f.stem for f in instance_filepaths]
+        RichER.push(
+            create_event(
+                RichER.EventName.PrintPanel, callback=None, message="Select instance"
+            )
+        )
+        RichER.push(
+            create_event(
+                RichER.EventName.PrintList, callback=None, list_elements=instance_names
+            )
+        )
 
-    Console().print_menu_question("Select instance")
-    Console().print_list_table(instance_names)
+        instance_index_event = create_event(
+            RichER.EventName.PrintPrompt,
+            callback=None,
+            message="Select instance index: ",
+        )
+        instance_index = retry_until_valid_int(
+            instance_index_event, 1, len(instance_names)
+        )
+        instance_filepath = instance_filepaths[instance_index - 1]
 
-    selected_instance = retry_until_valid_int("Select instance index: ", 1, len(instance_names))
-    instance_filepath = instance_filepaths[selected_instance-1]
+        instance = {"name": instance_names[instance_index - 1]}
+        with open(instance_filepath, "r") as f:
+            instance["variables"] = toml.load(f)
 
-    instance = {"name": instance_names[selected_instance-1]}
-    with open(instance_filepath, "r") as f:
-        instance["variables"] = toml.load(f)
+        return utils.StateOutput(
+            StateName.StartChat, {"prompt_config": prompt_config, "instance": instance}
+        )
 
-    state.mode = SessionMode.StartInstance
-    state.assets_stack.appendleft(instance)
+    SM.register(StateName.LoadInstance, load_instance)
 
-    return state
+    def start_chat(
+        prompt_config: model.PromptConfiguration, instance: Dict[str, Any]
+    ) -> utils.StateOutput:
+        message = f"Prompt: {prompt_config.name}\nInstance:{instance['name']}"
 
+        RichER.push(
+            create_event(
+                RichER.EventName.PrintPanel,
+                callback=None,
+                message=message,
+                color="pink3",
+                title="New Chat",
+            )
+        )
 
-def start_instance(state: SessionState) -> SessionState:
-    instance = state.assets_stack[0]
-    prompt_config = state.assets_stack[1]
+        return utils.StateOutput(
+            StateName.ContinueChat,
+            {"prompt_config": prompt_config, "instance": instance},
+        )
 
-    chat_title = f"{prompt_config.name}::{instance['name']}"
-    message = my_input("Enter message: ")
-    Console().print_user_message(message, chat_title)
+    SM.register(StateName.StartChat, start_chat)
 
-    response = api.custom(prompt_config, message=message, **instance["variables"])
-    Console().print_ai_message(response.content, chat_title)
+    def continue_chat(
+        prompt_config: model.PromptConfiguration, instance: Dict[str, Any]
+    ) -> utils.StateOutput:
+        chat_title = f"{prompt_config.name}::{instance['name']}"
+        RichER.push(
+            create_event(
+                RichER.EventName.PrintPrompt, callback=None, message="Enter message: "
+            )
+        )
+        message = input("")
 
-    state.mode = SessionMode.StartInstance
-    return state
+        RichER.push(
+            create_event(
+                RichER.EventName.PrintPanel,
+                callback=None,
+                message=message,
+                color="cyan",
+                title=chat_title,
+            )
+        )
 
+        response = api.custom(prompt_config, message=message, **instance["variables"])
+        RichER.push(
+            create_event(
+                RichER.EventName.PrintPanel,
+                callback=None,
+                message=response.content,
+                color="orange1",
+                title=chat_title,
+            )
+        )
 
-def execute_state(state: SessionState) -> SessionState:
-    if state.mode == SessionMode.NoPromptSelected:
-        return no_prompt_selected(state)
-    elif state.mode == SessionMode.PromptSelected:
-        return prompt_selected(state)
-    elif state.mode == SessionMode.NewInstance:
-        return new_instance(state)
-    elif state.mode == SessionMode.LoadInstance:
-        return load_instance(state)
-    elif state.mode == SessionMode.StartInstance:
-        return start_instance(state)
-    # elif state.mode == SessionMode.ShouldContinue:
-    #     return should_continue()
+        RichER.wait()
+
+        return utils.StateOutput(
+            StateName.ContinueChat,
+            {"prompt_config": prompt_config, "instance": instance},
+        )
+
+    SM.register(StateName.ContinueChat, continue_chat)
+
+    def prologue() -> utils.StateOutput:
+        RichER.wait()
+        RichER.finish()
+        rich_er_thread.join()
+
+        return utils.StateOutput(utils.StateMachine.EndState, {})
+
+    SM.register("Prologue", prologue)
+
+    rich_er_thread = threading.Thread(target=RichER.run)
+    rich_er_thread.start()
+
+    SM.set_start_state(StateName.NoPromptSelected)
+
+    return SM
 
 
 def __pre_new_session__(*args, **kwargs):
     api.LLMAssistant().setup(api.get_configuration())
-    state = SessionState(SessionMode.NoPromptSelected)
-
-    while state.mode != SessionMode.EndSession:
-        state = execute_state(state)
+    SM = setup_state_machine()
+    SM.run()
 
 
 def new_session_parser(subparser_action=None):
