@@ -5,13 +5,79 @@ from danoan.llm_assistant.core import api, model
 import argparse
 from enum import Enum
 from pathlib import Path
+import time
 import toml
 from typing import Any, Dict, List, Optional, Tuple
 
 
-def setup_state_machine():
+def is_a_prompt_config_file(
+    filepath: Path,
+) -> Tuple[bool, model.PromptConfiguration]:
+    try:
+        o = toml.load(filepath)
+        prompt_config = model.PromptConfiguration(**o)
+        return True, prompt_config
+    except toml.TomlDecodeError as ex:
+        raise ex
+    except ValueError:
+        return False, None
+
+
+def create_event(event_name: str, callback, **kwargs):
+    return utils.Event(event_name, parameters=kwargs, callback=callback)
+
+
+def wait_events_to_clean(er: utils.EventRunner):
+    while len(er) != 0:
+        time.sleep(0.05)
+
+
+def validate_int(er: utils.EventRunner, value, floor, ceiling) -> Optional[int]:
+    try:
+        v = int(value)
+        if v >= floor and v <= ceiling:
+            return v
+        else:
+            er.push(
+                create_event(
+                    utils.RichCLIEventRunner.EventName.PrintError,
+                    callback=None,
+                    message="Index out of bound",
+                )
+            )
+    except ValueError:
+        er.push(
+            create_event(
+                utils.RichCLIEventRunner.EventName.PrintError,
+                callback=None,
+                message="Invalid integer value",
+            )
+        )
+
+    return None
+
+
+def retry_prompt_until_valid_int(er: utils.EventRunner, message, floor, ceiling):
+    entered_value = None
+
+    def prompt_callback(prompt_value: str):
+        nonlocal entered_value
+        entered_value = prompt_value
+
+    event = create_event(
+        utils.RichCLIEventRunner.EventName.PrintPrompt, prompt_callback, message=message
+    )
+    er.push(event)
+    wait_events_to_clean(er)
+    while not (v := validate_int(er, entered_value, floor, ceiling)):
+        er.push(event)
+        wait_events_to_clean(er)
+
+    return v
+
+
+def create_session_state_machine(cliER: utils.EventRunner):
     SM = utils.StateMachine()
-    RichER = utils.RichCLIEventRunner()
 
     class StateName(Enum):
         NoPromptSelected = ("NoPromptSelected",)
@@ -24,56 +90,6 @@ def setup_state_machine():
         def __str__(self):
             return self.value
 
-    def is_a_prompt_config_file(
-        filepath: Path,
-    ) -> Tuple[bool, model.PromptConfiguration]:
-        try:
-            o = toml.load(filepath)
-            prompt_config = model.PromptConfiguration(**o)
-            return True, prompt_config
-        except toml.TomlDecodeError as ex:
-            raise ex
-        except ValueError:
-            return False, None
-
-    def validate_int(value, floor, ceiling) -> Optional[int]:
-        try:
-            v = int(value)
-            if v >= floor and v <= ceiling:
-                return v
-            else:
-                RichER.push(
-                    create_event(
-                        RichER.EventName.PrintError,
-                        callback=None,
-                        message="Index out of bound",
-                    )
-                )
-        except ValueError:
-            RichER.push(
-                create_event(
-                    RichER.EventName.PrintError,
-                    callback=None,
-                    message="Invalid integer value",
-                )
-            )
-
-        return None
-
-    def retry_until_valid_int(event: utils.Event, floor, ceiling) -> int:
-        RichER.push(event)
-        RichER.wait()
-        v_str = input("")
-        while not (v := validate_int(v_str, floor, ceiling)):
-            RichER.push(event)
-            RichER.wait()
-            v_str = input("")
-
-        return v
-
-    def create_event(event_name: RichER.EventName, callback, **kwargs):
-        return utils.Event(event_name, parameters=kwargs, callback=callback)
-
     def no_prompt_selected() -> utils.StateOutput:
         config = api.get_configuration()
         prompt_repository = Path(config.prompt_repository)
@@ -85,30 +101,28 @@ def setup_state_machine():
                 list_prompt_config.append(prompt_config)
 
         if len(list_prompt_config) == 0:
-            RichER.push(
+            cliER.push(
                 create_event(
-                    RichER.EventName.PrintError,
+                    cliER.EventName.PrintError,
                     None,
                     message=f"No prompt available in the repository: {prompt_repository}",
                 )
             )
             return utils.StateOutput("NoPromptSelected", None)
 
-        RichER.push(
-            create_event(RichER.EventName.PrintPanel, None, message="Select prompt")
+        cliER.push(
+            create_event(cliER.EventName.PrintPanel, None, message="Select prompt")
         )
-        RichER.push(
+        cliER.push(
             create_event(
-                RichER.EventName.PrintList,
+                cliER.EventName.PrintList,
                 None,
                 list_elements=[e.name for e in list_prompt_config],
             )
         )
-        prompt_index_event = create_event(
-            RichER.EventName.PrintPrompt, None, message="Prompt index: "
-        )
-        prompt_index = retry_until_valid_int(
-            prompt_index_event, 1, len(list_prompt_config)
+
+        prompt_index = retry_prompt_until_valid_int(
+            cliER, "Prompt index: ", 1, len(list_prompt_config)
         )
 
         return utils.StateOutput(
@@ -119,21 +133,18 @@ def setup_state_machine():
     SM.register(StateName.NoPromptSelected, no_prompt_selected)
 
     def prompt_selected(prompt_config: model.PromptConfiguration) -> utils.StateOutput:
-        RichER.push(
-            create_event(RichER.EventName.PrintPanel, None, message="Choose an option")
+        cliER.push(
+            create_event(cliER.EventName.PrintPanel, None, message="Choose an option")
         )
-        RichER.push(
+        cliER.push(
             create_event(
-                RichER.EventName.PrintList,
+                cliER.EventName.PrintList,
                 None,
                 list_elements=["New instance", "Load instance"],
             )
         )
 
-        option_index_event = create_event(
-            RichER.EventName.PrintPrompt, None, message="Option index: "
-        )
-        option_index = retry_until_valid_int(option_index_event, 1, 2)
+        option_index = retry_prompt_until_valid_int(cliER, "Option index: ", 1, 2)
 
         next_state = None
         if option_index == 1:
@@ -154,40 +165,52 @@ def setup_state_machine():
         instance_filepaths = list(instances_folder.iterdir())
         instance_names = [f.stem for f in instance_filepaths]
 
-        RichER.push(
+        instance_name = None
+
+        def instance_name_callback(prompt_value: str):
+            nonlocal instance_name
+            instance_name = prompt_value
+
+        cliER.push(
             create_event(
-                RichER.EventName.PrintPrompt,
-                callback=None,
+                cliER.EventName.PrintPrompt,
+                callback=instance_name_callback,
                 message="Enter the instance name: ",
             )
         )
-        instance_name = input("")
+        wait_events_to_clean(cliER)
         while instance_name in instance_names:
-            RichER.push(
+            cliER.push(
                 create_event(
-                    RichER.EventName.PrintError,
+                    cliER.EventName.PrintError,
                     callback=None,
                     message="This instance name exist already. Choose another one.",
                 )
             )
-            RichER.push(
+            cliER.push(
                 create_event(
-                    RichER.EventName.PrintPrompt,
-                    callback=None,
+                    cliER.EventName.PrintPrompt,
+                    callback=instance_name_callback,
                     message="Enter the instance name: ",
                 )
             )
-            instance_name = input("")
+            wait_events_to_clean(cliER)
+
+        assignments_str = None
+
+        def assignments_callback(prompt_value: str):
+            nonlocal assignments_str
+            assignments_str = prompt_value
 
         def get_assignments():
-            RichER.push(
+            cliER.push(
                 create_event(
-                    RichER.EventName.PrintPrompt,
-                    callback=None,
+                    cliER.EventName.PrintPrompt,
+                    callback=assignments_callback,
                     message="Enter variable assignment: ",
                 )
             )
-            assignments_str = input("")
+            wait_events_to_clean(cliER)
             return assignments_str.split("::")
 
         def validate_assignments(assignments: List[str]):
@@ -204,9 +227,9 @@ def setup_state_machine():
 
         assignments = get_assignments()
         while not validate_assignments(assignments):
-            RichER.push(
+            cliER.push(
                 create_event(
-                    RichER.EventName.PrintError,
+                    cliER.EventName.PrintError,
                     callback=None,
                     message="Each assignment should be in the format a=b and consecutive assignments should be separated by ::",
                 )
@@ -239,24 +262,19 @@ def setup_state_machine():
         instance_filepaths = list(instances_folder.iterdir())
         instance_names = [f.stem for f in instance_filepaths]
 
-        RichER.push(
+        cliER.push(
             create_event(
-                RichER.EventName.PrintPanel, callback=None, message="Select instance"
+                cliER.EventName.PrintPanel, callback=None, message="Select instance"
             )
         )
-        RichER.push(
+        cliER.push(
             create_event(
-                RichER.EventName.PrintList, callback=None, list_elements=instance_names
+                cliER.EventName.PrintList, callback=None, list_elements=instance_names
             )
         )
 
-        instance_index_event = create_event(
-            RichER.EventName.PrintPrompt,
-            callback=None,
-            message="Select instance index: ",
-        )
-        instance_index = retry_until_valid_int(
-            instance_index_event, 1, len(instance_names)
+        instance_index = retry_prompt_until_valid_int(
+            cliER, "Select instance index: ", 1, len(instance_names)
         )
         instance_filepath = instance_filepaths[instance_index - 1]
 
@@ -275,9 +293,9 @@ def setup_state_machine():
     ) -> utils.StateOutput:
         message = f"Prompt: {prompt_config.name}\nInstance:{instance['name']}"
 
-        RichER.push(
+        cliER.push(
             create_event(
-                RichER.EventName.PrintPanel,
+                cliER.EventName.PrintPanel,
                 callback=None,
                 message=message,
                 color="pink3",
@@ -296,16 +314,23 @@ def setup_state_machine():
         prompt_config: model.PromptConfiguration, instance: Dict[str, Any]
     ) -> utils.StateOutput:
         chat_title = f"{prompt_config.name}::{instance['name']}"
-        RichER.push(
+
+        message = None
+
+        def message_callback(prompt_value: str):
+            nonlocal message
+            message = prompt_value
+
+        cliER.push(
             create_event(
-                RichER.EventName.PrintPrompt, callback=None, message="Enter message: "
+                cliER.EventName.PrintPrompt, callback=message_callback, message="Enter message: "
             )
         )
-        message = input("")
+        wait_events_to_clean(cliER)
 
-        RichER.push(
+        cliER.push(
             create_event(
-                RichER.EventName.PrintPanel,
+                cliER.EventName.PrintPanel,
                 callback=None,
                 message=message,
                 color="cyan",
@@ -314,9 +339,9 @@ def setup_state_machine():
         )
 
         response = api.custom(prompt_config, message=message, **instance["variables"])
-        RichER.push(
+        cliER.push(
             create_event(
-                RichER.EventName.PrintPanel,
+                cliER.EventName.PrintPanel,
                 callback=None,
                 message=response.content,
                 color="orange1",
@@ -324,7 +349,7 @@ def setup_state_machine():
             )
         )
 
-        RichER.wait()
+        wait_events_to_clean(cliER)
 
         return utils.StateOutput(
             StateName.ContinueChat,
@@ -334,15 +359,15 @@ def setup_state_machine():
     SM.register(StateName.ContinueChat, continue_chat)
 
     def prologue() -> utils.StateOutput:
-        RichER.wait()
-        RichER.finish()
+        wait_events_to_clean(cliER)
+        cliER.finish()
         rich_er_thread.join()
 
         return utils.StateOutput(utils.StateMachine.EndState, {})
 
     SM.register("Prologue", prologue)
 
-    rich_er_thread = threading.Thread(target=RichER.run)
+    rich_er_thread = threading.Thread(target=cliER.run)
     rich_er_thread.start()
 
     SM.set_start_state(StateName.NoPromptSelected)
@@ -352,7 +377,8 @@ def setup_state_machine():
 
 def __pre_new_session__(*args, **kwargs):
     api.LLMAssistant().setup(api.get_configuration())
-    SM = setup_state_machine()
+    RichER = utils.RichCLIEventRunner()
+    SM = create_session_state_machine(RichER)
     SM.run()
 
 

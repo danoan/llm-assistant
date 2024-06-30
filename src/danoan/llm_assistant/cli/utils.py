@@ -62,12 +62,22 @@ class Event:
 class EventRunner(ABC):
     def __init__(self):
         self._events: Deque = deque()
+        self._execute = True
 
     def push(self, event: Event):
         self._events.append(event)
 
     def pop(self) -> Event:
         return self._events.popleft()
+
+    def top(self) -> Event:
+        return self._events[0]
+
+    def finish(self):
+        self._execute = False
+
+    def __len__(self):
+        return len(self._events)
 
     @abstractmethod
     def run(self):
@@ -84,28 +94,20 @@ class RichCLIEventRunner(EventRunner):
     def __init__(self):
         super().__init__()
         self._console = RichConsole()
-        self._execute = False
 
     def push(self, event: Event):
         if event.id not in self.EventName:
             pass
         return super().push(event)
 
-    def wait(self):
-        while len(self._events) != 0:
-            pass
-
-    def finish(self):
-        self._execute = False
-
     def run(self):
-        self._execute = True
         while self._execute:
             time.sleep(0.05)
             if len(self._events) == 0:
                 continue
 
-            next = self.pop()
+            next = self.top()
+            callback_data = None
             if next.id == self.EventName.PrintError:
                 message = next.parameters["message"]
                 panel = Panel(message, style="red")
@@ -137,10 +139,18 @@ class RichCLIEventRunner(EventRunner):
                 text.stylize("bold")
                 self._console.print(text, end="")
 
+                prompt_value = input("")
+                callback_data = {"prompt_value": prompt_value}
+
             else:
+                self.pop()
                 continue
+
+            self.pop()
             if next.callback:
-                next.callback()
+                if callback_data is None:
+                    callback_data = {}
+                next.callback(**callback_data)
 
 
 @dataclass
