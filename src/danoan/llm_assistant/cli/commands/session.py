@@ -25,7 +25,7 @@ class SessionEventName(Enum):
     PrintError = "PrintError",
     PrintPanel = "PrintPanel",
     PrintList = "PrintList",
-    PrintPrompt = "Prompt"
+    Prompt = "Prompt"
 
 
 class _RichCLIEventRunner(EventRunner):
@@ -66,7 +66,7 @@ class _RichCLIEventRunner(EventRunner):
             columns = Columns(list_elements)
             self._console.print(columns)
             self._console.print("")
-        elif next.id == SessionEventName.PrintPrompt:
+        elif next.id == SessionEventName.Prompt:
             message = next.parameters["message"]
 
             text = Text(message)
@@ -106,7 +106,7 @@ def create_event(event_name: str, callback, **kwargs):
 
 
 def wait_events_to_clean(er: EventRunner):
-    while len(er) != 0:
+    while len(er) != 0 or er.state() == EventRunner.RunnerState.Busy:
         time.sleep(0.05)
 
 
@@ -143,7 +143,7 @@ def retry_prompt_until_valid_int(er: EventRunner, message, floor, ceiling):
         entered_value = prompt_value
 
     event = create_event(
-        SessionEventName.PrintPrompt, prompt_callback, message=message
+        SessionEventName.Prompt, prompt_callback, message=message
     )
     er.push(event)
     wait_events_to_clean(er)
@@ -195,10 +195,8 @@ class SessionStateMachine:
         self._cliER_instance.join()
 
 
-def create_state_machine() -> SessionStateMachine:
-    SM = SessionStateMachine()
-
-    @SM.register(StateMachine.StartState)
+def register_state_machine_functions(register_function):
+    @register_function(StateMachine.StartState)
     def _no_prompt_selected(cliER: EventRunner):
         config = api.get_configuration()
         prompt_repository = Path(config.prompt_repository)
@@ -239,7 +237,7 @@ def create_state_machine() -> SessionStateMachine:
             {"prompt_config": list_prompt_config[prompt_index - 1]},
         )
 
-    @SM.register(StateName.PromptSelected)
+    @register_function(StateName.PromptSelected)
     def prompt_selected(cliER: EventRunner, prompt_config: model.PromptConfiguration) -> StateOutput:
         cliER.push(
             create_event(SessionEventName.PrintPanel, None, message="Choose an option")
@@ -262,7 +260,7 @@ def create_state_machine() -> SessionStateMachine:
 
         return StateOutput(next_state, {"prompt_config": prompt_config})
 
-    @SM.register(StateName.NewInstance)
+    @register_function(StateName.NewInstance)
     def _new_instance(cliER: EventRunner, prompt_config: model.PromptConfiguration) -> StateOutput:
         config_folder = api.get_configuration_folder()
         instances_folder = (
@@ -280,7 +278,7 @@ def create_state_machine() -> SessionStateMachine:
 
         cliER.push(
             create_event(
-                SessionEventName.PrintPrompt,
+                SessionEventName.Prompt,
                 callback=instance_name_callback,
                 message="Enter the instance name: ",
             )
@@ -296,7 +294,7 @@ def create_state_machine() -> SessionStateMachine:
             )
             cliER.push(
                 create_event(
-                    SessionEventName.PrintPrompt,
+                    SessionEventName.Prompt,
                     callback=instance_name_callback,
                     message="Enter the instance name: ",
                 )
@@ -312,7 +310,7 @@ def create_state_machine() -> SessionStateMachine:
         def get_assignments():
             cliER.push(
                 create_event(
-                    SessionEventName.PrintPrompt,
+                    SessionEventName.Prompt,
                     callback=assignments_callback,
                     message="Enter variable assignment: ",
                 )
@@ -359,7 +357,7 @@ def create_state_machine() -> SessionStateMachine:
             StateName.StartChat, {"prompt_config": prompt_config, "instance": instance}
         )
 
-    @SM.register(StateName.LoadInstance)
+    @register_function(StateName.LoadInstance)
     def load_instance(cliER: EventRunner, prompt_config: model.PromptConfiguration) -> StateOutput:
         config_folder = api.get_configuration_folder()
         instances_folder = (
@@ -392,7 +390,7 @@ def create_state_machine() -> SessionStateMachine:
             StateName.StartChat, {"prompt_config": prompt_config, "instance": instance}
         )
 
-    @SM.register(StateName.StartChat)
+    @register_function(StateName.StartChat)
     def start_chat(
         cliER: EventRunner,
         prompt_config: model.PromptConfiguration, instance: Dict[str, Any]
@@ -414,7 +412,7 @@ def create_state_machine() -> SessionStateMachine:
             {"prompt_config": prompt_config, "instance": instance},
         )
 
-    @SM.register(StateName.ContinueChat)
+    @register_function(StateName.ContinueChat)
     def continue_chat(
         cliER: EventRunner,
         prompt_config: model.PromptConfiguration, instance: Dict[str, Any]
@@ -429,7 +427,7 @@ def create_state_machine() -> SessionStateMachine:
 
         cliER.push(
             create_event(
-                SessionEventName.PrintPrompt, callback=message_callback, message="Enter message: "
+                SessionEventName.Prompt, callback=message_callback, message="Enter message: "
             )
         )
         wait_events_to_clean(cliER)
@@ -462,8 +460,6 @@ def create_state_machine() -> SessionStateMachine:
             {"prompt_config": prompt_config, "instance": instance},
         )
 
-    return SM
-
 
 #############################################
 # Argument Parser
@@ -472,7 +468,8 @@ def create_state_machine() -> SessionStateMachine:
 
 def __pre_new_session__(*args, **kwargs):
     api.LLMAssistant().setup(api.get_configuration())
-    SM = create_state_machine()
+    SM = SessionStateMachine()
+    register_state_machine_functions(SM.register)
     SM.run()
     SM.finish()
 

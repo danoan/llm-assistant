@@ -14,6 +14,7 @@ INPUT_FOLDER = SCRIPT_FOLDER / "input"
 CACHE_FILE = SCRIPT_FOLDER / "cache" / "test-api-cache"
 
 
+@pytest.mark.api
 @pytest.mark.parametrize(
     "prompt_folder,prompt_input_file,prompt_expected_file",
     [

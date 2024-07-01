@@ -1,7 +1,11 @@
-from abc import ABC, abstractmethod
-import time
+from abc import ABC
 from dataclasses import dataclass
+import time
 from typing import Any, Callable, Dict, Optional
+
+
+class StartStateNotRegisteredError(Exception):
+    pass
 
 
 @dataclass
@@ -21,17 +25,20 @@ class StateMachine(ABC):
     def register(self, state: str, action: Callable[[], StateOutput]):
         self._nodes[state] = action
 
-    def _next(self, input: Dict[str, Any]) -> StateOutput:
-        state_output = self._nodes[self._current](**input)
+    def _next(self, input: Optional[Dict[str, Any]] = None) -> StateOutput:
+        if input is None:
+            dict_input = {}
+        else:
+            dict_input = input
+        state_output = self._nodes[self._current](**dict_input)
         self._current = state_output.next_state
         return state_output
 
     def run(self):
         if self.StartState not in self._nodes:
-            # TODO: throw error
-            pass
+            raise StartStateNotRegisteredError()
 
-        state_output = self._next({})
+        state_output = self._next()
         while state_output.next_state != self.EndState:
             state_output = self._next(state_output.next_state_input)
             time.sleep(0.05)
