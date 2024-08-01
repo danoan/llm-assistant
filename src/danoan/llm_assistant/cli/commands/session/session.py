@@ -100,6 +100,10 @@ class _RichCLIDrawer(CLIDrawer):
             keyboard.release(Key.enter)
             _ = non_blocking_input()
             raise core.PromptInterruptedError()
+        else:
+            # Remove session commands from  input
+            value = value.replace(f"\x02", "")  # Ctrl+B
+            value = value.replace(f"\x11", "")  # Ctrl+Q
 
         return value
 
@@ -199,7 +203,7 @@ def __session__(*args, **kwargs):
 
     # Create a listener
     KL = KeyboardListener()
-    KL.register([Key.ctrl_l, Key.backspace], restart_runner)
+    KL.register([Key.ctrl_l, "b"], restart_runner)
     KL.register([Key.ctrl_l, "q"], exit_runner)
     KL.start()
 
