@@ -378,8 +378,10 @@ def test_continue_chat(monkeypatch):
         )
         tr.stop()
         cliDrawer.push_prompt_value("j'aime écrire")
+        cliDrawer.push_prompt_value("$$")
         tr.run()
-        assert len(cliDrawer.events) == 3
+        assert len(cliDrawer.events) == 4
+        assert cliDrawer.events.pop() == "prompt"
         assert cliDrawer.events.pop() == "prompt"
         assert cliDrawer.events.pop() == "print_panel"
         assert cliDrawer.events.pop() == "print_panel"
