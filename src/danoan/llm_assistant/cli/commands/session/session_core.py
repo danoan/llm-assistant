@@ -351,10 +351,19 @@ def register_tasks(
     ) -> Optional[TaskInstruction]:
         chat_title = f"{prompt_config.name}::{instance['name']}"
 
+        message_lines = []
         try:
-            message = cliDrawer.prompt(task=task, message="Enter message: ")
+            while True:
+                # TODO: Create a variation of prompt that accept message
+                # with several lines
+                line = cliDrawer.prompt(task=task, message="Enter message: ")
+                if line == "$$":
+                    break
+                message_lines.append(line)
         except PromptInterruptedError:
             return None
+
+        message = "\n".join(message_lines)
 
         cliDrawer.print_panel(message=message, color="cyan", title=chat_title)
 
