@@ -4,6 +4,7 @@ import argparse
 import logging
 from pathlib import Path
 import sys
+import json
 import toml
 
 logger = logging.getLogger(__name__)
@@ -18,7 +19,7 @@ def custom(prompt_configuration_filepath: Path, prompt_instance_filepath: Path):
         prompt_instance_filepath, "r"
     ) as file_pi:
         prompt_configuration = model.PromptConfiguration(**toml.load(file_pc))
-        prompt_instance = toml.load(file_pi)
+        prompt_instance = json.load(file_pi)
 
         response = api.custom(prompt_configuration, **prompt_instance)
         print(response)
