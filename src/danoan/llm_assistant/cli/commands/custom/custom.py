@@ -1,4 +1,5 @@
 from danoan.llm_assistant.core import api, model
+from danoan.llm_assistant.cli import utils
 
 import argparse
 import logging
@@ -6,6 +7,7 @@ from pathlib import Path
 import sys
 import json
 import toml
+from typing import TextIO
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -14,21 +16,19 @@ handler.setLevel(logging.INFO)
 logger.addHandler(handler)
 
 
-def custom(prompt_configuration_filepath: Path, prompt_instance_filepath: Path):
-    with open(prompt_configuration_filepath, "r") as file_pc, open(
-        prompt_instance_filepath, "r"
-    ) as file_pi:
+def custom(prompt_configuration_filepath: Path, prompt_instance_data: TextIO):
+    with open(prompt_configuration_filepath, "r") as file_pc:
         prompt_configuration = model.PromptConfiguration(**toml.load(file_pc))
-        prompt_instance = json.load(file_pi)
+        prompt_instance = json.load(prompt_instance_data)
 
         response = api.custom(prompt_configuration, **prompt_instance)
-        print(response)
+        return response
 
 
 def __custom__(
-    prompt_configuration_filepath: str, prompt_instance_filepath: str, *args, **kwargs
+    prompt_configuration_filepath: str, prompt_instance_data: TextIO, *args, **kwargs
 ):
-    api.ensure_configuration_file_exist(logger)
+    utils.ensure_configuration_file_exist(logger)
     _prompt_configuration_filepath = Path(prompt_configuration_filepath)
     if not _prompt_configuration_filepath.exists():
         logger.error(
@@ -36,14 +36,12 @@ def __custom__(
         )
         exit(1)
 
-    _prompt_instance_filepath = Path(prompt_instance_filepath)
-    if not _prompt_instance_filepath.exists():
-        logger.error(
-            f"The prompt instance file: {prompt_configuration_filepath} does not exist"
-        )
-        exit(1)
+    config = api.get_configuration()
+    api.LLMAssistant().setup(config)
+    response = custom(_prompt_configuration_filepath, prompt_instance_data)
 
-    custom(_prompt_configuration_filepath, _prompt_instance_filepath)
+    obj = json.loads(response.content)
+    json.dump(obj, sys.stdout, indent=2, ensure_ascii=False)
 
 
 def extend_parser(subparser_action=None):
@@ -69,8 +67,11 @@ def extend_parser(subparser_action=None):
         "prompt_configuration_filepath", help="Path to toml prompt configuration file"
     )
     parser.add_argument(
-        "prompt_instance_filepath",
-        help="Path to toml containing prompt variable values.",
+        "prompt_instance_data",
+        type=argparse.FileType("r"),
+        default=sys.stdin,
+        nargs="?",
+        help="Prompt data in JSON format",
     )
     parser.set_defaults(func=__custom__, subcommand_help=parser.print_help)
 
