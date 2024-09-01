@@ -33,7 +33,7 @@ def init(reset: bool = False):
 
 
 def __init_llm_assistant__(*args, **kwargs):
-    utils.ensure_configuration_file_exist(logger)
+    utils.ensure_environment_variable_is_defined(logger)
     init()
 
 
