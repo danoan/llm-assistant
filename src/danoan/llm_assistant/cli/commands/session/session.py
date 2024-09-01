@@ -12,7 +12,6 @@ from rich.console import Console as RichConsole
 from pynput.keyboard import Controller, Key
 from pynput import keyboard
 
-import argparse
 import fcntl
 import os
 from pathlib import Path
@@ -159,17 +158,7 @@ class KeyboardListener:
 #############################################
 
 
-def __session__(*args, **kwargs):
-    """
-    Chat interface to interact with pre-registered prompts.
-
-    To start a chat session the prompt must need to be stored
-    in the prompt repository folder, configurable from the
-    application settings.
-
-    Ctrl+Backspace: restart the session
-    Ctrl+Q:         exit the session
-    """
+def start_session():
     config = api.get_configuration()
     api.LLMAssistant().setup(config)
 
@@ -181,7 +170,6 @@ def __session__(*args, **kwargs):
     if not prompt_repository.exists():
         print("Pront repository does not exist. Please use the setup command")
         exit(1)
-
     cliDrawer = _RichCLIDrawer()
     tr = TaskRunner()
     core.register_tasks(
@@ -208,27 +196,3 @@ def __session__(*args, **kwargs):
     KL.start()
 
     tr.run()
-
-
-def extend_parser(subparser_action=None):
-    command_name = "session"
-    description = __session__.__doc__
-    help = description.split(".")[0] if description else ""
-
-    if subparser_action:
-        parser = subparser_action.add_parser(
-            command_name,
-            help=help,
-            description=description,
-            formatter_class=argparse.RawDescriptionHelpFormatter,
-        )
-    else:
-        parser = argparse.ArgumentParser(
-            command_name,
-            description=description,
-            formatter_class=argparse.RawDescriptionHelpFormatter,
-        )
-
-    parser.set_defaults(func=__session__, subcommand_help=parser.print_help)
-
-    return parser

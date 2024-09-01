@@ -1,5 +1,5 @@
-from danoan.llm_assistant.cli.commands.custom import custom
-from danoan.llm_assistant.cli.commands.session import session
+from danoan.llm_assistant.cli.commands.custom import custom_parser as custom
+from danoan.llm_assistant.cli.commands.session import session_parser as session
 from danoan.llm_assistant.cli.commands.setup import setup
 
 import argparse
