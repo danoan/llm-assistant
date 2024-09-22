@@ -14,7 +14,7 @@ def __setup__(*args, **kwargs):
         print(f"The environment variable: {api.LLM_ASSISTANT_ENV_VARIABLE} is not set")
         exit(1)
 
-    print(f"The configuration file is located at: {api.get_configuration_filepath()}\n")
+    print(f"The configuration file being used is located at: {api.get_configuration_filepath()}\n")
     print(api.get_configuration())
 
 
