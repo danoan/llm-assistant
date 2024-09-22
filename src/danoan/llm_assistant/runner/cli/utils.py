@@ -1,4 +1,5 @@
-from danoan.llm_assistant.core import api, exception, model
+from danoan.llm_assistant.common import api as common
+from danoan.llm_assistant.runner.core import api, exception, model
 
 import toml
 from pathlib import Path
@@ -7,7 +8,7 @@ from typing import Any, Tuple
 
 def ensure_environment_variable_is_defined(logger):
     try:
-        api.get_configuration_folder()
+        common.get_configuration_folder()
     except exception.EnvironmentVariableNotDefinedError:
         logger.error(
             f"The environment variable {api.LLM_ASSISTANT_ENV_VARIABLE} is not defined. Please define it before proceeding."
@@ -15,13 +16,25 @@ def ensure_environment_variable_is_defined(logger):
         exit(1)
 
 
-def ensure_configuration_file_exist(logger):
+def ensure_configuration_file_exists(logger):
     ensure_environment_variable_is_defined(logger)
     try:
-        api.get_configuration()
+        common.get_configuration()
     except exception.ConfigurationFileDoesNotExistError:
         logger.error(
-            f"The file {api.get_configuration_filepath()} was not found. You can create one by calling llm-assistant setup init"
+            f"The file {common.get_configuration_filepath()} was not found. You can create one by calling llm-assistant setup init"
+        )
+        exit(1)
+
+
+def ensure_prompt_exists(prompt_name: str, logger):
+    config = common.get_configuration()
+    prompt_config_filepath = (
+        Path(config.prompt_repository["path"]) / prompt_name / "config.toml"
+    )
+    if not prompt_config_filepath.exists():
+        logger.error(
+            f"Could not find the configuration file for prompt {prompt_name}. It should be located at {prompt_config_filepath}"
         )
         exit(1)
 

@@ -13,7 +13,7 @@ def __session__(*args, **kwargs):
     Ctrl+Q: exit the session
     """
 
-    from danoan.llm_assistant.cli.commands.session import session as S
+    from danoan.llm_assistant.runner.cli.commands.session import session as S
 
     S.start_session()
 

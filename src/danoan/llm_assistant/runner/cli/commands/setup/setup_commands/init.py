@@ -1,5 +1,6 @@
-from danoan.llm_assistant.core import api, model
-from danoan.llm_assistant.cli import utils
+from danoan.llm_assistant.common import api as common
+from danoan.llm_assistant.runner.core import api, model
+from danoan.llm_assistant.runner.cli import utils
 
 import argparse
 from dataclasses import asdict
@@ -21,11 +22,11 @@ def init(reset: bool = False):
     It creates the configuration file in the location pointed
     by the environment variable LLM_ASSISTANT_CONFIGURATION_FOLDER.
     """
-    config_folder = api.get_configuration_folder()
+    config_folder = common.get_configuration_folder()
     if not config_folder.exists():
         config_folder.mkdir(parents=True, exist_ok=True)
 
-    config_path = api.get_configuration_filepath()
+    config_path = common.get_configuration_filepath()
     if not config_path.exists() or reset:
         config = model.LLMAssistantConfiguration()
         with open(config_path, "w") as f:

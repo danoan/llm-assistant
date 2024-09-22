@@ -1,5 +1,6 @@
-from danoan.llm_assistant.core import api, exception
-from danoan.llm_assistant.cli.commands.setup.setup_commands import init
+from danoan.llm_assistant.common import api as common
+from danoan.llm_assistant.runner.core import api, exception
+from danoan.llm_assistant.runner.cli.commands.setup.setup_commands import init
 
 import argparse
 
@@ -7,17 +8,17 @@ import argparse
 def __setup__(*args, **kwargs):
     try:
         print(
-            f"The environment variable {api.LLM_ASSISTANT_ENV_VARIABLE}"
-            f" is set to: {api.get_configuration_folder()}"
+            f"The environment variable {common.LLM_ASSISTANT_ENV_VARIABLE}"
+            f" is set to: {common.get_configuration_folder()}"
         )
     except exception.EnvironmentVariableNotDefinedError:
         print(f"The environment variable: {api.LLM_ASSISTANT_ENV_VARIABLE} is not set")
         exit(1)
 
     print(
-        f"The configuration file being used is located at: {api.get_configuration_filepath()}\n"
+        f"The configuration file being used is located at: {common.get_configuration_filepath()}\n"
     )
-    print(api.get_configuration())
+    print(common.get_configuration())
 
 
 def extend_parser(subparser_action=None):

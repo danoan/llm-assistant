@@ -1,4 +1,4 @@
-from danoan.llm_assistant.core import api, model
+from danoan.llm_assistant.runner.core import api, model
 
 import pytest
 

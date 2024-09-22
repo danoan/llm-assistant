@@ -1,7 +1,5 @@
-from danoan.llm_assistant.core import exception, model
+from danoan.llm_assistant.runner.core import exception, model
 
-from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate
 
 from functools import lru_cache
 import logging
@@ -17,17 +15,7 @@ handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
 logger.addHandler(handler)
 logger.setLevel(logging.DEBUG)
 
-
 LLM_ASSISTANT_ENV_VARIABLE = "LLM_ASSISTANT_CONFIGURATION_FOLDER"
-
-################################################################
-# Helper functions
-################################################################
-
-
-################################################################
-# Configuration file
-################################################################
 
 
 def get_configuration_folder() -> Path:
@@ -82,69 +70,10 @@ def get_configuration() -> model.LLMAssistantConfiguration:
         return model.LLMAssistantConfiguration(**toml.load(f))
 
 
-# -------------------- LLM Assistant Instance --------------------
-
-
-def _singleton(cls):
-    instances_dict = {}
-
-    def inner(*args, **kwargs):
-        if cls not in instances_dict:
-            instances_dict[cls] = cls(*args, **kwargs)
-        return instances_dict[cls]
-
-    return inner
-
-
-@_singleton
-class LLMAssistant:
-    def __init__(self):
-        self._config = None
-
-    def setup(self, config: model.LLMAssistantConfiguration):
-        self._config = config
-        if self._config.use_cache:
-            from langchain.globals import set_llm_cache
-            from langchain_community.cache import SQLiteCache
-
-            set_llm_cache(SQLiteCache(database_path=self._config.cache_path))
-
-    @property
-    def config(self) -> model.LLMAssistantConfiguration:
-        if not self._config:
-            raise exception.LLMAssistantNotConfiguredError
-        return self._config
-
-
-# -------------------- Commands --------------------
-
-
-def custom(
-    prompt_configuration: model.PromptConfiguration,
-    **prompt_variables,
-):
-    """
-    Execute a custom prompt.
-    """
-    instance = LLMAssistant()
-
-    model = prompt_configuration.model
-    if not model:
-        model = instance.config.model
-
-    llm = ChatOpenAI(
-        api_key=instance.config.openai_key,
-        model=model,
+def get_prompt_configuration(prompt_name: str) -> model.PromptConfiguration:
+    config = get_configuration()
+    prompt_config_filepath = (
+        Path(config.prompt_repository["path"]) / prompt_name / "config.toml"
     )
-
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            ("system", prompt_configuration.system_prompt),
-            ("user", prompt_configuration.user_prompt),
-        ]
-    )
-
-    chain = prompt | llm
-    response = chain.invoke(prompt_variables)
-
-    return response
+    with open(prompt_config_filepath) as f:
+        return model.PromptConfiguration(**toml.load(f))

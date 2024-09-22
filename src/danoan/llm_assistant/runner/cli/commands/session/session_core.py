@@ -1,7 +1,11 @@
-from danoan.llm_assistant.cli import utils
-from danoan.llm_assistant.core import api, model
-from danoan.llm_assistant.core.cli_drawer import CLIDrawer
-from danoan.llm_assistant.core.task_runner import TaskRunner, TaskInstruction, Task
+from danoan.llm_assistant.runner.cli import utils
+from danoan.llm_assistant.runner.core import api, model
+from danoan.llm_assistant.runner.core.cli_drawer import CLIDrawer
+from danoan.llm_assistant.runner.core.task_runner import (
+    TaskRunner,
+    TaskInstruction,
+    Task,
+)
 
 from dataclasses import dataclass
 from enum import Enum

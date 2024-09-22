@@ -1,8 +1,13 @@
-from danoan.llm_assistant.core import api
-from danoan.llm_assistant.core.cli_drawer import CLIDrawer
-from danoan.llm_assistant.core.task_runner import TaskRunner, TaskInstruction, Task
-from danoan.llm_assistant.cli import utils
-from danoan.llm_assistant.cli.commands.session import session_core as core
+from danoan.llm_assistant.common import api as common
+from danoan.llm_assistant.runner.core import api
+from danoan.llm_assistant.runner.core.cli_drawer import CLIDrawer
+from danoan.llm_assistant.runner.core.task_runner import (
+    TaskRunner,
+    TaskInstruction,
+    Task,
+)
+from danoan.llm_assistant.runner.cli import utils
+from danoan.llm_assistant.runner.cli.commands.session import session_core as core
 
 from rich.text import Text
 from rich.panel import Panel
@@ -159,7 +164,7 @@ class KeyboardListener:
 
 
 def start_session():
-    config = api.get_configuration()
+    config = common.get_configuration()
     api.LLMAssistant().setup(config)
 
     if not config.prompt_repository and "path" not in config.prompt_repository:
