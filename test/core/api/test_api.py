@@ -1,4 +1,5 @@
-from danoan.llm_assistant.core import api, model
+from danoan.llm_assistant.common import model
+from danoan.llm_assistant.runner.core import api
 
 import pytest
 
@@ -25,7 +26,7 @@ def test_custom(openai_key, prompt_folder, prompt_input_file, prompt_expected_fi
     # TODO: When executing via pytest, this test raises an error within
     # the lang-chain library. If I remove the cache, it works.
     # The same behaviour is not observed if executed out of pytest
-    config = model.LLMAssistantConfiguration(
+    config = model.RunnerConfiguration(
         openai_key, "gpt-3.5-turbo", True, str(CACHE_FILE.resolve())
     )
 

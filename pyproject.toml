@@ -20,7 +20,7 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dependencies = ["toml", "langchain", "langchain-openai", "langchain-community", "rich", "pynput"]
+dependencies = ["toml", "langchain", "langchain-openai", "langchain-community", "rich", "pynput", "GitPython"]
 
 [project.urls]
 Documentation = "https://github.com/danoan/llm-assistant#readme"
@@ -28,7 +28,8 @@ Issues = "https://github.com/danoan/llm-assistant"
 Source = "https://github.com/danoan/llm-assistant"
 
 [project.scripts]
-llm-assistant = "danoan.llm_assistant.cli.cli:main"
+llm-assistant = "danoan.llm_assistant.runner.cli.cli:main"
+prompt-manager = "danoan.llm_assistant.prompt.cli.cli:main"
 
 # -------------------- build backend --------------------
 [tool.setuptools.packages.find]
