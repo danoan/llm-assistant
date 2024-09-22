@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import Any, Dict, Optional
 
 
 @dataclass
@@ -8,7 +8,7 @@ class LLMAssistantConfiguration:
     model: Optional[str] = None
     use_cache: bool = False
     cache_path: Optional[str] = None
-    prompt_repository: Optional[str] = None
+    prompt_repository: Optional[Dict[str, Any]] = None
 
     def __str__(self):
         return (

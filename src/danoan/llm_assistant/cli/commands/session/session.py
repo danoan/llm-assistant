@@ -162,11 +162,11 @@ def start_session():
     config = api.get_configuration()
     api.LLMAssistant().setup(config)
 
-    if not config.prompt_repository:
+    if not config.prompt_repository and "path" not in config.prompt_repository:
         print("Pront repository path is not configured. Please use the setup command")
         exit(1)
 
-    prompt_repository = Path(config.prompt_repository)
+    prompt_repository = Path(config.prompt_repository["path"])
     if not prompt_repository.exists():
         print("Pront repository does not exist. Please use the setup command")
         exit(1)
@@ -174,8 +174,7 @@ def start_session():
     tr = TaskRunner()
     core.register_tasks(
         cliDrawer,
-        Path(config.prompt_repository),
-        api.get_configuration_folder(),
+        prompt_repository,
         tr.register,
     )
 

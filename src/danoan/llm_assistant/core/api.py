@@ -29,6 +29,7 @@ LLM_ASSISTANT_ENV_VARIABLE = "LLM_ASSISTANT_CONFIGURATION_FOLDER"
 # Configuration file
 ################################################################
 
+
 def get_configuration_folder() -> Path:
     if LLM_ASSISTANT_ENV_VARIABLE not in os.environ:
         raise exception.EnvironmentVariableNotDefinedError()
@@ -44,11 +45,11 @@ def get_configuration_filepath() -> Path:
     It traverses the parents of the working directory until
     the configuration file is found.
 
-    If not found, checks if LLM_ASSISTANT_ENV_VARIABLE is 
+    If not found, checks if LLM_ASSISTANT_ENV_VARIABLE is
     defined and then use the configuration file located there.
 
     Raises:
-        FileNotFoundError:                  if the configuration file is not found in 
+        FileNotFoundError:                  if the configuration file is not found in
                                             the working directory.
         EnvironmentVariableNotDefinedError: If the LLM_ASSISTANT_ENV_VARIABLE
                                             is not defined

@@ -27,7 +27,7 @@ def ensure_configuration_file_exist(logger):
 
 
 def normalize_name(name: str) -> str:
-    return name.lower().replace(" ", "_")
+    return name.lower().replace(" ", "-")
 
 
 def value_or_default(data_dict, key, default: Any):

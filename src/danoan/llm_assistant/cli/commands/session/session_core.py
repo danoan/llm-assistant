@@ -3,14 +3,25 @@ from danoan.llm_assistant.core import api, model
 from danoan.llm_assistant.core.cli_drawer import CLIDrawer
 from danoan.llm_assistant.core.task_runner import TaskRunner, TaskInstruction, Task
 
+from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 import toml
 from typing import Any, Callable, Dict, Optional
 
+#############################################
+# Local model
+#############################################
+
 
 class PromptInterruptedError(Exception):
     pass
+
+
+@dataclass
+class PromptConfigurationWithLocation:
+    location: Path
+    prompt_config: model.PromptConfiguration
 
 
 #############################################
@@ -128,7 +139,6 @@ class TaskName(Enum):
 def register_tasks(
     cliDrawer: CLIDrawer,
     prompt_repository: Path,
-    configuration_folder: Path,
     register_function,
 ):
     """
@@ -147,7 +157,11 @@ def register_tasks(
         for prompt_config_filepath in prompt_repository.rglob("*config.toml"):
             _, prompt_config = utils.is_a_prompt_config_file(prompt_config_filepath)
             if prompt_config:
-                list_prompt_config.append(prompt_config)
+                list_prompt_config.append(
+                    PromptConfigurationWithLocation(
+                        prompt_config_filepath, prompt_config
+                    )
+                )
 
         if len(list_prompt_config) == 0:
             cliDrawer.print_error(
@@ -156,7 +170,9 @@ def register_tasks(
             return TaskInstruction("NoPromptSelected", None)
 
         cliDrawer.print_panel(message="Select prompt")
-        cliDrawer.print_list(list_elements=[e.name for e in list_prompt_config])
+        cliDrawer.print_list(
+            list_elements=[e.prompt_config.name for e in list_prompt_config]
+        )
 
         try:
             entered_str = _retry_prompt_until_valid_int(
@@ -177,7 +193,7 @@ def register_tasks(
 
     @register_function(TaskName.PromptSelected)
     def _prompt_selected(
-        task: Task, prompt_config: model.PromptConfiguration
+        task: Task, prompt_config: PromptConfigurationWithLocation
     ) -> Optional[TaskInstruction]:
         cliDrawer.print_panel(message="Choose an option")
         cliDrawer.print_list(list_elements=["New instance", "Load instance"])
@@ -208,12 +224,10 @@ def register_tasks(
 
     @register_function(TaskName.NewInstance)
     def _new_instance(
-        task: Task, prompt_config: model.PromptConfiguration
+        task: Task, prompt_config: PromptConfigurationWithLocation
     ) -> Optional[TaskInstruction]:
         instances_folder = (
-            configuration_folder
-            / "instances"
-            / utils.normalize_name(prompt_config.name)
+            prompt_repository / "instances" / prompt_config.location.parent.name
         )
         instances_folder.mkdir(parents=True, exist_ok=True)
         instance_filepaths = list(instances_folder.iterdir())
@@ -291,18 +305,25 @@ def register_tasks(
             toml.dump(instance, f)
 
         return TaskInstruction(
-            TaskName.StartChat, {"prompt_config": prompt_config, "instance": instance}
+            TaskName.StartChat,
+            {"prompt_config": prompt_config.prompt_config, "instance": instance},
         )
 
     @register_function(TaskName.LoadInstance)
     def _load_instance(
-        task: Task, prompt_config: model.PromptConfiguration
+        task: Task, prompt_config: PromptConfigurationWithLocation
     ) -> Optional[TaskInstruction]:
         instances_folder = (
-            configuration_folder
-            / "instances"
-            / utils.normalize_name(prompt_config.name)
+            prompt_repository / "instances" / prompt_config.location.parent.name
         )
+
+        if not instances_folder.exists():
+            print("NOT ExiSTS: ", instances_folder)
+            cliDrawer.print_error(message=f"No instance available for this prompt")
+            return TaskInstruction(
+                TaskName.PromptSelected, {"prompt_config": prompt_config}
+            )
+
         instance_filepaths = list(instances_folder.iterdir())
         instance_names = [f.stem for f in instance_filepaths]
 
@@ -327,7 +348,8 @@ def register_tasks(
             instance = toml.load(f)
 
         return TaskInstruction(
-            TaskName.StartChat, {"prompt_config": prompt_config, "instance": instance}
+            TaskName.StartChat,
+            {"prompt_config": prompt_config.prompt_config, "instance": instance},
         )
 
     @register_function(TaskName.StartChat)
