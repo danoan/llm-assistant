@@ -1,0 +1,7 @@
+danoan.llm\_assistant.cli.commands.custom.custom\_parser module
+===============================================================
+
+.. automodule:: danoan.llm_assistant.cli.commands.custom.custom_parser
+   :members:
+   :undoc-members:
+   :show-inheritance:

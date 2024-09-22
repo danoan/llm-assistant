@@ -1,0 +1,20 @@
+danoan.llm\_assistant.cli.commands.setup namespace
+==================================================
+
+.. py:module:: danoan.llm_assistant.cli.commands.setup
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   danoan.llm_assistant.cli.commands.setup.setup_commands
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   danoan.llm_assistant.cli.commands.setup.setup

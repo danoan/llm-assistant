@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>danoan.llm_assistant.core.task_runner module &mdash; llm-assistant 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=a3d76245" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            llm-assistant
+          </a>
+              <div class="version">
+                0.2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting started with LLM Assistant</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api-reference.html">API Reference</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../design-and-architecture.html">Design and Architecture</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">llm-assistant</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">danoan.llm_assistant.core.task_runner module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/reference/danoan.llm_assistant.core.task_runner.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-danoan.llm_assistant.core.task_runner">
+<span id="danoan-llm-assistant-core-task-runner-module"></span><h1>danoan.llm_assistant.core.task_runner module<a class="headerlink" href="#module-danoan.llm_assistant.core.task_runner" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="danoan.llm_assistant.core.task_runner.EventNotifier">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">danoan.llm_assistant.core.task_runner.</span></span><span class="sig-name descname"><span class="pre">EventNotifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">register_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unregister_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/danoan/llm_assistant/core/task_runner.html#EventNotifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.core.task_runner.EventNotifier" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Helper class that notifies caller when an event is complete.</p>
+<p>The EventNotifier is usually returned by an external class
+(let us say Manager) that accepts registering listeners to
+its events. A common use is to create a context and check
+the value of the notifier.</p>
+<dl>
+<dt>with Manager.get_notifier(event_name) as notifier:</dt><dd><dl>
+<dt>while True:</dt><dd><dl class="simple">
+<dt>if notifier.is_set():</dt><dd><p>break</p>
+</dd>
+</dl>
+<p>do_something()</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_name</strong> (<em>str</em>)</p></li>
+<li><p><strong>register_fn</strong> (<em>Callable</em><em>[</em><em>[</em><em>str</em><em>, </em><em>Callable</em><em>[</em><em>[</em><em>...</em><em>]</em><em>, </em><em>Any</em><em>]</em><em>]</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+<li><p><strong>unregister_fn</strong> (<em>Callable</em><em>[</em><em>[</em><em>str</em><em>, </em><em>Callable</em><em>[</em><em>[</em><em>...</em><em>]</em><em>, </em><em>Any</em><em>]</em><em>]</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="danoan.llm_assistant.core.task_runner.Task">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">danoan.llm_assistant.core.task_runner.</span></span><span class="sig-name descname"><span class="pre">Task</span></span><a class="reference internal" href="../_modules/danoan/llm_assistant/core/task_runner.html#Task"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.core.task_runner.Task" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Represent a task of TaskRunner.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="danoan.llm_assistant.core.task_runner.Task.Event">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/danoan/llm_assistant/core/task_runner.html#Task.Event"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.core.task_runner.Task.Event" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="danoan.llm_assistant.core.task_runner.Task.Event.Complete">
+<span class="sig-name descname"><span class="pre">Complete</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'complete'</span></em><a class="headerlink" href="#danoan.llm_assistant.core.task_runner.Task.Event.Complete" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="danoan.llm_assistant.core.task_runner.Task.Event.Stop">
+<span class="sig-name descname"><span class="pre">Stop</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'stop'</span></em><a class="headerlink" href="#danoan.llm_assistant.core.task_runner.Task.Event.Stop" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="danoan.llm_assistant.core.task_runner.Task.get_event_notifier">
+<span class="sig-name descname"><span class="pre">get_event_notifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#danoan.llm_assistant.core.task_runner.Task.Event" title="danoan.llm_assistant.core.task_runner.Task.Event"><span class="pre">Event</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#danoan.llm_assistant.core.task_runner.EventNotifier" title="danoan.llm_assistant.core.task_runner.EventNotifier"><span class="pre">EventNotifier</span></a></span></span><a class="reference internal" href="../_modules/danoan/llm_assistant/core/task_runner.html#Task.get_event_notifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.core.task_runner.Task.get_event_notifier" title="Link to this definition"></a></dt>
+<dd><p>Create EventNotifier for an event.</p>
+<p>The EventNotifier allows us to check if events such as Task.Event.Complete or
+Task.Event.Stop were triggered.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> (<a class="reference internal" href="#danoan.llm_assistant.core.task_runner.Task.Event" title="danoan.llm_assistant.core.task_runner.Task.Event"><em>Event</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#danoan.llm_assistant.core.task_runner.EventNotifier" title="danoan.llm_assistant.core.task_runner.EventNotifier"><em>EventNotifier</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="danoan.llm_assistant.core.task_runner.Task.register_listener">
+<span class="sig-name descname"><span class="pre">register_listener</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#danoan.llm_assistant.core.task_runner.Task.Event" title="danoan.llm_assistant.core.task_runner.Task.Event"><span class="pre">Event</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/danoan/llm_assistant/core/task_runner.html#Task.register_listener"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.core.task_runner.Task.register_listener" title="Link to this definition"></a></dt>
+<dd><p>Register a callback function to be called whenever the event is triggered.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> (<a class="reference internal" href="#danoan.llm_assistant.core.task_runner.Task.Event" title="danoan.llm_assistant.core.task_runner.Task.Event"><em>Event</em></a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="danoan.llm_assistant.core.task_runner.Task.run">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/danoan/llm_assistant/core/task_runner.html#Task.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.core.task_runner.Task.run" title="Link to this definition"></a></dt>
+<dd><p>The task logic.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="danoan.llm_assistant.core.task_runner.Task.start">
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/danoan/llm_assistant/core/task_runner.html#Task.start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.core.task_runner.Task.start" title="Link to this definition"></a></dt>
+<dd><p>Start executing the task logic.</p>
+<p>It triggers all listeners of Task.Event.Complete whenever
+is finished.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="danoan.llm_assistant.core.task_runner.Task.stop">
+<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/danoan/llm_assistant/core/task_runner.html#Task.stop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.core.task_runner.Task.stop" title="Link to this definition"></a></dt>
+<dd><p>Trigger all listeners of event Task.Event.Stop.</p>
+<p>The logic contained in run is not aborted.
+It is up to the user to take this decision.</p>
+<p># Run logic
+with self.get_event_notifier(Task.Event.Stop) as notifier:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>if notifier.is_set():</dt><dd><p>take action</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="danoan.llm_assistant.core.task_runner.Task.unregister_listener">
+<span class="sig-name descname"><span class="pre">unregister_listener</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#danoan.llm_assistant.core.task_runner.Task.Event" title="danoan.llm_assistant.core.task_runner.Task.Event"><span class="pre">Event</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/danoan/llm_assistant/core/task_runner.html#Task.unregister_listener"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.core.task_runner.Task.unregister_listener" title="Link to this definition"></a></dt>
+<dd><p>Unregister a previously registered listener.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>TaskListenerNotRegisteredError if the listener to unregister is not found.</strong> – </p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>event</strong> (<a class="reference internal" href="#danoan.llm_assistant.core.task_runner.Task.Event" title="danoan.llm_assistant.core.task_runner.Task.Event"><em>Event</em></a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="danoan.llm_assistant.core.task_runner.TaskInstruction">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">danoan.llm_assistant.core.task_runner.</span></span><span class="sig-name descname"><span class="pre">TaskInstruction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/danoan/llm_assistant/core/task_runner.html#TaskInstruction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.core.task_runner.TaskInstruction" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task_name</strong> (<em>str</em>)</p></li>
+<li><p><strong>task_input</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>] </em><em>| </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="danoan.llm_assistant.core.task_runner.TaskInstruction.task_input">
+<span class="sig-name descname"><span class="pre">task_input</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#danoan.llm_assistant.core.task_runner.TaskInstruction.task_input" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="danoan.llm_assistant.core.task_runner.TaskInstruction.task_name">
+<span class="sig-name descname"><span class="pre">task_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#danoan.llm_assistant.core.task_runner.TaskInstruction.task_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="danoan.llm_assistant.core.task_runner.TaskListenerNotRegisteredError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">danoan.llm_assistant.core.task_runner.</span></span><span class="sig-name descname"><span class="pre">TaskListenerNotRegisteredError</span></span><a class="reference internal" href="../_modules/danoan/llm_assistant/core/task_runner.html#TaskListenerNotRegisteredError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.core.task_runner.TaskListenerNotRegisteredError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="danoan.llm_assistant.core.task_runner.TaskNotRegisteredError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">danoan.llm_assistant.core.task_runner.</span></span><span class="sig-name descname"><span class="pre">TaskNotRegisteredError</span></span><a class="reference internal" href="../_modules/danoan/llm_assistant/core/task_runner.html#TaskNotRegisteredError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.core.task_runner.TaskNotRegisteredError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="danoan.llm_assistant.core.task_runner.TaskRunner">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">danoan.llm_assistant.core.task_runner.</span></span><span class="sig-name descname"><span class="pre">TaskRunner</span></span><a class="reference internal" href="../_modules/danoan/llm_assistant/core/task_runner.html#TaskRunner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.core.task_runner.TaskRunner" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Execute TaskInstruction added to its queue until emptness.</p>
+<p>TaskRunner executes tasks in the same order they are added in its internal
+queue via a TaskInstruction. The TaskInstruction contains the task name and
+its input variables. To execute a task, the latter needs to be priorly
+registered.</p>
+<p>The Task output is an optional TaskInstruction and it is added to the
+TaskRunner queue as soon it is completed. The added TaskInstruction is
+then executed in the next turn.</p>
+<p>The queue object is adapted to concurrent thread execution.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="danoan.llm_assistant.core.task_runner.TaskRunner.QuitInstruction">
+<span class="sig-name descname"><span class="pre">QuitInstruction</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">TaskInstruction(task_name='quit',</span> <span class="pre">task_input=None)</span></em><a class="headerlink" href="#danoan.llm_assistant.core.task_runner.TaskRunner.QuitInstruction" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="danoan.llm_assistant.core.task_runner.TaskRunner.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">td</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#danoan.llm_assistant.core.task_runner.TaskInstruction" title="danoan.llm_assistant.core.task_runner.TaskInstruction"><span class="pre">TaskInstruction</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/danoan/llm_assistant/core/task_runner.html#TaskRunner.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.core.task_runner.TaskRunner.add" title="Link to this definition"></a></dt>
+<dd><p>Add a new TaskInstruction to the queue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>td</strong> (<a class="reference internal" href="#danoan.llm_assistant.core.task_runner.TaskInstruction" title="danoan.llm_assistant.core.task_runner.TaskInstruction"><em>TaskInstruction</em></a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="danoan.llm_assistant.core.task_runner.TaskRunner.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/danoan/llm_assistant/core/task_runner.html#TaskRunner.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.core.task_runner.TaskRunner.clear" title="Link to this definition"></a></dt>
+<dd><p>Clear task queue.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="danoan.llm_assistant.core.task_runner.TaskRunner.next">
+<span class="sig-name descname"><span class="pre">next</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/danoan/llm_assistant/core/task_runner.html#TaskRunner.next"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.core.task_runner.TaskRunner.next" title="Link to this definition"></a></dt>
+<dd><p>Stop the current task.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="danoan.llm_assistant.core.task_runner.TaskRunner.register">
+<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/danoan/llm_assistant/core/task_runner.html#TaskRunner.register"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.core.task_runner.TaskRunner.register" title="Link to this definition"></a></dt>
+<dd><p>Decorator to register a function as a task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task_name</strong> (<em>str</em>)</p></li>
+<li><p><strong>first_task</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="danoan.llm_assistant.core.task_runner.TaskRunner.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/danoan/llm_assistant/core/task_runner.html#TaskRunner.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.core.task_runner.TaskRunner.run" title="Link to this definition"></a></dt>
+<dd><p>Traverse the queue executing all tasks there present.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="danoan.llm_assistant.core.task_runner.TaskRunner.stop">
+<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/danoan/llm_assistant/core/task_runner.html#TaskRunner.stop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.core.task_runner.TaskRunner.stop" title="Link to this definition"></a></dt>
+<dd><p>Stop all tasks.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Daniel Martins Antunes.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

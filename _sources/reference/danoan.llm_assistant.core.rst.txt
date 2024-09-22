@@ -1,0 +1,19 @@
+danoan.llm\_assistant.core package
+==================================
+
+.. automodule:: danoan.llm_assistant.core
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   danoan.llm_assistant.core.api
+   danoan.llm_assistant.core.cli_drawer
+   danoan.llm_assistant.core.exception
+   danoan.llm_assistant.core.model
+   danoan.llm_assistant.core.task_runner

@@ -1,0 +1,7 @@
+danoan.llm\_assistant.core.cli\_drawer module
+=============================================
+
+.. automodule:: danoan.llm_assistant.core.cli_drawer
+   :members:
+   :undoc-members:
+   :show-inheritance:

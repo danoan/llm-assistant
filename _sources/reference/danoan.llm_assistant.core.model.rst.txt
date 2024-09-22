@@ -1,0 +1,7 @@
+danoan.llm\_assistant.core.model module
+=======================================
+
+.. automodule:: danoan.llm_assistant.core.model
+   :members:
+   :undoc-members:
+   :show-inheritance:
