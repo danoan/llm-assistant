@@ -1,9 +1,9 @@
-from danoan.llm_assistant.core import api
-from danoan.llm_assistant.cli.commands.session import session_core as core
+from danoan.llm_assistant.runner.core import api
+from danoan.llm_assistant.runner.cli.commands.session import session_core as core
+from danoan.llm_assistant.runner.cli.commands.session.cli_drawer import CLIDrawer
+from danoan.llm_assistant.runner.cli.commands.session import task_runner
 
-from danoan.llm_assistant.core import model
-from danoan.llm_assistant.core.cli_drawer import CLIDrawer
-from danoan.llm_assistant.core import task_runner
+from danoan.llm_assistant.common import model
 
 from collections import deque
 from dataclasses import asdict, dataclass
@@ -43,7 +43,6 @@ class MockCLIDrawer(CLIDrawer):
 
 @dataclass
 class Context:
-    configuration_folder: Path
     prompt_repository: Path
     instances_folder: Path
 
@@ -59,22 +58,22 @@ def context(number_prompts: int):
     def create_instance(instances_folder: Path, prompt_name: str):
         prompt_instances_folder = instances_folder / prompt_name
         prompt_instances_folder.mkdir(exist_ok=True)
+        print(prompt_instances_folder, prompt_instances_folder.exists())
         with open(prompt_instances_folder / "instance.toml", "w") as f:
             toml.dump({"name": "my-instance", "variables": {"language": "english"}}, f)
 
     def wrapper(fn):
         def inner():
-            with TemporaryDirectory() as _prompt_repository, TemporaryDirectory() as _configuration_folder:
+            with TemporaryDirectory() as _prompt_repository:
                 prompt_repository = Path(_prompt_repository)
-                configuration_folder = Path(_configuration_folder)
-                instances_folder = configuration_folder / "instances"
+                instances_folder = prompt_repository / "instances"
                 instances_folder.mkdir()
 
                 for i in range(number_prompts):
                     prompt_name = f"prompt-{i}"
                     create_prompt_config(prompt_repository, prompt_name)
                     create_instance(instances_folder, prompt_name)
-                fn(Context(configuration_folder, prompt_repository, instances_folder))
+                fn(Context(prompt_repository, instances_folder))
 
         return inner
 
@@ -85,6 +84,11 @@ def get_prompt_config(prompt_repository: Path):
     p = list(prompt_repository.rglob("*config.toml"))[0]
     with open(p) as f:
         return model.PromptConfiguration(**toml.load(f))
+
+
+def get_prompt_config_with_location(prompt_repository: Path):
+    p = list(prompt_repository.rglob("*config.toml"))[0]
+    return core.PromptConfigurationWithLocation(p, get_prompt_config(prompt_repository))
 
 
 def get_prompt_instance(
@@ -130,7 +134,6 @@ def test_no_prompt_selected():
         core.register_tasks(
             cliDrawer,
             context.prompt_repository,
-            context.configuration_folder,
             tr.register,
         )
 
@@ -153,7 +156,6 @@ def test_no_prompt_selected_empty_prompt_repository():
         core.register_tasks(
             cliDrawer,
             context.prompt_repository,
-            context.configuration_folder,
             tr.register,
         )
 
@@ -176,7 +178,6 @@ def test_prompt_selected():
         core.register_tasks(
             cliDrawer,
             context.prompt_repository,
-            context.configuration_folder,
             tr.register,
         )
 
@@ -184,7 +185,11 @@ def test_prompt_selected():
         tr.add(
             task_runner.TaskInstruction(
                 core.TaskName.PromptSelected,
-                {"prompt_config": get_prompt_config(context.prompt_repository)},
+                {
+                    "prompt_config": get_prompt_config_with_location(
+                        context.prompt_repository
+                    )
+                },
             )
         )
         cliDrawer.push_prompt_value("1")
@@ -209,7 +214,6 @@ def test_new_instance():
         core.register_tasks(
             cliDrawer,
             context.prompt_repository,
-            context.configuration_folder,
             tr.register,
         )
 
@@ -217,7 +221,11 @@ def test_new_instance():
         tr.add(
             task_runner.TaskInstruction(
                 core.TaskName.NewInstance,
-                {"prompt_config": get_prompt_config(context.prompt_repository)},
+                {
+                    "prompt_config": get_prompt_config_with_location(
+                        context.prompt_repository
+                    )
+                },
             )
         )
         tr.stop()
@@ -233,7 +241,11 @@ def test_new_instance():
         tr.add(
             task_runner.TaskInstruction(
                 core.TaskName.NewInstance,
-                {"prompt_config": get_prompt_config(context.prompt_repository)},
+                {
+                    "prompt_config": get_prompt_config_with_location(
+                        context.prompt_repository
+                    )
+                },
             )
         )
         tr.stop()
@@ -251,7 +263,11 @@ def test_new_instance():
         tr.add(
             task_runner.TaskInstruction(
                 core.TaskName.NewInstance,
-                {"prompt_config": get_prompt_config(context.prompt_repository)},
+                {
+                    "prompt_config": get_prompt_config_with_location(
+                        context.prompt_repository
+                    )
+                },
             )
         )
         tr.stop()
@@ -284,7 +300,6 @@ def test_load_instance():
         core.register_tasks(
             cliDrawer,
             context.prompt_repository,
-            context.configuration_folder,
             tr.register,
         )
 
@@ -292,7 +307,11 @@ def test_load_instance():
         tr.add(
             task_runner.TaskInstruction(
                 core.TaskName.LoadInstance,
-                {"prompt_config": get_prompt_config(context.prompt_repository)},
+                {
+                    "prompt_config": get_prompt_config_with_location(
+                        context.prompt_repository
+                    )
+                },
             )
         )
         tr.stop()
@@ -317,7 +336,6 @@ def test_start_chat():
         core.register_tasks(
             cliDrawer,
             context.prompt_repository,
-            context.configuration_folder,
             tr.register,
         )
 
@@ -354,7 +372,6 @@ def test_continue_chat(monkeypatch):
         core.register_tasks(
             cliDrawer,
             context.prompt_repository,
-            context.configuration_folder,
             tr.register,
         )
 

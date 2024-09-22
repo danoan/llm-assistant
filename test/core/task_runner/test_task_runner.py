@@ -1,4 +1,4 @@
-from danoan.llm_assistant.core.task_runner import (
+from danoan.llm_assistant.runner.cli.commands.session.task_runner import (
     TaskRunner,
     Task,
     TaskInstruction,

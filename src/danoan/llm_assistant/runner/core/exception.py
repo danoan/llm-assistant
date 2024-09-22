@@ -1,0 +1,2 @@
+class LLMAssistantNotConfiguredError(Exception):
+    pass
