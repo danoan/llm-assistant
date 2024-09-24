@@ -1,8 +1,5 @@
-from danoan.llm_assistant.common import api as common
-from danoan.llm_assistant.runner.core import api
-
-from danoan.llm_assistant.runner.cli.commands.run import run as M
 from danoan.llm_assistant.runner.cli import utils as cli_utils
+from danoan.llm_assistant.common import api as common
 
 
 import argparse
@@ -32,10 +29,14 @@ def __run__(
     *args,
     **kwargs,
 ):
+    """
+    Run a pre-registered prompt.
+    """
+    from danoan.llm_assistant.runner.cli.commands.run import run as M
+
     cli_utils.ensure_configuration_file_exists(logger)
     cli_utils.ensure_prompt_exists(prompt_name, logger)
-    api.LLMAssistant().setup(common.get_configuration())
-    llma_config = api.LLMAssistant().config
+    llma_config = common.get_configuration()
 
     prompt = common.get_prompt_configuration(prompt_name)
     ss = prompt_input

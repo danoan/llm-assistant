@@ -1,8 +1,6 @@
 from danoan.llm_assistant.common import api as common
-from danoan.llm_assistant.runner.core import api, model
-from danoan.llm_assistant.runner.cli import utils
+from danoan.llm_assistant.runner.core import model
 
-import argparse
 from dataclasses import asdict
 import logging
 import sys
@@ -16,12 +14,6 @@ logger.addHandler(handler)
 
 
 def init(reset: bool = False):
-    """
-    Initialize llm-assistant configuration.
-
-    It creates the configuration file in the location pointed
-    by the environment variable LLM_ASSISTANT_CONFIGURATION_FOLDER.
-    """
     config_folder = common.get_configuration_folder()
     if not config_folder.exists():
         config_folder.mkdir(parents=True, exist_ok=True)
@@ -31,32 +23,3 @@ def init(reset: bool = False):
         config = model.LLMAssistantConfiguration()
         with open(config_path, "w") as f:
             toml.dump(asdict(config), f)
-
-
-def __init_llm_assistant__(*args, **kwargs):
-    utils.ensure_environment_variable_is_defined(logger)
-    init()
-
-
-def extend_parser(subparser_action=None):
-    command_name = "init"
-    description = init.__doc__
-    help = description.split(".")[0] if description else ""
-
-    if subparser_action:
-        parser = subparser_action.add_parser(
-            command_name,
-            help=help,
-            description=description,
-            formatter_class=argparse.RawDescriptionHelpFormatter,
-        )
-    else:
-        parser = argparse.ArgumentParser(
-            command_name,
-            description=description,
-            formatter_class=argparse.RawDescriptionHelpFormatter,
-        )
-
-    parser.set_defaults(func=__init_llm_assistant__, subcommand_help=parser.print_help)
-
-    return parser

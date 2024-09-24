@@ -14,5 +14,5 @@ class Configuration:
 class TrackedPrompt:
     name: str
     repository_path: Path
-    current_branch: str
-    tags: List[str]
+    current_tag: str
+    branches: List[str]

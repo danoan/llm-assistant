@@ -10,8 +10,8 @@ def __list__(*args, **kwargs):
     """
     entries = []
     for tp in api.get_tracked_prompts():
-        tags = ",".join([tag.name for tag in tp.tags])
-        entry = f"{tp.name}: @{tp.current_branch} ({tags})"
+        versions = ",".join([branch.name for branch in tp.branches])
+        entry = f"{tp.name}: @{tp.current_tag} ({versions})"
         entries.append(entry)
     cli_utils.print_panel_list("Tracked Prompts", entries)
 

@@ -1,11 +1,11 @@
-from danoan.llm_assistant.runner.cli import utils
-from danoan.llm_assistant.runner.core import api, model
-from danoan.llm_assistant.runner.core.cli_drawer import CLIDrawer
-from danoan.llm_assistant.runner.core.task_runner import (
-    TaskRunner,
+from danoan.llm_assistant.runner.cli import utils as cli_utils
+from danoan.llm_assistant.runner.cli.commands.session.cli_drawer import CLIDrawer
+from danoan.llm_assistant.runner.cli.commands.session.task_runner import (
     TaskInstruction,
     Task,
 )
+
+from danoan.llm_assistant.runner.core import api, model
 
 from dataclasses import dataclass
 from enum import Enum
@@ -159,7 +159,7 @@ def register_tasks(
     def _no_prompt_selected(task: Task) -> Optional[TaskInstruction]:
         list_prompt_config = []
         for prompt_config_filepath in prompt_repository.rglob("*config.toml"):
-            _, prompt_config = utils.is_a_prompt_config_file(prompt_config_filepath)
+            _, prompt_config = cli_utils.is_a_prompt_config_file(prompt_config_filepath)
             if prompt_config:
                 list_prompt_config.append(
                     PromptConfigurationWithLocation(

@@ -55,13 +55,14 @@ def get_tracked_prompt(repository_name: str) -> model.TrackedPrompt:
     if not repository_folder.exists():
         raise FileNotFoundError()
     repository = git.Repo(repository_folder)
-
-    branch = repository.active_branch.name
-    tags = []
     if repository.head.is_valid():
         current_commit = repository.head.commit
-        tags = [tag for tag in repository.tags if tag.commit == current_commit]
-    return model.TrackedPrompt(repository_name, repository_folder, branch, tags)
+        current_tag = "no-tag"
+        for tag in repository.tags:
+            if tag.commit == current_commit:
+                current_tag = tag.name
+        branches = [b for b in repository.branches if b.name not in ["master"]]
+    return model.TrackedPrompt(repository_name, repository_folder, current_tag, branches)
 
 
 def get_tracked_prompts() -> Generator[model.TrackedPrompt, None, None]:

@@ -1,11 +1,12 @@
 from danoan.llm_assistant.common import api as common
-from danoan.llm_assistant.runner.core import api
-from danoan.llm_assistant.runner.core.cli_drawer import CLIDrawer
-from danoan.llm_assistant.runner.core.task_runner import (
+from danoan.llm_assistant.runner.cli.commands.session.cli_drawer import CLIDrawer
+from danoan.llm_assistant.runner.cli.commands.session.task_runner import (
     TaskRunner,
     TaskInstruction,
     Task,
 )
+
+from danoan.llm_assistant.runner.core import api
 from danoan.llm_assistant.runner.cli import utils
 from danoan.llm_assistant.runner.cli.commands.session import session_core as core
 

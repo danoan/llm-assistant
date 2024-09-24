@@ -3,7 +3,20 @@ from danoan.llm_assistant.runner.core import model
 
 
 import json
+import logging
+import sys
 from typing import List, Optional, TextIO
+
+logger = logging.getLogger(__file__)
+handler = logging.StreamHandler(sys.stderr)
+handler.setLevel(logging.INFO)
+handler.setFormatter(
+    logging.Formatter(
+        "%(asctime)s %(levelname)s %(message)s",
+    )
+)
+logger.addHandler(handler)
+logger.setLevel(logging.INFO)
 
 
 def run(

@@ -1,6 +1,8 @@
 from danoan.llm_assistant.common import api as common
-from danoan.llm_assistant.runner.core import api, exception
-from danoan.llm_assistant.runner.cli.commands.setup.setup_commands import init
+from danoan.llm_assistant.common import exception
+from danoan.llm_assistant.runner.cli.commands.setup.setup_commands import (
+    init_parser as init,
+)
 
 import argparse
 
@@ -12,7 +14,9 @@ def __setup__(*args, **kwargs):
             f" is set to: {common.get_configuration_folder()}"
         )
     except exception.EnvironmentVariableNotDefinedError:
-        print(f"The environment variable: {api.LLM_ASSISTANT_ENV_VARIABLE} is not set")
+        print(
+            f"The environment variable: {common.LLM_ASSISTANT_ENV_VARIABLE} is not set"
+        )
         exit(1)
 
     print(
