@@ -45,7 +45,12 @@ def __run__(
         json.dump(json.loads(from_text), ss, ensure_ascii=False)
         ss.seek(0)
 
-    response = M.run(llma_config, prompt, ss, prompt_param)
+    print(ss.read())
+    print(prompt_param)
+    print(prompt)
+    exit(0)
+
+    response = M.run(llma_config.runner, prompt, ss, prompt_param)
     try:
         obj = json.loads(response.content)
         json.dump(obj, sys.stdout, indent=2, ensure_ascii=False)

@@ -1,4 +1,5 @@
-from danoan.llm_assistant.runner.core import exception, model
+from danoan.llm_assistant.common import model
+from danoan.llm_assistant.runner.core import exception
 
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
@@ -35,7 +36,7 @@ class LLMAssistant:
     def __init__(self):
         self._config = None
 
-    def setup(self, config: model.LLMAssistantConfiguration):
+    def setup(self, config: model.RunnerConfiguration):
         self._config = config
         if self._config.use_cache:
             from langchain.globals import set_llm_cache

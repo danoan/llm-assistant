@@ -1,5 +1,5 @@
+from danoan.llm_assistant.common import model
 from danoan.llm_assistant.runner.core import api
-from danoan.llm_assistant.runner.core import model
 
 
 import json
@@ -20,12 +20,12 @@ logger.setLevel(logging.INFO)
 
 
 def run(
-    llma_configuration: model.LLMAssistantConfiguration,
+    runner_configuration: model.RunnerConfiguration,
     prompt: model.PromptConfiguration,
     prompt_input: TextIO,
     prompt_param: Optional[List[List[str]]],
 ):
-    api.LLMAssistant().setup(llma_configuration)
+    api.LLMAssistant().setup(runner_configuration)
 
     input_obj = json.load(prompt_input)
     if prompt_param:

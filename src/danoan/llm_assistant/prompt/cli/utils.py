@@ -1,6 +1,7 @@
 from danoan.llm_assistant.common import api as common
+from danoan.llm_assistant.common import model
+
 from danoan.llm_assistant.prompt.core import api, utils
-from danoan.llm_assistant.runner.core import model
 
 from rich import print
 from rich.columns import Columns
@@ -128,17 +129,3 @@ def ensure_prompt_repository_exists(repository_name: str):
     if not api.is_prompt_repository(repository_folder):
         print(f"The path {repository_folder} does not point to a prompt repository.")
         exit(1)
-
-
-def get_llma_configuration() -> model.LLMAssistantConfiguration:
-    config = api.get_configuration()
-    if not config.openai_key:
-        raise AttributeError()
-
-    cache_filepath = common.get_configuration_filepath().parent / "cache.db"
-    return model.LLMAssistantConfiguration(
-        openai_key=config.openai_key,
-        model="gpt-3.5-turbo",
-        use_cache=True,
-        cache_path=cache_filepath,
-    )

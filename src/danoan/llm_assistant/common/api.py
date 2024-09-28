@@ -1,4 +1,4 @@
-from danoan.llm_assistant.runner.core import exception, model
+from danoan.llm_assistant.common import exception, model
 
 
 from functools import lru_cache
@@ -14,6 +14,10 @@ handler.setLevel(logging.DEBUG)
 handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
 logger.addHandler(handler)
 logger.setLevel(logging.DEBUG)
+
+########################################
+# Configuration files
+########################################
 
 LLM_ASSISTANT_ENV_VARIABLE = "LLM_ASSISTANT_CONFIGURATION_FOLDER"
 
@@ -72,8 +76,6 @@ def get_configuration() -> model.LLMAssistantConfiguration:
 
 def get_prompt_configuration(prompt_name: str) -> model.PromptConfiguration:
     config = get_configuration()
-    prompt_config_filepath = (
-        Path(config.prompt_repository["path"]) / prompt_name / "config.toml"
-    )
+    prompt_config_filepath = config.runner.local_folder / prompt_name / "config.toml"
     with open(prompt_config_filepath) as f:
         return model.PromptConfiguration(**toml.load(f))

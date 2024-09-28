@@ -3,7 +3,7 @@ from danoan.llm_assistant.runner.cli.commands.session import session_core as cor
 from danoan.llm_assistant.runner.cli.commands.session.cli_drawer import CLIDrawer
 from danoan.llm_assistant.runner.cli.commands.session import task_runner
 
-from danoan.llm_assistant.runner.core import model
+from danoan.llm_assistant.common import model
 
 from collections import deque
 from dataclasses import asdict, dataclass

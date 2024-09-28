@@ -1,7 +1,12 @@
-from danoan.llm_assistant.prompt.cli.commands.init import parser as init
-from danoan.llm_assistant.prompt.cli.commands.list import parser as list_prompts
-from danoan.llm_assistant.prompt.cli.commands.push import parser as push
-from danoan.llm_assistant.prompt.cli.commands.track import parser as track
+from danoan.llm_assistant.prompt.cli.commands.versioning.commands.list import (
+    parser as list_prompts,
+)
+from danoan.llm_assistant.prompt.cli.commands.versioning.commands.push import (
+    parser as push,
+)
+from danoan.llm_assistant.prompt.cli.commands.versioning.commands.sync import (
+    parser as sync,
+)
 
 import argparse
 
@@ -26,7 +31,7 @@ def extend_parser(subparser_action=None):
         )
 
     subparser_action = parser.add_subparsers()
-    list_of_commands = [init, list_prompts, push, track]
+    list_of_commands = [list_prompts, push, sync]
     for command in list_of_commands:
         command.extend_parser(subparser_action)
 

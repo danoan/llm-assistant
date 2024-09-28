@@ -1,5 +1,6 @@
 from danoan.llm_assistant.common import api as common
-from danoan.llm_assistant.runner.core import api, exception, model
+from danoan.llm_assistant.common import model
+from danoan.llm_assistant.runner.core import api, exception
 
 import toml
 from pathlib import Path
@@ -29,9 +30,7 @@ def ensure_configuration_file_exists(logger):
 
 def ensure_prompt_exists(prompt_name: str, logger):
     config = common.get_configuration()
-    prompt_config_filepath = (
-        Path(config.prompt_repository["path"]) / prompt_name / "config.toml"
-    )
+    prompt_config_filepath = config.runner.local_folder / prompt_name / "config.toml"
     if not prompt_config_filepath.exists():
         logger.error(
             f"Could not find the configuration file for prompt {prompt_name}. It should be located at {prompt_config_filepath}"

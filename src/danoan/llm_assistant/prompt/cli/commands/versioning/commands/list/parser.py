@@ -1,17 +1,23 @@
 from danoan.llm_assistant.prompt.core import api
-from danoan.llm_assistant.prompt.cli import utils
+from danoan.llm_assistant.prompt.cli import utils as cli_utils
 
 import argparse
 
 
-def __regenerate_tests__(*args, **kwargs):
-    """ """
-    raise NotImplementedError()
+def __list__(*args, **kwargs):
+    """
+    List all tracked prompts.
+    """
+    entries = []
+    for tp in api.get_tracked_prompts():
+        entry = f"{tp.name}: @{tp.current_tag}"
+        entries.append(entry)
+    cli_utils.print_panel_list("Tracked Prompts", entries)
 
 
 def extend_parser(subparser_action=None):
-    command_name = "regenerate-tests"
-    description = __regenerate_tests__.__doc__
+    command_name = "list"
+    description = __list__.__doc__
     help = description.split(".")[0] if description else ""
 
     if subparser_action:
@@ -28,6 +34,6 @@ def extend_parser(subparser_action=None):
             formatter_class=argparse.RawDescriptionHelpFormatter,
         )
 
-    parser.set_defaults(func=__regenerate_tests__, subcommand_help=parser.print_help)
+    parser.set_defaults(func=__list__, subcommand_help=parser.print_help)
 
     return parser

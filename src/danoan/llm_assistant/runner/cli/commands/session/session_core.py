@@ -5,7 +5,8 @@ from danoan.llm_assistant.runner.cli.commands.session.task_runner import (
     Task,
 )
 
-from danoan.llm_assistant.runner.core import api, model
+from danoan.llm_assistant.common import model
+from danoan.llm_assistant.runner.core import api
 
 from dataclasses import dataclass
 from enum import Enum

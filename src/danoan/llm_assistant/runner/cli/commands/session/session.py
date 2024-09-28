@@ -166,13 +166,13 @@ class KeyboardListener:
 
 def start_session():
     config = common.get_configuration()
-    api.LLMAssistant().setup(config)
+    api.LLMAssistant().setup(config.runner)
 
-    if not config.prompt_repository and "path" not in config.prompt_repository:
+    if not config.runner.local_folder:
         print("Pront repository path is not configured. Please use the setup command")
         exit(1)
 
-    prompt_repository = Path(config.prompt_repository["path"])
+    prompt_repository = Path(config.runner.local_folder)
     if not prompt_repository.exists():
         print("Pront repository does not exist. Please use the setup command")
         exit(1)

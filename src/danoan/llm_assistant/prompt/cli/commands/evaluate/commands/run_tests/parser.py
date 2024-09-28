@@ -1,8 +1,9 @@
+from danoan.llm_assistant.common.model import PromptConfiguration
+
 from danoan.llm_assistant.prompt.core import api
 from danoan.llm_assistant.prompt.cli import utils as cli_utils
 
 from danoan.llm_assistant.runner.core import api as llma
-from danoan.llm_assistant.runner.core.model import PromptConfiguration
 
 import argparse
 import json
