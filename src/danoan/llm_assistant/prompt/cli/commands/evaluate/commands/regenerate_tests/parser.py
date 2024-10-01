@@ -1,11 +1,15 @@
 import argparse
 
 
-def __regenerate_tests__(*args, **kwargs):
+def __regenerate_tests__(prompt_name: str, *args, **kwargs):
     """
     Run all tests and replace stored results.
     """
-    raise NotImplementedError()
+    from danoan.llm_assistant.prompt.cli.commands.evaluate.commands.regenerate_tests import (
+        action as A,
+    )
+
+    A.regenerate_tests(prompt_name)
 
 
 def extend_parser(subparser_action=None):
@@ -27,6 +31,7 @@ def extend_parser(subparser_action=None):
             formatter_class=argparse.RawDescriptionHelpFormatter,
         )
 
+    parser.add_argument("prompt_name", type=str, help="Prompt name")
     parser.set_defaults(func=__regenerate_tests__, subcommand_help=parser.print_help)
 
     return parser

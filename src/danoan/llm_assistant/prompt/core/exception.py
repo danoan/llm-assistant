@@ -1,0 +1,2 @@
+class TestFileMissingError(Exception):
+    pass

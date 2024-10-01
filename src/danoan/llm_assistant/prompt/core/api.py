@@ -1,7 +1,7 @@
 from danoan.llm_assistant.common import api as common
 from danoan.llm_assistant.common.model import PromptRepositoryConfiguration
 
-from danoan.llm_assistant.prompt.core import model
+from danoan.llm_assistant.prompt.core import model, exception
 
 import copy
 from dataclasses import asdict, dataclass
@@ -27,6 +27,10 @@ def get_prompts_folder() -> Path:
     """
     config = common.get_configuration()
     return config.prompt.local_folder
+
+
+def get_prompt_configuration_filepath(prompt_name: str) -> Path:
+    return get_prompts_folder() / prompt_name / "config.toml"
 
 
 def is_prompt_repository(path: Path) -> bool:
@@ -89,17 +93,11 @@ def get_tracked_prompts() -> Generator[model.TrackedPrompt, None, None]:
         yield get_tracked_prompt(x.name)
 
 
-def get_prompt_test_files(prompt_name: str):
-    """ """
-    prompt_folder = get_prompts_folder() / prompt_name
-    if not prompt_folder.exists():
-        raise FileNotFoundError()
-
-    prompt_config = prompt_folder / "config.toml"
-    input = prompt_folder / "tests" / "regression" / "input.json"
-    expected = prompt_folder / "tests" / "regression" / "expected.json"
-
-    return prompt_config, input, expected
+def get_prompt_test_regression_filepath(prompt_name: str) -> Path:
+    """
+    Get regression test file.
+    """
+    return get_prompts_folder() / prompt_name / "tests" / "regression.json"
 
 
 def sync(repo_config: PromptRepositoryConfiguration, progress_callback=None):
