@@ -1,2 +1,0 @@
-class TestFileMissingError(Exception):
-    pass

@@ -1,7 +1,6 @@
-from danoan.llm_assistant.common import api as common
-from danoan.llm_assistant.common import model
-
 from danoan.llm_assistant.prompt.core import api, utils
+
+from danoan.llm_assistant.common import api as common
 
 from rich import print
 from rich.columns import Columns

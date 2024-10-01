@@ -1,6 +1,3 @@
-from danoan.llm_assistant.prompt.core import api
-from danoan.llm_assistant.prompt.cli import utils as cli_utils
-
 import argparse
 
 
@@ -8,11 +5,11 @@ def __list__(*args, **kwargs):
     """
     List all tracked prompts.
     """
-    entries = []
-    for tp in api.get_tracked_prompts():
-        entry = f"{tp.name}: @{tp.current_tag}"
-        entries.append(entry)
-    cli_utils.print_panel_list("Tracked Prompts", entries)
+    from danoan.llm_assistant.prompt.cli.commands.versioning.commands.list import (
+        action as A,
+    )
+
+    A.list_prompts()
 
 
 def extend_parser(subparser_action=None):

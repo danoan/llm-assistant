@@ -1,7 +1,7 @@
 from danoan.llm_assistant.common import api as common
 from danoan.llm_assistant.common.model import PromptRepositoryConfiguration
 
-from danoan.llm_assistant.prompt.core import model, exception
+from danoan.llm_assistant.prompt.core import model
 
 import copy
 from dataclasses import asdict, dataclass
