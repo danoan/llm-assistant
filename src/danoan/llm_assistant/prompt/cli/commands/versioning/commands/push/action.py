@@ -7,7 +7,7 @@ from typing import List, Optional
 
 
 def __get_most_recent_version_before_commit__(
-    repository_folder: str, commit_hash: str
+    repository_folder: Path, commit_hash: str
 ) -> Optional[str]:
     tags = utils.get_most_recent_tags_before_commit(repository_folder, commit_hash)
     for t in tags:

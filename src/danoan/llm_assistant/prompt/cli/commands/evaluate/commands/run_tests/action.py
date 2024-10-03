@@ -1,16 +1,16 @@
-from danoan.llm_assistant.prompt.core import api
-from danoan.llm_assistant.prompt.cli import utils as cli_utils
-
-from danoan.llm_assistant.common import api as common
-from danoan.llm_assistant.common.model import RunnerConfiguration
-from danoan.llm_assistant.runner.core import api as llma
-
 import json
+
+from danoan.llm_assistant.config.model import RunnerConfiguration
+
+from danoan.llm_assistant.common import config
+from danoan.llm_assistant.prompt.cli import utils as cli_utils
+from danoan.llm_assistant.prompt.core import api
+from danoan.llm_assistant.runner.core import api as llma
 
 
 def __run_tests__(runner_configuration: RunnerConfiguration, prompt_name: str):
     llma.LLMAssistant().setup(runner_configuration)
-    prompt_config = common.get_prompt_configuration(prompt_name)
+    prompt_config = config.get_prompt_configuration(prompt_name)
     regression_fp = api.get_prompt_test_regression_filepath(prompt_name)
 
     with open(regression_fp, "r") as fi:
@@ -29,7 +29,7 @@ def __run_tests__(runner_configuration: RunnerConfiguration, prompt_name: str):
 def run_tests(prompt_name: str):
     try:
         for response_str, expected_str in __run_tests__(
-            common.get_configuration().runner, prompt_name
+            config.get_configuration().runner, prompt_name
         ):
             cli_utils.print_side_by_side(
                 response_str,

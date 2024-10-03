@@ -1,5 +1,5 @@
 from danoan.llm_assistant.runner.cli import utils as cli_utils
-from danoan.llm_assistant.common import api as common
+from danoan.llm_assistant.common import config as config
 
 
 import argparse
@@ -36,19 +36,14 @@ def __run__(
 
     cli_utils.ensure_configuration_file_exists(logger)
     cli_utils.ensure_prompt_exists(prompt_name, logger)
-    llma_config = common.get_configuration()
+    llma_config = config.get_configuration()
 
-    prompt = common.get_prompt_configuration(prompt_name)
+    prompt = config.get_prompt_configuration(prompt_name)
     ss = prompt_input
     if from_text:
         ss = io.StringIO()
         json.dump(json.loads(from_text), ss, ensure_ascii=False)
         ss.seek(0)
-
-    print(ss.read())
-    print(prompt_param)
-    print(prompt)
-    exit(0)
 
     response = M.run(llma_config.runner, prompt, ss, prompt_param)
     try:

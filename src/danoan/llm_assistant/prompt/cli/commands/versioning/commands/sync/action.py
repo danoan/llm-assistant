@@ -1,8 +1,9 @@
-from danoan.llm_assistant.common import api as common
-from danoan.llm_assistant.prompt.core import api
+from typing import Dict
 
 from git.remote import RemoteProgress
-from typing import Dict
+
+from danoan.llm_assistant.common import config
+from danoan.llm_assistant.prompt.core import api
 
 
 def __git_event_processor__(op_code, cur_count, max_count=None, message=""):
@@ -60,5 +61,5 @@ def __get_sync_events_processor__():
 
 
 def sync():
-    config = common.get_configuration()
+    config = config.get_configuration()
     api.sync(config.prompt, __get_sync_events_processor__())

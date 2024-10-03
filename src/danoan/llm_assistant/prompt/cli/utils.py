@@ -1,6 +1,5 @@
-from danoan.llm_assistant.prompt.core import api, utils
-
-from danoan.llm_assistant.common import api as common
+from pathlib import Path
+from typing import Any, List
 
 from rich import print
 from rich.columns import Columns
@@ -8,8 +7,8 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
 
-from pathlib import Path
-from typing import Any, List
+from danoan.llm_assistant.common import config
+from danoan.llm_assistant.prompt.core import api, utils
 
 ###################################
 # GUI Primitives
@@ -114,10 +113,10 @@ def print_side_by_side(
 
 
 def ensure_configuration_file_exists():
-    if not common.get_configuration_filepath().exists():
+    if not config.get_configuration_filepath().exists():
         print(
             f"Configuration file for prompt-evaluator does not exist. It should be located \
-            at {common.get_configuration_filepath()}"
+            at {config.get_configuration_filepath()}"
         )
         exit(1)
 

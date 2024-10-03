@@ -1,28 +1,26 @@
-from danoan.llm_assistant.common import api as common
-from danoan.llm_assistant.runner.cli.commands.session.cli_drawer import CLIDrawer
-from danoan.llm_assistant.runner.cli.commands.session.task_runner import (
-    TaskRunner,
-    TaskInstruction,
-    Task,
-)
-
-from danoan.llm_assistant.runner.core import api
-from danoan.llm_assistant.runner.cli import utils
-from danoan.llm_assistant.runner.cli.commands.session import session_core as core
-
-from rich.text import Text
-from rich.panel import Panel
-from rich.columns import Columns
-from rich.console import Console as RichConsole
-
-from pynput.keyboard import Controller, Key
-from pynput import keyboard
-
 import fcntl
 import os
-from pathlib import Path
 import selectors
 import sys
+from pathlib import Path
+
+from pynput import keyboard
+from pynput.keyboard import Controller, Key
+from rich.columns import Columns
+from rich.console import Console as RichConsole
+from rich.panel import Panel
+from rich.text import Text
+
+from danoan.llm_assistant.common import config
+from danoan.llm_assistant.runner.cli import utils
+from danoan.llm_assistant.runner.cli.commands.session import session_core as core
+from danoan.llm_assistant.runner.cli.commands.session.cli_drawer import CLIDrawer
+from danoan.llm_assistant.runner.cli.commands.session.task_runner import (
+    Task,
+    TaskInstruction,
+    TaskRunner,
+)
+from danoan.llm_assistant.runner.core import api
 
 
 def create_non_blocking_input():
@@ -165,7 +163,7 @@ class KeyboardListener:
 
 
 def start_session():
-    config = common.get_configuration()
+    config = config.get_configuration()
     api.LLMAssistant().setup(config.runner)
 
     if not config.runner.local_folder:

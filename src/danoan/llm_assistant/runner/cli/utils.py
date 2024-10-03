@@ -1,15 +1,15 @@
-from danoan.llm_assistant.common import api as common
-from danoan.llm_assistant.common import model
-from danoan.llm_assistant.runner.core import api, exception
-
-import toml
 from pathlib import Path
 from typing import Any, Tuple
+
+import toml
+
+from danoan.llm_assistant.common import config, model
+from danoan.llm_assistant.runner.core import api, exception
 
 
 def ensure_environment_variable_is_defined(logger):
     try:
-        common.get_configuration_folder()
+        config.get_configuration_folder()
     except exception.EnvironmentVariableNotDefinedError:
         logger.error(
             f"The environment variable {api.LLM_ASSISTANT_ENV_VARIABLE} is not defined. Please define it before proceeding."
@@ -20,16 +20,16 @@ def ensure_environment_variable_is_defined(logger):
 def ensure_configuration_file_exists(logger):
     ensure_environment_variable_is_defined(logger)
     try:
-        common.get_configuration()
+        config.get_configuration()
     except exception.ConfigurationFileDoesNotExistError:
         logger.error(
-            f"The file {common.get_configuration_filepath()} was not found. You can create one by calling llm-assistant setup init"
+            f"The file {config.get_configuration_filepath()} was not found. You can create one by calling llm-assistant setup init"
         )
         exit(1)
 
 
 def ensure_prompt_exists(prompt_name: str, logger):
-    config = common.get_configuration()
+    config = config.get_configuration()
     prompt_config_filepath = config.runner.local_folder / prompt_name / "config.toml"
     if not prompt_config_filepath.exists():
         logger.error(

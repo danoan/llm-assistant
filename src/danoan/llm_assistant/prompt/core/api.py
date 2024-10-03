@@ -1,17 +1,17 @@
-from danoan.llm_assistant.common import api as common
-from danoan.llm_assistant.common.model import PromptRepositoryConfiguration
-
-from danoan.llm_assistant.prompt.core import model
-
 import copy
+import logging
+import sys
 from dataclasses import asdict, dataclass
 from enum import Enum
-import git
-import logging
 from pathlib import Path
-import sys
-import toml
 from typing import Generator, Literal, Optional
+
+import git
+import toml
+from danoan.llm_assistant.config.model import PromptRepositoryConfiguration
+
+from danoan.llm_assistant.common import config
+from danoan.llm_assistant.prompt.core import model
 
 logger = logging.getLogger(__file__)
 handler = logging.StreamHandler(sys.stderr)
@@ -25,7 +25,7 @@ def get_prompts_folder() -> Path:
     """
     Return path to the folder where all tracked prompts are located.
     """
-    config = common.get_configuration()
+    config = config.get_configuration()
     return config.prompt.local_folder
 
 
@@ -186,8 +186,8 @@ def sync(repo_config: PromptRepositoryConfiguration, progress_callback=None):
         else:
             _progress_callback(SyncItem(Events.NOT_PROMPT_REPOSITORY))
 
-    config = common.get_configuration()
+    config = config.get_configuration()
     config.prompt = updated_repo_config
 
-    with open(common.get_configuration_filepath(), "w") as f:
+    with open(config.get_configuration_filepath(), "w") as f:
         toml.dump(config.__asdict__(), f)
