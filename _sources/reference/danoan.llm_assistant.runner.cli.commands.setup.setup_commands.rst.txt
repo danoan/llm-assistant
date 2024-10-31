@@ -1,0 +1,13 @@
+danoan.llm\_assistant.runner.cli.commands.setup.setup\_commands namespace
+=========================================================================
+
+.. py:module:: danoan.llm_assistant.runner.cli.commands.setup.setup_commands
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   danoan.llm_assistant.runner.cli.commands.setup.setup_commands.init
+   danoan.llm_assistant.runner.cli.commands.setup.setup_commands.init_parser

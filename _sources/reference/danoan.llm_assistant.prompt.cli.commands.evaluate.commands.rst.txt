@@ -1,0 +1,13 @@
+danoan.llm\_assistant.prompt.cli.commands.evaluate.commands namespace
+=====================================================================
+
+.. py:module:: danoan.llm_assistant.prompt.cli.commands.evaluate.commands
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   danoan.llm_assistant.prompt.cli.commands.evaluate.commands.regenerate_tests
+   danoan.llm_assistant.prompt.cli.commands.evaluate.commands.run_tests

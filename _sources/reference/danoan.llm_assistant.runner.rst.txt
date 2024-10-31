@@ -1,0 +1,16 @@
+danoan.llm\_assistant.runner package
+====================================
+
+.. automodule:: danoan.llm_assistant.runner
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   danoan.llm_assistant.runner.cli
+   danoan.llm_assistant.runner.core

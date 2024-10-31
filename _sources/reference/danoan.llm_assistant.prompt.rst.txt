@@ -1,0 +1,16 @@
+danoan.llm\_assistant.prompt package
+====================================
+
+.. automodule:: danoan.llm_assistant.prompt
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   danoan.llm_assistant.prompt.cli
+   danoan.llm_assistant.prompt.core

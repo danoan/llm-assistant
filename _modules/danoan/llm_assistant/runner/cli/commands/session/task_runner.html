@@ -1,0 +1,429 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>danoan.llm_assistant.runner.cli.commands.session.task_runner &mdash; llm-assistant 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../../_static/css/custom.css?v=a3d76245" />
+
+  
+      <script src="../../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../../../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+      <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+      <script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";
+window.addEventListener("load", () => mermaid.run());
+</script>
+    <script src="../../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../../index.html" class="icon icon-home">
+            llm-assistant
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../getting-started.html">Getting started with LLM Assistant</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../api-reference.html">API Reference</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../design-and-architecture.html">Design and Architecture</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../../index.html">llm-assistant</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">danoan.llm_assistant.runner.cli.commands.session.task_runner</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for danoan.llm_assistant.runner.cli.commands.session.task_runner</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">from</span> <span class="nn">queue</span> <span class="kn">import</span> <span class="n">Queue</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
+
+
+<span class="n">RegisterListenerFunction</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">Any</span><span class="p">]</span>
+<span class="n">UnregisterListenerFunction</span> <span class="o">=</span> <span class="n">RegisterListenerFunction</span>
+
+
+<div class="viewcode-block" id="EventNotifier">
+<a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.EventNotifier">[docs]</a>
+<span class="k">class</span> <span class="nc">EventNotifier</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Helper class that notifies caller when an event is complete.</span>
+
+<span class="sd">    The EventNotifier is usually returned by an external class</span>
+<span class="sd">    (let us say Manager) that accepts registering listeners to</span>
+<span class="sd">    its events. A common use is to create a context and check</span>
+<span class="sd">    the value of the notifier.</span>
+
+<span class="sd">    with Manager.get_notifier(event_name) as notifier:</span>
+<span class="sd">        while True:</span>
+<span class="sd">            if notifier.is_set():</span>
+<span class="sd">                break</span>
+<span class="sd">            do_something()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">event_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">register_fn</span><span class="p">:</span> <span class="n">RegisterListenerFunction</span><span class="p">,</span>
+        <span class="n">unregister_fn</span><span class="p">:</span> <span class="n">UnregisterListenerFunction</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_name</span> <span class="o">=</span> <span class="n">event_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_event</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register</span> <span class="o">=</span> <span class="n">register_fn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_unregister</span> <span class="o">=</span> <span class="n">unregister_fn</span>
+
+    <span class="k">def</span> <span class="nf">_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event</span>
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_unregister</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="TaskListenerNotRegisteredError">
+<a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.TaskListenerNotRegisteredError">[docs]</a>
+<span class="k">class</span> <span class="nc">TaskListenerNotRegisteredError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="Task">
+<a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.Task">[docs]</a>
+<span class="k">class</span> <span class="nc">Task</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represent a task of TaskRunner.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Task.Event">
+<a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.Task.Event">[docs]</a>
+    <span class="k">class</span> <span class="nc">Event</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+        <span class="n">Stop</span> <span class="o">=</span> <span class="s2">&quot;stop&quot;</span>
+        <span class="n">Complete</span> <span class="o">=</span> <span class="s2">&quot;complete&quot;</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">_trigger_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">event</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">[</span><span class="n">event</span><span class="p">]:</span>
+            <span class="n">callback</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trigger_event</span><span class="p">(</span><span class="n">Task</span><span class="o">.</span><span class="n">Event</span><span class="o">.</span><span class="n">Complete</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">output</span>
+
+<div class="viewcode-block" id="Task.run">
+<a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.Task.run">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The task logic.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="Task.start">
+<a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.Task.start">[docs]</a>
+    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Start executing the task logic.</span>
+
+<span class="sd">        It triggers all listeners of Task.Event.Complete whenever</span>
+<span class="sd">        is finished.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Task.stop">
+<a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.Task.stop">[docs]</a>
+    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Trigger all listeners of event Task.Event.Stop.</span>
+
+<span class="sd">        The logic contained in run is not aborted.</span>
+<span class="sd">        It is up to the user to take this decision.</span>
+
+<span class="sd">        # Run logic</span>
+<span class="sd">        with self.get_event_notifier(Task.Event.Stop) as notifier:</span>
+<span class="sd">            if notifier.is_set():</span>
+<span class="sd">                take action</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trigger_event</span><span class="p">(</span><span class="n">Task</span><span class="o">.</span><span class="n">Event</span><span class="o">.</span><span class="n">Stop</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Task.register_listener">
+<a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.Task.register_listener">[docs]</a>
+    <span class="k">def</span> <span class="nf">register_listener</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register a callback function to be called whenever the event is triggered.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">event</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">[</span><span class="n">event</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">[</span><span class="n">event</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Task.unregister_listener">
+<a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.Task.unregister_listener">[docs]</a>
+    <span class="k">def</span> <span class="nf">unregister_listener</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Unregister a previously registered listener.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            TaskListenerNotRegisteredError if the listener to unregister is not found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">event</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">TaskListenerNotRegisteredError</span><span class="p">()</span>
+
+        <span class="n">filter_result</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="ow">is</span> <span class="n">callback</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">[</span><span class="n">event</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">[</span><span class="n">event</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">filter_result</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Task.get_event_notifier">
+<a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.Task.get_event_notifier">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_event_notifier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EventNotifier</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create EventNotifier for an event.</span>
+
+<span class="sd">        The EventNotifier allows us to check if events such as Task.Event.Complete or</span>
+<span class="sd">        Task.Event.Stop were triggered.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">_register</span><span class="p">(</span><span class="n">event_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">register_listener</span><span class="p">(</span><span class="n">Task</span><span class="o">.</span><span class="n">Event</span><span class="p">(</span><span class="n">event_name</span><span class="p">),</span> <span class="n">callback</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">_unregister</span><span class="p">(</span><span class="n">event_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">unregister_listener</span><span class="p">(</span><span class="n">Task</span><span class="o">.</span><span class="n">Event</span><span class="p">(</span><span class="n">event_name</span><span class="p">),</span> <span class="n">callback</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">EventNotifier</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">_register</span><span class="p">,</span> <span class="n">_unregister</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TaskNotRegisteredError">
+<a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.TaskNotRegisteredError">[docs]</a>
+<span class="k">class</span> <span class="nc">TaskNotRegisteredError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="TaskInstruction">
+<a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.TaskInstruction">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">TaskInstruction</span><span class="p">:</span>
+    <span class="n">task_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">task_input</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span></div>
+
+
+
+<div class="viewcode-block" id="TaskRunner">
+<a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.TaskRunner">[docs]</a>
+<span class="k">class</span> <span class="nc">TaskRunner</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Execute TaskInstruction added to its queue until emptness.</span>
+
+<span class="sd">    TaskRunner executes tasks in the same order they are added in its internal</span>
+<span class="sd">    queue via a TaskInstruction. The TaskInstruction contains the task name and</span>
+<span class="sd">    its input variables. To execute a task, the latter needs to be priorly</span>
+<span class="sd">    registered.</span>
+
+<span class="sd">    The Task output is an optional TaskInstruction and it is added to the</span>
+<span class="sd">    TaskRunner queue as soon it is completed. The added TaskInstruction is</span>
+<span class="sd">    then executed in the next turn.</span>
+
+<span class="sd">    The queue object is adapted to concurrent thread execution.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">QuitInstruction</span> <span class="o">=</span> <span class="n">TaskInstruction</span><span class="p">(</span><span class="s2">&quot;quit&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Task</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_task_queue</span><span class="p">:</span> <span class="n">Queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_task</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_register_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">task_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">task</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span><span class="p">[</span><span class="n">task_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">callback</span>
+
+<div class="viewcode-block" id="TaskRunner.register">
+<a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.TaskRunner.register">[docs]</a>
+    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">first_task</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Decorator to register a function as a task.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+            <span class="k">class</span> <span class="nc">_Task</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+                <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_register_task</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">_Task</span><span class="p">(),</span> <span class="n">callback</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">first_task</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_task_queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_task_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">TaskInstruction</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">decorator</span></div>
+
+
+<div class="viewcode-block" id="TaskRunner.run">
+<a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.TaskRunner.run">[docs]</a>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Traverse the queue executing all tasks there present.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task_queue</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+            <span class="n">td</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">td</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">td</span> <span class="o">==</span> <span class="n">TaskRunner</span><span class="o">.</span><span class="n">QuitInstruction</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="n">task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">td</span><span class="o">.</span><span class="n">task_name</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">task</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_current_task</span> <span class="o">=</span> <span class="n">td</span><span class="o">.</span><span class="n">task_name</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span><span class="p">[</span><span class="n">td</span><span class="o">.</span><span class="n">task_name</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span><span class="p">[</span><span class="n">td</span><span class="o">.</span><span class="n">task_name</span><span class="p">](</span><span class="n">td</span><span class="o">.</span><span class="n">task_input</span><span class="p">)</span>
+
+            <span class="n">input_dict</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">if</span> <span class="n">td</span> <span class="ow">and</span> <span class="n">td</span><span class="o">.</span><span class="n">task_input</span><span class="p">:</span>
+                <span class="n">input_dict</span> <span class="o">=</span> <span class="n">td</span><span class="o">.</span><span class="n">task_input</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_task_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="o">**</span><span class="n">input_dict</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TaskRunner.next">
+<a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.TaskRunner.next">[docs]</a>
+    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stop the current task.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_task</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_task</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">task</span><span class="p">:</span>
+            <span class="n">task</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="TaskRunner.add">
+<a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.TaskRunner.add">[docs]</a>
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">td</span><span class="p">:</span> <span class="n">TaskInstruction</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a new TaskInstruction to the queue.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">td</span><span class="o">.</span><span class="n">task_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">TaskNotRegisteredError</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_task_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">td</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TaskRunner.stop">
+<a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.TaskRunner.stop">[docs]</a>
+    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stop all tasks.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_task_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">TaskRunner</span><span class="o">.</span><span class="n">QuitInstruction</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TaskRunner.clear">
+<a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.TaskRunner.clear">[docs]</a>
+    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clear task queue.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task_queue</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_task_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Daniel Martins Antunes.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

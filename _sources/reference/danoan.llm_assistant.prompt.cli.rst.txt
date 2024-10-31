@@ -1,0 +1,13 @@
+danoan.llm\_assistant.prompt.cli namespace
+==========================================
+
+.. py:module:: danoan.llm_assistant.prompt.cli
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   danoan.llm_assistant.prompt.cli.cli
+   danoan.llm_assistant.prompt.cli.utils

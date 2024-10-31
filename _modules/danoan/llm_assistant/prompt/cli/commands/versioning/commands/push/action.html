@@ -1,0 +1,227 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>danoan.llm_assistant.prompt.cli.commands.versioning.commands.push.action &mdash; llm-assistant 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../../../../_static/css/custom.css?v=a3d76245" />
+
+  
+      <script src="../../../../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../../../../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../../../../../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+      <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+      <script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";
+window.addEventListener("load", () => mermaid.run());
+</script>
+    <script src="../../../../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../../../../index.html" class="icon icon-home">
+            llm-assistant
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../../../getting-started.html">Getting started with LLM Assistant</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../../../api-reference.html">API Reference</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../../../design-and-architecture.html">Design and Architecture</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../../../../index.html">llm-assistant</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">danoan.llm_assistant.prompt.cli.commands.versioning.commands.push.action</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for danoan.llm_assistant.prompt.cli.commands.versioning.commands.push.action</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">danoan.llm_assistant.prompt.core</span> <span class="kn">import</span> <span class="n">api</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">danoan.llm_assistant.prompt.cli</span> <span class="kn">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">cli_utils</span>
+
+<span class="kn">import</span> <span class="nn">git</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+
+<span class="k">def</span> <span class="nf">__get_most_recent_version_before_commit__</span><span class="p">(</span>
+    <span class="n">repository_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">commit_hash</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="n">tags</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_most_recent_tags_before_commit</span><span class="p">(</span><span class="n">repository_folder</span><span class="p">,</span> <span class="n">commit_hash</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;v&quot;</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="k">return</span> <span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span> <span class="nf">__propose_new_version_from_current_one__</span><span class="p">(</span><span class="n">current_version</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="n">variation</span><span class="p">,</span> <span class="n">major</span><span class="p">,</span> <span class="n">minor</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">current_version</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)]</span>
+    <span class="n">bump_variation</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">variation</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">major</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">minor</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">bump_major</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">variation</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">major</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">minor</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">bump_minor</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">variation</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">major</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">minor</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;v</span><span class="si">{</span><span class="n">bump_variation</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;v</span><span class="si">{</span><span class="n">bump_major</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;v</span><span class="si">{</span><span class="n">bump_minor</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">__get_current_version__</span><span class="p">(</span><span class="n">repository_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="n">repo</span> <span class="o">=</span> <span class="n">git</span><span class="o">.</span><span class="n">Repo</span><span class="p">(</span><span class="n">repository_folder</span><span class="p">)</span>
+    <span class="n">current_tags</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_commit_tags</span><span class="p">(</span><span class="n">repository_folder</span><span class="p">,</span> <span class="n">repo</span><span class="o">.</span><span class="n">commit</span><span class="p">())</span>
+
+    <span class="n">no_version_at_all</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">get_most_recent_tags_before_commit</span><span class="p">(</span><span class="n">repository_folder</span><span class="p">,</span> <span class="n">repo</span><span class="o">.</span><span class="n">commit</span><span class="p">()))</span>
+        <span class="o">==</span> <span class="mi">0</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">no_version_at_all</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">current_commit_is_not_versioned</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">current_tags</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">no_version_at_all</span>
+    <span class="n">most_recent_version</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">current_commit_is_not_versioned</span><span class="p">:</span>
+        <span class="n">most_recent_version</span> <span class="o">=</span> <span class="n">__get_most_recent_version_before_commit__</span><span class="p">(</span>
+            <span class="n">repository_folder</span><span class="p">,</span> <span class="n">repo</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">most_recent_version</span> <span class="o">=</span> <span class="n">current_tags</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">most_recent_version</span>
+
+
+<span class="k">def</span> <span class="nf">__ask_to_version__</span><span class="p">(</span><span class="n">tracked_prompt</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">TrackedPrompt</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="n">ans</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;The prompt </span><span class="si">{</span><span class="n">tracked_prompt</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is not versioned. A version is necessary to continue. Do you like to version it? (y,n): &quot;</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">ans</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="kc">True</span>
+
+
+<span class="k">def</span> <span class="nf">__ask_for_a_version__</span><span class="p">(</span><span class="n">tracked_prompt</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">TrackedPrompt</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="n">current_version</span> <span class="o">=</span> <span class="n">__get_current_version__</span><span class="p">(</span><span class="n">tracked_prompt</span><span class="o">.</span><span class="n">repository_path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">current_version</span><span class="p">:</span>
+        <span class="n">current_version</span> <span class="o">=</span> <span class="s2">&quot;v0.0.0&quot;</span>
+    <span class="n">proposed_versions</span> <span class="o">=</span> <span class="n">__propose_new_version_from_current_one__</span><span class="p">(</span><span class="n">current_version</span><span class="p">)</span>
+
+    <span class="n">repo</span> <span class="o">=</span> <span class="n">git</span><span class="o">.</span><span class="n">Repo</span><span class="p">(</span><span class="n">tracked_prompt</span><span class="o">.</span><span class="n">repository_path</span><span class="p">)</span>
+    <span class="n">cli_utils</span><span class="o">.</span><span class="n">print_previous_commit</span><span class="p">(</span><span class="n">tracked_prompt</span><span class="o">.</span><span class="n">repository_path</span><span class="p">,</span> <span class="n">repo</span><span class="o">.</span><span class="n">commit</span><span class="p">())</span>
+    <span class="n">ans</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Which version would you like to set? (Proposed versions are </span><span class="si">{</span><span class="n">proposed_versions</span><span class="si">}</span><span class="s2">): &quot;</span>
+    <span class="p">)</span>
+    <span class="n">version</span> <span class="o">=</span> <span class="n">proposed_versions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ans</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">version</span> <span class="o">=</span> <span class="n">ans</span>
+    <span class="n">utils</span><span class="o">.</span><span class="n">push_new_version</span><span class="p">(</span><span class="n">tracked_prompt</span><span class="o">.</span><span class="n">repository_path</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">True</span>
+
+
+<div class="viewcode-block" id="push">
+<a class="viewcode-back" href="../../../../../../../../../reference/danoan.llm_assistant.prompt.cli.commands.versioning.commands.push.action.html#danoan.llm_assistant.prompt.cli.commands.versioning.commands.push.action.push">[docs]</a>
+<span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="n">prompt_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">cli_utils</span><span class="o">.</span><span class="n">ensure_configuration_file_exists</span><span class="p">()</span>
+    <span class="n">cli_utils</span><span class="o">.</span><span class="n">ensure_prompt_repository_exists</span><span class="p">(</span><span class="n">prompt_name</span><span class="p">)</span>
+
+    <span class="n">tp</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">get_tracked_prompt</span><span class="p">(</span><span class="n">prompt_name</span><span class="p">)</span>
+
+    <span class="n">repo</span> <span class="o">=</span> <span class="n">git</span><span class="o">.</span><span class="n">Repo</span><span class="p">(</span><span class="n">tp</span><span class="o">.</span><span class="n">repository_path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">repo</span><span class="o">.</span><span class="n">is_dirty</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;There are uncommited changes on the index.&quot;</span><span class="p">)</span>
+        <span class="n">cli_utils</span><span class="o">.</span><span class="n">print_staging_area</span><span class="p">(</span><span class="n">tp</span><span class="o">.</span><span class="n">repository_path</span><span class="p">)</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">current_tags</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_commit_tags</span><span class="p">(</span><span class="n">tp</span><span class="o">.</span><span class="n">repository_path</span><span class="p">,</span> <span class="n">repo</span><span class="o">.</span><span class="n">commit</span><span class="p">())</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">current_tags</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">cli_utils</span><span class="o">.</span><span class="n">print_commits</span><span class="p">(</span>
+            <span class="n">tp</span><span class="o">.</span><span class="n">repository_path</span><span class="p">,</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_non_versioned_commits</span><span class="p">(</span><span class="n">tp</span><span class="o">.</span><span class="n">repository_path</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">__ask_to_version__</span><span class="p">(</span><span class="n">tp</span><span class="p">):</span>
+            <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">__ask_for_a_version__</span><span class="p">(</span><span class="n">tp</span><span class="p">):</span>
+            <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The latest changes are already versioned&quot;</span><span class="p">)</span>
+        <span class="n">cli_utils</span><span class="o">.</span><span class="n">print_commits</span><span class="p">(</span><span class="n">tp</span><span class="o">.</span><span class="n">repository_path</span><span class="p">,</span> <span class="p">[</span><span class="n">repo</span><span class="o">.</span><span class="n">commit</span><span class="p">()])</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Daniel Martins Antunes.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

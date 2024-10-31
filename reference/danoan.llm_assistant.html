@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>danoan.llm_assistant namespace &mdash; llm-assistant 0.2.0 documentation</title>
+  <title>danoan.llm_assistant namespace &mdash; llm-assistant 0.3.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=a3d76245" />
@@ -14,7 +14,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../_static/documentation_options.js?v=e259d695"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -81,56 +81,53 @@
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="danoan.llm_assistant.cli.html">danoan.llm_assistant.cli namespace</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="danoan.llm_assistant.cli.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="danoan.llm_assistant.cli.cli.html">danoan.llm_assistant.cli.cli module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.cli.cli.html#danoan.llm_assistant.cli.cli.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="danoan.llm_assistant.common.html">danoan.llm_assistant.common package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="danoan.llm_assistant.common.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="danoan.llm_assistant.common.config.html">danoan.llm_assistant.common.config module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.common.config.html#danoan.llm_assistant.common.config.get_configuration"><code class="docutils literal notranslate"><span class="pre">get_configuration()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.common.config.html#danoan.llm_assistant.common.config.get_configuration_filepath"><code class="docutils literal notranslate"><span class="pre">get_configuration_filepath()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.common.config.html#danoan.llm_assistant.common.config.get_configuration_folder"><code class="docutils literal notranslate"><span class="pre">get_configuration_folder()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.common.config.html#danoan.llm_assistant.common.config.get_prompt_configuration"><code class="docutils literal notranslate"><span class="pre">get_prompt_configuration()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="danoan.llm_assistant.cli.utils.html">danoan.llm_assistant.cli.utils module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.cli.utils.html#danoan.llm_assistant.cli.utils.ensure_configuration_file_exist"><code class="docutils literal notranslate"><span class="pre">ensure_configuration_file_exist()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.cli.utils.html#danoan.llm_assistant.cli.utils.ensure_environment_variable_is_defined"><code class="docutils literal notranslate"><span class="pre">ensure_environment_variable_is_defined()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.cli.utils.html#danoan.llm_assistant.cli.utils.is_a_prompt_config_file"><code class="docutils literal notranslate"><span class="pre">is_a_prompt_config_file()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.cli.utils.html#danoan.llm_assistant.cli.utils.normalize_name"><code class="docutils literal notranslate"><span class="pre">normalize_name()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.cli.utils.html#danoan.llm_assistant.cli.utils.value_or_default"><code class="docutils literal notranslate"><span class="pre">value_or_default()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="danoan.llm_assistant.common.exception.html">danoan.llm_assistant.common.exception module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.common.exception.html#danoan.llm_assistant.common.exception.ConfigurationFileDoesNotExistError"><code class="docutils literal notranslate"><span class="pre">ConfigurationFileDoesNotExistError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.common.exception.html#danoan.llm_assistant.common.exception.EnvironmentVariableNotDefinedError"><code class="docutils literal notranslate"><span class="pre">EnvironmentVariableNotDefinedError</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="danoan.llm_assistant.common.model.html">danoan.llm_assistant.common.model module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.common.model.html#danoan.llm_assistant.common.model.LLMAssistantConfiguration"><code class="docutils literal notranslate"><span class="pre">LLMAssistantConfiguration</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.common.model.html#danoan.llm_assistant.common.model.PromptConfiguration"><code class="docutils literal notranslate"><span class="pre">PromptConfiguration</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.common.model.html#danoan.llm_assistant.common.model.PromptRepositoryConfiguration"><code class="docutils literal notranslate"><span class="pre">PromptRepositoryConfiguration</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.common.model.html#danoan.llm_assistant.common.model.RunnerConfiguration"><code class="docutils literal notranslate"><span class="pre">RunnerConfiguration</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="danoan.llm_assistant.core.html">danoan.llm_assistant.core package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="danoan.llm_assistant.core.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="danoan.llm_assistant.core.api.html">danoan.llm_assistant.core.api module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.core.api.html#danoan.llm_assistant.core.api.LLMAssistant"><code class="docutils literal notranslate"><span class="pre">LLMAssistant()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.core.api.html#danoan.llm_assistant.core.api.custom"><code class="docutils literal notranslate"><span class="pre">custom()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.core.api.html#danoan.llm_assistant.core.api.get_configuration"><code class="docutils literal notranslate"><span class="pre">get_configuration()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.core.api.html#danoan.llm_assistant.core.api.get_configuration_filepath"><code class="docutils literal notranslate"><span class="pre">get_configuration_filepath()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.core.api.html#danoan.llm_assistant.core.api.get_configuration_folder"><code class="docutils literal notranslate"><span class="pre">get_configuration_folder()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="danoan.llm_assistant.prompt.html">danoan.llm_assistant.prompt package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="danoan.llm_assistant.prompt.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="danoan.llm_assistant.prompt.cli.html">danoan.llm_assistant.prompt.cli namespace</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.prompt.cli.html#submodules">Submodules</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="danoan.llm_assistant.core.cli_drawer.html">danoan.llm_assistant.core.cli_drawer module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.core.cli_drawer.html#danoan.llm_assistant.core.cli_drawer.CLIDrawer"><code class="docutils literal notranslate"><span class="pre">CLIDrawer</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="danoan.llm_assistant.prompt.core.html">danoan.llm_assistant.prompt.core namespace</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.prompt.core.html#submodules">Submodules</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="danoan.llm_assistant.core.exception.html">danoan.llm_assistant.core.exception module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.core.exception.html#danoan.llm_assistant.core.exception.ConfigurationFileDoesNotExistError"><code class="docutils literal notranslate"><span class="pre">ConfigurationFileDoesNotExistError</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.core.exception.html#danoan.llm_assistant.core.exception.EnvironmentVariableNotDefinedError"><code class="docutils literal notranslate"><span class="pre">EnvironmentVariableNotDefinedError</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.core.exception.html#danoan.llm_assistant.core.exception.LLMAssistantNotConfiguredError"><code class="docutils literal notranslate"><span class="pre">LLMAssistantNotConfiguredError</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="danoan.llm_assistant.core.model.html">danoan.llm_assistant.core.model module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.core.model.html#danoan.llm_assistant.core.model.LLMAssistantConfiguration"><code class="docutils literal notranslate"><span class="pre">LLMAssistantConfiguration</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.core.model.html#danoan.llm_assistant.core.model.PromptConfiguration"><code class="docutils literal notranslate"><span class="pre">PromptConfiguration</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="danoan.llm_assistant.core.task_runner.html">danoan.llm_assistant.core.task_runner module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.core.task_runner.html#danoan.llm_assistant.core.task_runner.EventNotifier"><code class="docutils literal notranslate"><span class="pre">EventNotifier</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.core.task_runner.html#danoan.llm_assistant.core.task_runner.Task"><code class="docutils literal notranslate"><span class="pre">Task</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.core.task_runner.html#danoan.llm_assistant.core.task_runner.TaskInstruction"><code class="docutils literal notranslate"><span class="pre">TaskInstruction</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.core.task_runner.html#danoan.llm_assistant.core.task_runner.TaskListenerNotRegisteredError"><code class="docutils literal notranslate"><span class="pre">TaskListenerNotRegisteredError</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.core.task_runner.html#danoan.llm_assistant.core.task_runner.TaskNotRegisteredError"><code class="docutils literal notranslate"><span class="pre">TaskNotRegisteredError</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.core.task_runner.html#danoan.llm_assistant.core.task_runner.TaskRunner"><code class="docutils literal notranslate"><span class="pre">TaskRunner</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="danoan.llm_assistant.runner.html">danoan.llm_assistant.runner package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="danoan.llm_assistant.runner.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="danoan.llm_assistant.runner.cli.html">danoan.llm_assistant.runner.cli namespace</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.runner.cli.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="danoan.llm_assistant.runner.core.html">danoan.llm_assistant.runner.core namespace</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="danoan.llm_assistant.runner.core.html#submodules">Submodules</a></li>
 </ul>
 </li>
 </ul>
