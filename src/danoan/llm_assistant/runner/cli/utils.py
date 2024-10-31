@@ -3,18 +3,20 @@ from typing import Any, Tuple
 
 import toml
 
-from danoan.llm_assistant.common import config, model
-from danoan.llm_assistant.runner.core import api, exception
+from danoan.llm_assistant.common import config, model, exception
+from danoan.llm_assistant.runner.core import api
 
 
 def ensure_environment_variable_is_defined(logger):
-    try:
-        config.get_configuration_folder()
-    except exception.EnvironmentVariableNotDefinedError:
-        logger.error(
-            f"The environment variable {api.LLM_ASSISTANT_ENV_VARIABLE} is not defined. Please define it before proceeding."
-        )
-        exit(1)
+    # Not necessqry anymore
+    pass
+    # try:
+    #     config.get_configuration_folder()
+    # except exception.EnvironmentVariableNotDefinedError:
+    #     logger.error(
+    #         f"The environment variable {api.LLM_ASSISTANT_ENV_VARIABLE} is not defined. Please define it before proceeding."
+    #     )
+    #     exit(1)
 
 
 def ensure_configuration_file_exists(logger):
@@ -29,8 +31,10 @@ def ensure_configuration_file_exists(logger):
 
 
 def ensure_prompt_exists(prompt_name: str, logger):
-    config = config.get_configuration()
-    prompt_config_filepath = config.runner.local_folder / prompt_name / "config.toml"
+    llma_config = config.get_configuration()
+    prompt_config_filepath = (
+        llma_config.runner.local_folder / prompt_name / "config.toml"
+    )
     if not prompt_config_filepath.exists():
         logger.error(
             f"Could not find the configuration file for prompt {prompt_name}. It should be located at {prompt_config_filepath}"

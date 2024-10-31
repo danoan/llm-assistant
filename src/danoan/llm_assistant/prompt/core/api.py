@@ -8,7 +8,7 @@ from typing import Generator, Literal, Optional
 
 import git
 import toml
-from danoan.llm_assistant.config.model import PromptRepositoryConfiguration
+from danoan.llm_assistant.common.model import PromptRepositoryConfiguration
 
 from danoan.llm_assistant.common import config
 from danoan.llm_assistant.prompt.core import model
@@ -25,8 +25,8 @@ def get_prompts_folder() -> Path:
     """
     Return path to the folder where all tracked prompts are located.
     """
-    config = config.get_configuration()
-    return config.prompt.local_folder
+    llma_config = config.get_configuration()
+    return llma_config.prompt.local_folder
 
 
 def get_prompt_configuration_filepath(prompt_name: str) -> Path:
@@ -48,7 +48,7 @@ def is_prompt_repository(path: Path) -> bool:
     mandatory_keys = ["user_prompt", "system_prompt"]
     for key in mandatory_keys:
         if key not in obj:
-            logger.debug(obj)
+            logger.debug(key)
             return False
     return True
 
@@ -186,8 +186,8 @@ def sync(repo_config: PromptRepositoryConfiguration, progress_callback=None):
         else:
             _progress_callback(SyncItem(Events.NOT_PROMPT_REPOSITORY))
 
-    config = config.get_configuration()
-    config.prompt = updated_repo_config
+    llma_config = config.get_configuration()
+    llma_config.prompt = updated_repo_config
 
     with open(config.get_configuration_filepath(), "w") as f:
-        toml.dump(config.__asdict__(), f)
+        toml.dump(llma_config.__asdict__(), f)

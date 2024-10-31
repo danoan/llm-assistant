@@ -21,7 +21,7 @@ logger.setLevel(logging.DEBUG)
 ########################################
 
 LLM_ASSISTANT_ENV_VARIABLE = "LLM_ASSISTANT_CONFIGURATION_FOLDER"
-LLM_ASSISTANT_CONFIGURATION_FILENAME = "llma-assistant-config.toml"
+LLM_ASSISTANT_CONFIGURATION_FILENAME = "llm-assistant-config.toml"
 
 
 @lru_cache

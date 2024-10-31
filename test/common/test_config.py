@@ -1,4 +1,4 @@
-from danoan.llm_assistant.common import config, exception, model
+from danoan.llm_assistant.common import config, exception
 
 from pathlib import Path
 import os
