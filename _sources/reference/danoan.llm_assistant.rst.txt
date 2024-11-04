@@ -9,6 +9,5 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   danoan.llm_assistant.common
-   danoan.llm_assistant.prompt
-   danoan.llm_assistant.runner
+   danoan.llm_assistant.cli
+   danoan.llm_assistant.core
