@@ -20,11 +20,6 @@ repos:
     -   id: pretty-format-json
     -   id: check-toml
 
--   repo: https://github.com/lovesegfault/beautysh
-    rev: v6.2.1
-    hooks:
-    -   id: beautysh
-
 -   repo: https://github.com/psf/black
     rev: 23.12.1
     hooks:
