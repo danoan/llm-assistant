@@ -61,5 +61,5 @@ def __get_sync_events_processor__():
 
 
 def sync():
-    config = config.get_configuration()
-    api.sync(config.prompt, __get_sync_events_processor__())
+    llma_config = config.get_configuration()
+    api.sync(llma_config.prompt, __get_sync_events_processor__())

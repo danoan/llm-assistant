@@ -18,18 +18,36 @@ from danoan.llm_assistant.prompt.core import api, utils
 _console = Console()
 
 
-def _make_numbered_list(entries: List[Any], padding=(0, 10), **kwargs):
+def _make_numbered_list(entries: List[Any], padding=(0, 10), **kwargs) -> Columns:
     list_elements = [f"{i}. {s}" for i, s in enumerate(entries, 1)]
     return Columns(list_elements, padding=padding, **kwargs)
+
+
+def _make_numbered_vertical_list(entries: List[Any]) -> Text:
+    text = Text()
+    for i, e in enumerate(entries, 1):
+        text.append(f"{i}. {e}")
+        if i != len(entries):
+            text.append("\n")
+    return text
 
 
 def print_list(*args, **kwargs):
     _console.print(_make_numbered_list(*args, **kwargs))
 
 
+def print_vertical_list(entries: List[Any]):
+    _console.print(_make_numbered_vertical_list(entries))
+
+
 def print_panel_list(title, entries: List[Any], **kwargs):
     columns = _make_numbered_list(entries)
     panel = Panel(columns, title=title, **kwargs)
+    _console.print(panel)
+
+
+def print_vertical_panel_list(title, entries: List[Any], **kwargs):
+    panel = Panel(_make_numbered_vertical_list(entries), title=title)
     _console.print(panel)
 
 
