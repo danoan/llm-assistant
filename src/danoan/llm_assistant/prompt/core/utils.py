@@ -8,7 +8,6 @@ from typing import Any, List
 ###################################
 
 
-@lru_cache
 def get_commit_tags(repository_folder: Path, commit_hash: str) -> List[str]:
     """
     Get all tags of a commit.
@@ -86,3 +85,13 @@ def push_new_version(repository_folder: Path, version: str):
 def get_staging_area(repository_folder: Path) -> List[Any]:
     repository = git.Repo(repository_folder)
     return repository.commit().diff()
+
+
+def get_versions(repository_path: Path) -> List[str]:
+    repo = git.Repo(repository_path)
+    return [t.name[1:] for t in repo.tags]
+
+
+def get_branches_names(repository_path: Path) -> List[str]:
+    repo = git.Repo(repository_path)
+    return ["/".join(x.name.split("/")[1:]) for x in repo.remote().refs]
