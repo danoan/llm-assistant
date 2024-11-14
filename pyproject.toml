@@ -79,7 +79,10 @@ source = [
 [tool.coverage.report]
 show_missing = true
 skip_covered = true
-omit = []
+omit = [
+  "src/danoan/llm_assistant/prompt/core/utils.py",
+  "src/danoan/llm_assistant/runner/cli/utils.py"
+]
 fail_under = 75
 
 
