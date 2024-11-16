@@ -1,59 +1,35 @@
-# Getting started with LLM Assistant
+# How to run a prompt
 
-Collection of tools to work with LLMs.
+The `llm-assistant` can run prompts that are located in a prompts collection
+folder. It is possible to execute prompts using the CLI in an interactive
+way or using the `llm-assistant` API.
 
-## Features
+## Prompt collection folder
 
-- CLI for interactive prompt execution.
-- Prompt versioning tool.
-- Prompt definition format and general runner.
-
-
-## How to use
-
-### Configuring a LLM provider
-
-The first step is to create a `llm-assistannt-config.toml` file
-to hold runner and prompt settings.
+In the `llm-assistant-config.toml` file you should register the location of
+the prompt collection folder in the `[prompt]` section.
 
 ```toml
-[runner]
-openai_key = "<OPENAI_KEY>"
-model = "gpt-3.5-turbo"
-use_cache = true
-cache_path = "/home/user/.config/llm-assistant/cache.db"
-
 [prompt]
-git_user = "danoan-prompts"
-prompt_collection_folder = "/home/user/.config/llm-assistant/cache.db"
-
-[prompt.versioning]
-alternative-expression = "v2.0.0"
-word-definition = "v1.0.0"
+prompt_collection_folder = "path/to/prompt-collection-folder"
 ```
 
-**Configuration file search**: The application backtracks the current working directory searching for the
-`llm-assistant-config.toml` file starting from the current working directory. If no configuration file 
-is found, it searches in the location specified by the environment variable `LLM_ASSISTANT_CONFIGURATION_FOLDER`.
+The path is relative to the `llm-assistant-config.toml` path. It is expected
+that each prompt in the collections folder has its own directory and at least
+one file name `config.toml`
 
-You can check which configuration file is being used by running
-
-```bash
-llm-assistant setup
+```
+prompt-collection-folder
+    - correct-text
+        - config.toml
+    - word-definition
+        - config.toml
 ```
 
-:::{Tip}
-For different strategies regarding `llm-assistant` configuration, check the guide [](how-to/setup-assistant.md).
-:::
-
-
-### Running a prompt
-
-First thing is to define your prompt `config.toml` file and store them in the prompt collection folder.
+The `config.toml` file should look similar to the following:
 
 ```toml
-# prompt-collection-folder/alternative-expression/config.toml
-name="Alternative Expression"
+name="Alternative Expressions"
 system_prompt='''
 You are fluent speaker of the {language} language and your task is to list at most five expressions that encodes the meaning of a sentence or a word enclosed by double angle brackets.
 
@@ -65,22 +41,34 @@ Language: {language}
 Sentence: <<{message}>>
 Response:
 '''
-'''
 ```
+You can associate a git namespace to your prompts collection folder and keep them synced with the
+help of `prompt-manager`. Check [](sync-and-push-prompts.md) for more information.
 
-Then, you can run this prompt by executing
+## Running a custom prompt
+
+To run a prompt, the same must be located in the prompt-collection folder. Consider the 
+`alternative-expression` prompt given in the previous section. There are three alternatives
+to run it.
 
 ```bash
 echo "{}" | llm-assistant run alternative-expression --p language portuguese --p message "ganhar a vida"
+echo '{"message":"ganhar a vida"}' | llm-assistant run alternative-expression --p language portuguese
+echo '{"message":"ganhar a vida", "language":"portuguese"}' | llm-assistant run alternative-expression
 ```
 
-### Starting an interactive session
+## Running a prompt interactively
 
-To start an interactive session, type:
+You are invited to select one of the prompts located at `prompt.prompt_collection_folder` and then to load or
+create a new instance for the prompt.
 
-```bash
-llm-assistant session
-```
+**Prompt Instance**: A prompt instance is a subset of pre-defined prompt variables. For example, in the alternative-expression
+prompt, we could have a french instance (language=french) and a portuguese instance (language=portuguese).
+
+
+:::{tip}
+Instances are stored at `${LLM_ASSISTANT_CONFIGURATION_FOLDER}/prompts/instances`
+:::
 
 ```bash
 ╭────────────────────────────────────────────────────────────────────────────────────────╮
@@ -116,42 +104,24 @@ Enter message: $$
 ╰───────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
-### Syncing prompts
 
-The `sync` feature allows to fetch the most recent updates from the remote prompt repository
-and to update the local view.
+## Running a prompt using the API
 
-```bash
-prompt-manager versioning sync
+You can also run prompts using the `llm-assistant` python API.
+
+```python
+config = model.RunnerConfiguration(openai_key, "gpt-3.5-turbo", True, "path-to-cache-file")
+api.LLMAssistant().setup(config)
+
+prompt_configuration = model.PromptConfiguration(
+    "alternative-expression", "system_prompt", "user_prompt"
+)
+
+data = {
+    "language":"portuguese" ,
+    "message": "ganhar a vida"
+}
+
+api.custom(prompt_configuration, **data)
 ```
 
-The synchronization is done according with the `prompt.versioning` settings.
-
-```toml
-[prompt]
-git_user = "danoan-prompts"
-prompt_collection_folder = "/home/user/.config/llm-assistant/cache.db"
-
-[prompt.versioning]
-alternative-expression = "v2.0.0"
-word-definition = "v1.0.0"
-```
-
-For the settings above, the sync will search for the repositories:
-
-- danoan-prompts/alternative-expression
-- danoan-prompts/word-definition
-
-on github and then fetch the specified version.
-
-### Push prompt version assistant
-
-The `prompt-manager versioning push` commands guides the user to the creation of a
-new prompt version, helping to keep your prompts organized and following a versioning 
-policy.
-
-Check the guide [](/how-to/run-a-prompt.md) for more information.
-
-## Contributing
-
-Please reference to our [contribution](http://danoan.github.io/llm-assistant/contributing) and [code-of-conduct]((http://danoan.github.io/llm-assistant/code-of-conduct.md)) guidelines.
