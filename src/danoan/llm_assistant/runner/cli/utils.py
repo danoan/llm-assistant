@@ -3,7 +3,7 @@ from typing import Any, Tuple
 
 import toml
 
-from danoan.llm_assistant.common import config, model, exception
+from danoan.llm_assistant.common import config, exception, model
 from danoan.llm_assistant.runner.core import api
 
 
@@ -32,8 +32,13 @@ def ensure_configuration_file_exists(logger):
 
 def ensure_prompt_exists(prompt_name: str, logger):
     llma_config = config.get_configuration()
+
+    if not llma_config.prompt:
+        logger.error("Prompt settings are not specified")
+        exit(1)
+
     prompt_config_filepath = (
-        llma_config.runner.local_folder / prompt_name / "config.toml"
+        llma_config.prompt.prompt_collection_folder / prompt_name / "config.toml"
     )
     if not prompt_config_filepath.exists():
         logger.error(

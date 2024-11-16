@@ -1,19 +1,22 @@
-from danoan.llm_assistant.common.model import PromptRepositoryConfiguration
-
-from danoan.llm_assistant.common import config
-from danoan.llm_assistant.prompt.core import model, utils
+"""
+prompt-manager interface.
+"""
 
 import copy
-from dataclasses import asdict, dataclass
-from enum import Enum
-import git
 import logging
-from pathlib import Path
 import re
 import sys
-import toml
+from dataclasses import asdict, dataclass
+from enum import Enum
+from pathlib import Path
 from typing import Generator, List, Literal, Optional
 
+import git
+import toml
+
+from danoan.llm_assistant.common import config
+from danoan.llm_assistant.common.model import PromptRepositoryConfiguration
+from danoan.llm_assistant.prompt.core import model, utils
 
 logger = logging.getLogger(__file__)
 handler = logging.StreamHandler(sys.stderr)
@@ -28,7 +31,7 @@ def get_prompts_folder() -> Path:
     Return path to the folder where all tracked prompts are located.
     """
     llma_config = config.get_configuration()
-    return llma_config.prompt.local_folder
+    return llma_config.prompt.prompt_collection_folder
 
 
 def get_prompt_configuration_filepath(prompt_name: str) -> Path:
@@ -42,8 +45,12 @@ def is_prompt_repository(path: Path) -> bool:
     """
     Check if a path points to a prompt repository.
 
-    A prompt repository must contain a `config.toml`
-    that contains some mandatory keys.
+    A prompt repository must have a `config.toml`
+    that must have the following keys.
+
+    - user_prompt
+    - system_prompt
+
     """
     configuration_prompt_path = path / "config.toml"
     if not configuration_prompt_path.exists():
@@ -118,7 +125,7 @@ def sync(repo_config: PromptRepositoryConfiguration, progress_callback=None):
         FETCH = "fetch"
         CHECKOUT = "checkout"
         SYNCED = "synced"
-        SYNC_LOCAL_FOLDER = "sync_local_folder"
+        SYNC_LOCAL_FOLDER = "sync_prompt_collection_folder"
         NOT_TRACKED = "not_tracked"
         NOT_PROMPT_REPOSITORY = "not_prompt_repository"
         GIT = "git"
@@ -184,7 +191,7 @@ def sync(repo_config: PromptRepositoryConfiguration, progress_callback=None):
     # Sync prompt repository local folder
     updated_repo_config = copy.deepcopy(repo_config)
     _progress_callback(SyncItem(Events.SYNC_LOCAL_FOLDER))
-    for prompt_folder in repo_config.local_folder.iterdir():
+    for prompt_folder in repo_config.prompt_collection_folder.iterdir():
         _progress_callback(SyncItem(Events.SYNC_LOCAL_FOLDER, "folder", prompt_folder))
         if is_prompt_repository(prompt_folder):
             prompt_name = prompt_folder.stem

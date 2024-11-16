@@ -1,18 +1,18 @@
-from danoan.llm_assistant.runner.cli import utils as cli_utils
-from danoan.llm_assistant.runner.cli.commands.session.cli_drawer import CLIDrawer
-from danoan.llm_assistant.runner.cli.commands.session.task_runner import (
-    TaskInstruction,
-    Task,
-)
-
-from danoan.llm_assistant.common import model
-from danoan.llm_assistant.runner.core import api
-
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-import toml
 from typing import Any, Callable, Dict, Optional
+
+import toml
+
+from danoan.llm_assistant.common import model
+from danoan.llm_assistant.runner.cli import utils as cli_utils
+from danoan.llm_assistant.runner.cli.commands.session.cli_drawer import CLIDrawer
+from danoan.llm_assistant.runner.cli.commands.session.task_runner import (
+    Task,
+    TaskInstruction,
+)
+from danoan.llm_assistant.runner.core import api
 
 #############################################
 # Local model
@@ -323,7 +323,6 @@ def register_tasks(
         )
 
         if not instances_folder.exists():
-            print("NOT ExiSTS: ", instances_folder)
             cliDrawer.print_error(message=f"No instance available for this prompt")
             return TaskInstruction(
                 TaskName.PromptSelected, {"prompt_config": prompt_config}

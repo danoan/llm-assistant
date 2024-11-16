@@ -1,13 +1,17 @@
-from danoan.llm_assistant.common import exception, model
+"""
+LLM-assistant configuration API.
+"""
 
-
-from functools import lru_cache
 import logging
 import os
-from pathlib import Path
 import sys
-import toml
+from functools import lru_cache
+from pathlib import Path
 from typing import Optional
+
+import toml
+
+from danoan.llm_assistant.common import exception, model
 
 logger = logging.getLogger(__file__)
 handler = logging.StreamHandler(sys.stderr)
@@ -34,7 +38,6 @@ def _get_first_configuration_filepath_within_file_hierarchy(
     """
     visited = set()
     folders_to_visit = [base_dir]
-    print(base_dir)
     while len(folders_to_visit) > 0:
         cur_folder = folders_to_visit.pop()
         if cur_folder in visited:
@@ -79,6 +82,21 @@ def get_configuration_folder() -> Path:
     raise exception.EnvironmentVariableNotDefinedError()
 
 
+def get_environment_variable_value() -> Path:
+    f"""
+    Return the value stored by {LLM_ASSISTANT_ENV_VARIABLE}.
+
+    Raises:
+        EnvironmentVariableNotDefinedError: If the LLM_ASSISTANT_ENV_VARIABLE
+                                            is not defined and a configuration file
+                                            is not found in the file hierarchy
+    """
+    if LLM_ASSISTANT_ENV_VARIABLE in os.environ:
+        return Path(os.environ[LLM_ASSISTANT_ENV_VARIABLE]).expanduser()
+
+    raise exception.EnvironmentVariableNotDefinedError()
+
+
 def get_configuration_filepath() -> Path:
     """
     Return path to llm-assistant configuration file.
@@ -95,7 +113,7 @@ def get_configuration() -> model.LLMAssistantConfiguration:
         raise exception.ConfigurationFileDoesNotExistError()
 
     with open(config_filepath, "r") as f:
-        return model.LLMAssistantConfiguration(**toml.load(f))
+        return model.LLMAssistantConfiguration.from_dict(**toml.load(f))
 
 
 def get_prompt_configuration(prompt_name: str) -> model.PromptConfiguration:
@@ -103,13 +121,21 @@ def get_prompt_configuration(prompt_name: str) -> model.PromptConfiguration:
     Get prompt configuration object.
 
     It searches the prompt configuration file within the directory specified
-    by runner.local_folder setting.
+    by runner.prompt_collection_folder setting.
 
     Raises:
         FileNotFoundError: if prompt configuration file is not found.
     """
     config = get_configuration()
-    prompt_config_filepath = config.runner.local_folder / prompt_name / "config.toml"
+    if config.prompt:
+        prompt_config_filepath = (
+            config.prompt.prompt_collection_folder / prompt_name / "config.toml"
+        )
+    else:
+        raise FileNotFoundError(
+            2, "File not found", "prompt collection folder is not specified"
+        )
+
     if not prompt_config_filepath.exists():
         raise FileNotFoundError(2, "File not found", prompt_config_filepath)
     with open(prompt_config_filepath) as f:

@@ -1,3 +1,7 @@
+"""
+prompt-manager data models.
+"""
+
 from dataclasses import dataclass
 from enum import Enum
 from functools import total_ordering
