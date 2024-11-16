@@ -233,12 +233,8 @@ def push(prompt_name: str, version: Optional[str] = None, *args, **kwargs):
     pv = model.PromptVersion(suggested_version)
 
     git_commands = []
-    git_commands.extend(
-        __update_changelog__(tp, changes_description, pv)
-    )
-    git_commands.extend(
-        __create_tag__(tp, changes_nature, changes_description, pv)
-    )
+    git_commands.extend(__update_changelog__(tp, changes_description, pv))
+    git_commands.extend(__create_tag__(tp, changes_nature, changes_description, pv))
 
     for command in git_commands:
         command()

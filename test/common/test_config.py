@@ -1,10 +1,10 @@
-from danoan.llm_assistant.common import config, exception
-
-from pathlib import Path
 import os
 import tempfile
+from pathlib import Path
 
 import pytest
+
+from danoan.llm_assistant.common import config, exception
 
 
 def test_get_configuration_folder_cwd(monkeypatch):
@@ -62,7 +62,6 @@ def test_get_configuration(monkeypatch):
     model = "gpt-3.5-turbo"
     use_cache = true
     cache_path = "cache.db"
-    local_folder = "local"
     """
     with tempfile.TemporaryDirectory() as _tmpdir:
         tmpdir = Path(_tmpdir)
@@ -96,7 +95,10 @@ def test_get_prompt_configuration(monkeypatch):
     model = "gpt-3.5-turbo"
     use_cache = true
     cache_path = "cache.db"
-    local_folder = "prompts"
+
+    [prompt]
+    git_user = "danoan"
+    prompt_collection_folder = "prompts"
     """
 
     prompt_config_file_toml = """

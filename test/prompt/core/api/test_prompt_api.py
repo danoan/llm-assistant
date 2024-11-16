@@ -1,17 +1,17 @@
-from danoan.llm_assistant.prompt.core import api, model, utils
+import tempfile
+from collections import namedtuple
+from pathlib import Path
+from typing import Optional
+
+import git
+import pytest
+from git.exc import InvalidGitRepositoryError
 
 from danoan.llm_assistant.common.config import (
-    LLM_ASSISTANT_ENV_VARIABLE,
     LLM_ASSISTANT_CONFIGURATION_FILENAME,
+    LLM_ASSISTANT_ENV_VARIABLE,
 )
-
-from collections import namedtuple
-from git.exc import InvalidGitRepositoryError
-import git
-from pathlib import Path
-import pytest
-import tempfile
-from typing import Optional
+from danoan.llm_assistant.prompt.core import api, model, utils
 
 
 def create_prompt_config_file(config_file: Path):
@@ -28,7 +28,7 @@ def create_llm_assistant_config_file(config_file: Path, prompts_dir: Path):
     minimum_config = f"""
     [prompt]
     git_user=""
-    local_folder="{str(prompts_dir)}"
+    prompt_collection_folder="{str(prompts_dir)}"
     versioning = ""
     """
 

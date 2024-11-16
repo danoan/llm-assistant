@@ -10,7 +10,7 @@ def __setup__(*args, **kwargs):
     try:
         print(
             f"The environment variable {config.LLM_ASSISTANT_ENV_VARIABLE}"
-            f" is set to: {config.get_configuration_folder()}"
+            f" is set to: {config.get_environment_variable_value()}"
         )
     except exception.EnvironmentVariableNotDefinedError:
         print(

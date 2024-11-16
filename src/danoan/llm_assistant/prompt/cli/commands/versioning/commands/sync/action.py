@@ -27,7 +27,7 @@ def __get_sync_events_processor__():
         if event == "sync_config":
             if name is None:
                 print(
-                    "Starting synchronization of local folder with configuration file"
+                    "Starting synchronization of prompt collection folder with configuration file"
                 )
             else:
                 print(f"{d*2}{name}: {value}")
@@ -37,10 +37,10 @@ def __get_sync_events_processor__():
             print(f"{d*4}Checkout version: {value}")
         elif event == "synced":
             print(f"{d*4}Already synced")
-        elif event == "sync_local_folder":
+        elif event == "sync_prompt_collection_folder":
             if name is None:
                 print(
-                    "Starting synchronization of configuration file with local folder"
+                    "Starting synchronization of configuration file with prompt collection folder"
                 )
             else:
                 print(f"{d*2}{name}: {value}")

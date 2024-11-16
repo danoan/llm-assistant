@@ -1,3 +1,7 @@
+"""
+prompt-manager utility tools.
+"""
+
 from functools import lru_cache
 import git
 from pathlib import Path
