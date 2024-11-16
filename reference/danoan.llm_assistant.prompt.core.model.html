@@ -77,6 +77,75 @@
              
   <section id="module-danoan.llm_assistant.prompt.core.model">
 <span id="danoan-llm-assistant-prompt-core-model-module"></span><h1>danoan.llm_assistant.prompt.core.model module<a class="headerlink" href="#module-danoan.llm_assistant.prompt.core.model" title="Link to this heading"></a></h1>
+<p>prompt-manager data models.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="danoan.llm_assistant.prompt.core.model.ChangeNature">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">danoan.llm_assistant.prompt.core.model.</span></span><span class="sig-name descname"><span class="pre">ChangeNature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/danoan/llm_assistant/prompt/core/model.html#ChangeNature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.prompt.core.model.ChangeNature" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="danoan.llm_assistant.prompt.core.model.ChangeNature.InterfaceUpdate">
+<span class="sig-name descname"><span class="pre">InterfaceUpdate</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#danoan.llm_assistant.prompt.core.model.ChangeNature.InterfaceUpdate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="danoan.llm_assistant.prompt.core.model.ChangeNature.PromptTweak">
+<span class="sig-name descname"><span class="pre">PromptTweak</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#danoan.llm_assistant.prompt.core.model.ChangeNature.PromptTweak" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="danoan.llm_assistant.prompt.core.model.ChangeNature.ScopeChange">
+<span class="sig-name descname"><span class="pre">ScopeChange</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#danoan.llm_assistant.prompt.core.model.ChangeNature.ScopeChange" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="danoan.llm_assistant.prompt.core.model.PromptVersion">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">danoan.llm_assistant.prompt.core.model.</span></span><span class="sig-name descname"><span class="pre">PromptVersion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">incrementer_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#danoan.llm_assistant.prompt.core.model.PromptVersion.IncrementerType" title="danoan.llm_assistant.prompt.core.model.PromptVersion.IncrementerType"><span class="pre">IncrementerType</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">IncrementerType.Major</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/danoan/llm_assistant/prompt/core/model.html#PromptVersion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.prompt.core.model.PromptVersion" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>version</strong> (<em>str</em>)</p></li>
+<li><p><strong>incrementer_type</strong> (<a class="reference internal" href="#danoan.llm_assistant.prompt.core.model.PromptVersion.IncrementerType" title="danoan.llm_assistant.prompt.core.model.PromptVersion.IncrementerType"><em>IncrementerType</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="danoan.llm_assistant.prompt.core.model.PromptVersion.IncrementerType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">IncrementerType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/danoan/llm_assistant/prompt/core/model.html#PromptVersion.IncrementerType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.prompt.core.model.PromptVersion.IncrementerType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="danoan.llm_assistant.prompt.core.model.PromptVersion.IncrementerType.Fix">
+<span class="sig-name descname"><span class="pre">Fix</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#danoan.llm_assistant.prompt.core.model.PromptVersion.IncrementerType.Fix" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="danoan.llm_assistant.prompt.core.model.PromptVersion.IncrementerType.Major">
+<span class="sig-name descname"><span class="pre">Major</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#danoan.llm_assistant.prompt.core.model.PromptVersion.IncrementerType.Major" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="danoan.llm_assistant.prompt.core.model.PromptVersion.IncrementerType.Minor">
+<span class="sig-name descname"><span class="pre">Minor</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#danoan.llm_assistant.prompt.core.model.PromptVersion.IncrementerType.Minor" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="danoan.llm_assistant.prompt.core.model.PromptVersion.set_incrementer">
+<span class="sig-name descname"><span class="pre">set_incrementer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">incremeter_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#danoan.llm_assistant.prompt.core.model.PromptVersion.IncrementerType" title="danoan.llm_assistant.prompt.core.model.PromptVersion.IncrementerType"><span class="pre">IncrementerType</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/danoan/llm_assistant/prompt/core/model.html#PromptVersion.set_incrementer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.prompt.core.model.PromptVersion.set_incrementer" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>incremeter_type</strong> (<a class="reference internal" href="#danoan.llm_assistant.prompt.core.model.PromptVersion.IncrementerType" title="danoan.llm_assistant.prompt.core.model.PromptVersion.IncrementerType"><em>IncrementerType</em></a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="danoan.llm_assistant.prompt.core.model.TrackedPrompt">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">danoan.llm_assistant.prompt.core.model.</span></span><span class="sig-name descname"><span class="pre">TrackedPrompt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repository_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">branches</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/danoan/llm_assistant/prompt/core/model.html#TrackedPrompt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.prompt.core.model.TrackedPrompt" title="Link to this definition"></a></dt>

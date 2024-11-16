@@ -83,9 +83,17 @@ window.addEventListener("load", () => mermaid.run());
            <div itemprop="articleBody">
              
   <h1>Source code for danoan.llm_assistant.common.model</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">asdict</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Data models shared by prompt and runner modules.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="c1">#################################</span>
+<span class="c1"># Configuration data</span>
+<span class="c1">#################################</span>
 
 
 <div class="viewcode-block" id="PromptRepositoryConfiguration">
@@ -93,23 +101,23 @@ window.addEventListener("load", () => mermaid.run());
 <span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">PromptRepositoryConfiguration</span><span class="p">:</span>
     <span class="n">git_user</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">local_folder</span><span class="p">:</span> <span class="n">Path</span>
-    <span class="n">versioning</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+    <span class="n">prompt_collection_folder</span><span class="p">:</span> <span class="n">Path</span>
+    <span class="n">versioning</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">local_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">local_folder</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prompt_collection_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_collection_folder</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__asdict__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">asdict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;local_folder&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">local_folder</span><span class="p">)</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;prompt_collection_folder&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_collection_folder</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">d</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;git_user: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">git_user</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;local_folder: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">local_folder</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;versioning: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">local_folder</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;prompt_collection_folder: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_collection_folder</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;versioning: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">versioning</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span></div>
 
 
@@ -122,18 +130,14 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">use_cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">cache_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">local_folder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cache_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache_path</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_path</span> <span class="k">else</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">local_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">local_folder</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_folder</span> <span class="k">else</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">__asdict__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">asdict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_path</span><span class="p">:</span>
             <span class="n">d</span><span class="p">[</span><span class="s2">&quot;cache_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache_path</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_folder</span><span class="p">:</span>
-            <span class="n">d</span><span class="p">[</span><span class="s2">&quot;local_folder&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">local_folder</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">d</span>
 
@@ -143,7 +147,6 @@ window.addEventListener("load", () => mermaid.run());
             <span class="sa">f</span><span class="s2">&quot;model: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;use_cache: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">use_cache</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;cache_path: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cache_path</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;local_folder: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">local_folder</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span></div>
 
 
@@ -152,15 +155,8 @@ window.addEventListener("load", () => mermaid.run());
 <a class="viewcode-back" href="../../../../reference/danoan.llm_assistant.common.model.html#danoan.llm_assistant.common.model.LLMAssistantConfiguration">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">LLMAssistantConfiguration</span><span class="p">:</span>
-    <span class="n">runner</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">RunnerConfiguration</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">prompt</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">PromptRepositoryConfiguration</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">runner</span> <span class="o">=</span> <span class="n">RunnerConfiguration</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">prompt</span> <span class="o">=</span> <span class="n">PromptRepositoryConfiguration</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt</span><span class="p">)</span>
+    <span class="n">runner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">RunnerConfiguration</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">prompt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PromptRepositoryConfiguration</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
@@ -176,8 +172,31 @@ window.addEventListener("load", () => mermaid.run());
             <span class="s2">&quot;prompt&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt</span><span class="o">.</span><span class="n">__asdict__</span><span class="p">()</span>
             <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt</span><span class="p">)</span> <span class="ow">is</span> <span class="n">PromptRepositoryConfiguration</span>
             <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt</span><span class="p">,</span>
-        <span class="p">}</span></div>
+        <span class="p">}</span>
 
+<div class="viewcode-block" id="LLMAssistantConfiguration.from_dict">
+<a class="viewcode-back" href="../../../../reference/danoan.llm_assistant.common.model.html#danoan.llm_assistant.common.model.LLMAssistantConfiguration.from_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">runner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">prompt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">inst_runner</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">inst_prompt</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">runner</span><span class="p">:</span>
+            <span class="n">inst_runner</span> <span class="o">=</span> <span class="n">RunnerConfiguration</span><span class="p">(</span><span class="o">**</span><span class="n">runner</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">prompt</span><span class="p">:</span>
+            <span class="n">inst_prompt</span> <span class="o">=</span> <span class="n">PromptRepositoryConfiguration</span><span class="p">(</span><span class="o">**</span><span class="n">prompt</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">inst_runner</span><span class="p">,</span> <span class="n">inst_prompt</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="c1">#################################</span>
+<span class="c1"># Application entities</span>
+<span class="c1">#################################</span>
 
 
 <div class="viewcode-block" id="PromptConfiguration">

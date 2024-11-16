@@ -17,7 +17,9 @@ How-to guides
 .. toctree::
    :maxdepth: 1
 
-   how-to/
+   how-to/setup-assistant
+   how-to/run-a-prompt
+   how-to/sync-and-push-prompts
 
 
 Reference guides

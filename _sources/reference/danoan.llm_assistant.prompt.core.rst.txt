@@ -1,7 +1,10 @@
-danoan.llm\_assistant.prompt.core namespace
-===========================================
+danoan.llm\_assistant.prompt.core package
+=========================================
 
-.. py:module:: danoan.llm_assistant.prompt.core
+.. automodule:: danoan.llm_assistant.prompt.core
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Submodules
 ----------

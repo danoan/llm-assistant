@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Getting started with LLM Assistant &mdash; llm-assistant 0.2.0 documentation</title>
+  <title>Getting started with LLM Assistant &mdash; llm-assistant 0.3.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=a3d76245" />
@@ -14,7 +14,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="_static/documentation_options.js?v=e259d695"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -46,7 +46,14 @@
               <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Getting started with LLM Assistant</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#features">Features</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-use">How to use</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#configuring-a-llm-provider">Configuring a LLM provider</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running-a-prompt">Running a prompt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#starting-an-interactive-session">Starting an interactive session</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#syncing-prompts">Syncing prompts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#push-prompt-version-assistant">Push prompt version assistant</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#contributing">Contributing</a></li>
 </ul>
 </li>
@@ -84,12 +91,163 @@
              
   <section id="getting-started-with-llm-assistant">
 <h1>Getting started with LLM Assistant<a class="headerlink" href="#getting-started-with-llm-assistant" title="Link to this heading"></a></h1>
-<p>Collection of simple LLM applications</p>
+<p>Collection of tools to work with LLMs.</p>
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>CLI for interactive prompt execution.</p></li>
+<li><p>Prompt versioning tool.</p></li>
+<li><p>Prompt definition format and general runner.</p></li>
+</ul>
 </section>
-<section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
+<section id="how-to-use">
+<h2>How to use<a class="headerlink" href="#how-to-use" title="Link to this heading"></a></h2>
+<section id="configuring-a-llm-provider">
+<h3>Configuring a LLM provider<a class="headerlink" href="#configuring-a-llm-provider" title="Link to this heading"></a></h3>
+<p>The first step is to create a <code class="docutils literal notranslate"><span class="pre">llm-assistannt-config.toml</span></code> file
+to hold runner and prompt settings.</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[runner]</span>
+<span class="n">openai_key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&lt;OPENAI_KEY&gt;&quot;</span>
+<span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;gpt-3.5-turbo&quot;</span>
+<span class="n">use_cache</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+<span class="n">cache_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/home/user/.config/llm-assistant/cache.db&quot;</span>
+
+<span class="k">[prompt]</span>
+<span class="n">git_user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;danoan-prompts&quot;</span>
+<span class="n">prompt_collection_folder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/home/user/.config/llm-assistant/cache.db&quot;</span>
+
+<span class="k">[prompt.versioning]</span>
+<span class="n">alternative-expression</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;v2.0.0&quot;</span>
+<span class="n">word-definition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;v1.0.0&quot;</span>
+</pre></div>
+</div>
+<p><strong>Configuration file search</strong>: The application backtracks the current working directory searching for the
+<code class="docutils literal notranslate"><span class="pre">llm-assistant-config.toml</span></code> file starting from CWD. If not such file is found, it searches in the location
+specified by the environment variable <code class="docutils literal notranslate"><span class="pre">LLM_ASSISTANT_CONFIGURATION_FOLDER</span></code>.</p>
+<p>You can check which configuration file is being used by running</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>llm-assistant<span class="w"> </span>setup
+</pre></div>
+</div>
+</section>
+<section id="running-a-prompt">
+<h3>Running a prompt<a class="headerlink" href="#running-a-prompt" title="Link to this heading"></a></h3>
+<p>Consider the <code class="docutils literal notranslate"><span class="pre">alternative-expression</span></code> prompt configuration file:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Alternative Expressions&quot;</span>
+<span class="n">system_prompt</span><span class="o">=</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">You are fluent speaker of the {language} language and your task is to list at most five expressions that encodes the meaning of a sentence or a word enclosed by double angle brackets.</span>
+
+<span class="s1">Your response must be given as a json list and the items must be written in {language}.</span>
+
+<span class="s1">Examples</span>
+<span class="s1">--------</span>
+
+<span class="s1">Language: English.</span>
+<span class="s1">Sentence: &lt;&lt;It is an unusual day today.&gt;&gt;</span>
+<span class="s1">Response: [</span>
+<span class="s1">    &quot;It is an odd day today&quot;,</span>
+<span class="s1">    &quot;Today is quite unusual&quot;,</span>
+<span class="s1">    &quot;It is an atypical day&quot;,</span>
+<span class="s1">    &quot;Today feels out of the ordinary&quot;,</span>
+<span class="s1">    &quot;Today stands out differently&quot;</span>
+<span class="s1">]</span>
+<span class="s1">--</span>
+
+<span class="s1">Language: french</span>
+<span class="s1">Sentence: &lt;&lt;gentil&gt;&gt;</span>
+<span class="s1">Response: [</span>
+<span class="s1">    &quot;aimable&quot;,</span>
+<span class="s1">    &quot;doux&quot;</span>
+<span class="s1">]</span>
+<span class="s1">--</span>
+
+<span class="s1">&#39;&#39;&#39;</span>
+<span class="n">user_prompt</span><span class="o">=</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">Language: {language}</span>
+<span class="s1">Sentence: &lt;&lt;{message}&gt;&gt;</span>
+<span class="s1">Response:</span>
+<span class="s1">&#39;&#39;&#39;</span>
+</pre></div>
+</div>
+<p>It is possible to run the prompt in three different ways</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;{}&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>llm-assistant<span class="w"> </span>run<span class="w"> </span>alternative-expression<span class="w"> </span>--p<span class="w"> </span>language<span class="w"> </span>portuguese<span class="w"> </span>--p<span class="w"> </span>message<span class="w"> </span><span class="s2">&quot;ganhar a vida&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;{&quot;message&quot;:&quot;ganhar a vida&quot;}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>llm-assistant<span class="w"> </span>run<span class="w"> </span>alternative-expression<span class="w"> </span>--p<span class="w"> </span>language<span class="w"> </span>portuguese
+<span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;{&quot;message&quot;:&quot;ganhar a vida&quot;, &quot;language&quot;:&quot;portuguese&quot;}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>llm-assistant<span class="w"> </span>run<span class="w"> </span>alternative-expression
+</pre></div>
+</div>
+</section>
+<section id="starting-an-interactive-session">
+<h3>Starting an interactive session<a class="headerlink" href="#starting-an-interactive-session" title="Link to this heading"></a></h3>
+<p>To start an interactive session, type:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>llm-assistant<span class="w"> </span>session
+</pre></div>
+</div>
+<p>You are invited to select one of the prompts located at <code class="docutils literal notranslate"><span class="pre">prompt.prompt_collection_folder</span></code> and then to load or
+create a new instance for the prompt.</p>
+<p><strong>Prompt Instance</strong>: A prompt instance is a subset of pre-defined prompt variables. For example, in the alternative-expression
+prompt, we could have a french instance (language=french) and a portuguese instance (language=portuguese).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>╭────────────────────────────────────────────────────────────────────────────────────────╮
+│<span class="w"> </span>Select<span class="w"> </span>prompt<span class="w">                                                                          </span>│
+╰────────────────────────────────────────────────────────────────────────────────────────╯
+<span class="m">1</span>.<span class="w"> </span>Alternative<span class="w"> </span>Expressions<span class="w"> </span><span class="m">2</span>.<span class="w"> </span>Word<span class="w"> </span>Definition
+
+Prompt<span class="w"> </span>index:<span class="w"> </span><span class="m">2</span>
+╭────────────────────────────────────────────────────────────────────────────────────────╮
+│<span class="w"> </span>Choose<span class="w"> </span>an<span class="w"> </span>option<span class="w">                                                                       </span>│
+╰────────────────────────────────────────────────────────────────────────────────────────╯
+<span class="m">1</span>.<span class="w"> </span>New<span class="w"> </span>instance<span class="w"> </span><span class="m">2</span>.<span class="w"> </span>Load<span class="w"> </span>instance
+
+Option<span class="w"> </span>index:<span class="w"> </span><span class="m">1</span>
+Enter<span class="w"> </span>the<span class="w"> </span>instance<span class="w"> </span>name:<span class="w"> </span>portuguese
+Enter<span class="w"> </span>variable<span class="w"> </span>assignment:<span class="w"> </span><span class="nv">language</span><span class="o">=</span>portuguese
+╭───────────────────────────────────────<span class="w"> </span>New<span class="w"> </span>Chat<span class="w"> </span>───────────────────────────────────────╮
+│<span class="w"> </span>Prompt:<span class="w"> </span>Word<span class="w"> </span>Definition<span class="w">                                                                </span>│
+│<span class="w"> </span>Instance:portuguese<span class="w">                                                                    </span>│
+╰────────────────────────────────────────────────────────────────────────────────────────╯
+Enter<span class="w"> </span>messaó
+Enter<span class="w"> </span>message:<span class="w"> </span><span class="nv">$$</span>
+╭─────────────────────────────<span class="w"> </span>Word<span class="w"> </span>Definition::portuguese<span class="w"> </span>─────────────────────────────╮
+│<span class="w"> </span>borogodó<span class="w">                                                                              </span>│
+╰───────────────────────────────────────────────────────────────────────────────────────╯
+╭─────────────────────────────<span class="w"> </span>Word<span class="w"> </span>Definition::portuguese<span class="w"> </span>─────────────────────────────╮
+│<span class="w"> </span><span class="o">[</span><span class="w">                                                                                     </span>│
+│<span class="w">   </span><span class="s2">&quot;Encanto, atração irresistível e misteriosa; charme&quot;</span>,<span class="w">                               </span>│
+│<span class="w">   </span><span class="s2">&quot;Qualidade ou característica que atrai e seduz de maneira peculiar ou especial.&quot;</span>,<span class="w">   </span>│
+│<span class="w">   </span><span class="s2">&quot;Dom, habilidade natural para seduzir ou encantar as pessoas.&quot;</span>,<span class="w">                     </span>│
+│<span class="w">   </span><span class="s2">&quot;Magia, feitiço; algo que exerce influência sobre os outros de forma inexplicável.&quot;</span><span class="w"> </span>│
+│<span class="w"> </span><span class="o">]</span><span class="w">                                                                                     </span>│
+╰───────────────────────────────────────────────────────────────────────────────────────╯
+</pre></div>
+</div>
+</section>
+<section id="syncing-prompts">
+<h3>Syncing prompts<a class="headerlink" href="#syncing-prompts" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">sync</span></code> feature allows to fetch the most recent updates from the remote prompt repository
+and to update the local view.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>prompt-manager<span class="w"> </span>sync
+</pre></div>
+</div>
+<p>The synchronization is done according with the <code class="docutils literal notranslate"><span class="pre">prompt.versioning</span></code> settings.</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[prompt]</span>
+<span class="n">git_user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;danoan-prompts&quot;</span>
+<span class="n">prompt_collection_folder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/home/user/.config/llm-assistant/cache.db&quot;</span>
+
+<span class="k">[prompt.versioning]</span>
+<span class="n">alternative-expression</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;v2.0.0&quot;</span>
+<span class="n">word-definition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;v1.0.0&quot;</span>
+</pre></div>
+</div>
+<p>For the settings above, the sync will seach for the repositories:</p>
+<ul class="simple">
+<li><p>danoan-prompts/alternative-expression</p></li>
+<li><p>danoan-prompts/word-definition</p></li>
+</ul>
+<p>on github and then fetch the specified version.</p>
+</section>
+<section id="push-prompt-version-assistant">
+<h3>Push prompt version assistant<a class="headerlink" href="#push-prompt-version-assistant" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">prompt-manager</span> <span class="pre">versioning</span> <span class="pre">push</span></code> commands guides the user to the creation of a
+new prompt version.</p>
+</section>
 </section>
 <section id="contributing">
 <h2>Contributing<a class="headerlink" href="#contributing" title="Link to this heading"></a></h2>

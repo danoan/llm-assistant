@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API Reference &mdash; llm-assistant 0.2.0 documentation</title>
+  <title>API Reference &mdash; llm-assistant 0.3.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=a3d76245" />
@@ -14,7 +14,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="_static/documentation_options.js?v=e259d695"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -47,7 +47,12 @@
 <li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started with LLM Assistant</a></li>
 </ul>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-common">Module: common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-prompt">Module: prompt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-runner">Module: runner</a></li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="design-and-architecture.html">Design and Architecture</a></li>
@@ -79,22 +84,51 @@
              
   <section id="api-reference">
 <h1>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading"></a></h1>
+<section id="module-common">
+<h2>Module: common<a class="headerlink" href="#module-common" title="Link to this heading"></a></h2>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="reference/danoan.llm_assistant.core.cli_drawer.html#module-danoan.llm_assistant.core.cli_drawer" title="danoan.llm_assistant.core.cli_drawer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">danoan.llm_assistant.core.cli_drawer</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="reference/danoan.llm_assistant.common.config.html#module-danoan.llm_assistant.common.config" title="danoan.llm_assistant.common.config"><code class="xref py py-obj docutils literal notranslate"><span class="pre">danoan.llm_assistant.common.config</span></code></a></p></td>
+<td><p>LLM-assistant configuration API.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="reference/danoan.llm_assistant.core.exception.html#module-danoan.llm_assistant.core.exception" title="danoan.llm_assistant.core.exception"><code class="xref py py-obj docutils literal notranslate"><span class="pre">danoan.llm_assistant.core.exception</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="reference/danoan.llm_assistant.common.model.html#module-danoan.llm_assistant.common.model" title="danoan.llm_assistant.common.model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">danoan.llm_assistant.common.model</span></code></a></p></td>
+<td><p>Data models shared by prompt and runner modules.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="reference/danoan.llm_assistant.core.model.html#module-danoan.llm_assistant.core.model" title="danoan.llm_assistant.core.model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">danoan.llm_assistant.core.model</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="reference/danoan.llm_assistant.core.task_runner.html#module-danoan.llm_assistant.core.task_runner" title="danoan.llm_assistant.core.task_runner"><code class="xref py py-obj docutils literal notranslate"><span class="pre">danoan.llm_assistant.core.task_runner</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="reference/danoan.llm_assistant.common.exception.html#module-danoan.llm_assistant.common.exception" title="danoan.llm_assistant.common.exception"><code class="xref py py-obj docutils literal notranslate"><span class="pre">danoan.llm_assistant.common.exception</span></code></a></p></td>
+<td><p>Shared exceptions between prompt and runner modules.</p></td>
 </tr>
 </tbody>
 </table>
+</section>
+<section id="module-prompt">
+<h2>Module: prompt<a class="headerlink" href="#module-prompt" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="reference/danoan.llm_assistant.prompt.core.api.html#module-danoan.llm_assistant.prompt.core.api" title="danoan.llm_assistant.prompt.core.api"><code class="xref py py-obj docutils literal notranslate"><span class="pre">danoan.llm_assistant.prompt.core.api</span></code></a></p></td>
+<td><p>prompt-manager interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="reference/danoan.llm_assistant.prompt.core.model.html#module-danoan.llm_assistant.prompt.core.model" title="danoan.llm_assistant.prompt.core.model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">danoan.llm_assistant.prompt.core.model</span></code></a></p></td>
+<td><p>prompt-manager data models.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="reference/danoan.llm_assistant.prompt.core.utils.html#module-danoan.llm_assistant.prompt.core.utils" title="danoan.llm_assistant.prompt.core.utils"><code class="xref py py-obj docutils literal notranslate"><span class="pre">danoan.llm_assistant.prompt.core.utils</span></code></a></p></td>
+<td><p>prompt-manager utility tools.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-runner">
+<h2>Module: runner<a class="headerlink" href="#module-runner" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="reference/danoan.llm_assistant.runner.core.api.html#module-danoan.llm_assistant.runner.core.api" title="danoan.llm_assistant.runner.core.api"><code class="xref py py-obj docutils literal notranslate"><span class="pre">danoan.llm_assistant.runner.core.api</span></code></a></p></td>
+<td><p>runner interface.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="reference/danoan.llm_assistant.runner.core.exception.html#module-danoan.llm_assistant.runner.core.exception" title="danoan.llm_assistant.runner.core.exception"><code class="xref py py-obj docutils literal notranslate"><span class="pre">danoan.llm_assistant.runner.core.exception</span></code></a></p></td>
+<td><p>runner exceptions.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
 </section>
 
 

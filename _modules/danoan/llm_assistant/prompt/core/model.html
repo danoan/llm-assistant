@@ -83,7 +83,13 @@ window.addEventListener("load", () => mermaid.run());
            <div itemprop="articleBody">
              
   <h1>Source code for danoan.llm_assistant.prompt.core.model</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">prompt-manager data models.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">total_ordering</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 
@@ -96,6 +102,71 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">repository_path</span><span class="p">:</span> <span class="n">Path</span>
     <span class="n">current_tag</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">branches</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="ChangeNature">
+<a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.core.model.html#danoan.llm_assistant.prompt.core.model.ChangeNature">[docs]</a>
+<span class="k">class</span> <span class="nc">ChangeNature</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">PromptTweak</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">InterfaceUpdate</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">ScopeChange</span> <span class="o">=</span> <span class="mi">3</span></div>
+
+
+
+<div class="viewcode-block" id="PromptVersion">
+<a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.core.model.html#danoan.llm_assistant.prompt.core.model.PromptVersion">[docs]</a>
+<span class="nd">@total_ordering</span>
+<span class="k">class</span> <span class="nc">PromptVersion</span><span class="p">:</span>
+<div class="viewcode-block" id="PromptVersion.IncrementerType">
+<a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.core.model.html#danoan.llm_assistant.prompt.core.model.PromptVersion.IncrementerType">[docs]</a>
+    <span class="k">class</span> <span class="nc">IncrementerType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+        <span class="n">Major</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">Minor</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">Fix</span> <span class="o">=</span> <span class="mi">3</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">incrementer_type</span><span class="p">:</span> <span class="n">IncrementerType</span> <span class="o">=</span> <span class="n">IncrementerType</span><span class="o">.</span><span class="n">Major</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">incrementer_type</span> <span class="o">=</span> <span class="n">incrementer_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">major</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">minor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">version</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">__version_id__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">major</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e5</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minor</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e4</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fix</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e3</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">incrementer_type</span> <span class="o">==</span> <span class="n">PromptVersion</span><span class="o">.</span><span class="n">IncrementerType</span><span class="o">.</span><span class="n">Major</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">major</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">incrementer_type</span> <span class="o">==</span> <span class="n">PromptVersion</span><span class="o">.</span><span class="n">IncrementerType</span><span class="o">.</span><span class="n">Minor</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">minor</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">incrementer_type</span> <span class="o">==</span> <span class="n">PromptVersion</span><span class="o">.</span><span class="n">IncrementerType</span><span class="o">.</span><span class="n">Fix</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fix</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">major</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">minor</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fix</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">PromptVersion</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="bp">NotImplemented</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__version_id__</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">__version_id__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">PromptVersion</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="bp">NotImplemented</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__version_id__</span><span class="p">()</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">__version_id__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">major</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">minor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fix</span><span class="p">))</span>
+
+<div class="viewcode-block" id="PromptVersion.set_incrementer">
+<a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.core.model.html#danoan.llm_assistant.prompt.core.model.PromptVersion.set_incrementer">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_incrementer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">incremeter_type</span><span class="p">:</span> <span class="n">IncrementerType</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">incrementer_type</span> <span class="o">=</span> <span class="n">incremeter_type</span></div>
+</div>
 
 </pre></div>
 

@@ -83,20 +83,25 @@ window.addEventListener("load", () => mermaid.run());
            <div itemprop="articleBody">
              
   <h1>Source code for danoan.llm_assistant.prompt.core.api</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">prompt-manager interface.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">git</span>
 <span class="kn">import</span> <span class="nn">toml</span>
-<span class="kn">from</span> <span class="nn">danoan.llm_assistant.common.model</span> <span class="kn">import</span> <span class="n">PromptRepositoryConfiguration</span>
 
 <span class="kn">from</span> <span class="nn">danoan.llm_assistant.common</span> <span class="kn">import</span> <span class="n">config</span>
-<span class="kn">from</span> <span class="nn">danoan.llm_assistant.prompt.core</span> <span class="kn">import</span> <span class="n">model</span>
+<span class="kn">from</span> <span class="nn">danoan.llm_assistant.common.model</span> <span class="kn">import</span> <span class="n">PromptRepositoryConfiguration</span>
+<span class="kn">from</span> <span class="nn">danoan.llm_assistant.prompt.core</span> <span class="kn">import</span> <span class="n">model</span><span class="p">,</span> <span class="n">utils</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
 <span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
@@ -113,13 +118,16 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">    Return path to the folder where all tracked prompts are located.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">llma_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get_configuration</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">llma_config</span><span class="o">.</span><span class="n">prompt</span><span class="o">.</span><span class="n">local_folder</span></div>
+    <span class="k">return</span> <span class="n">llma_config</span><span class="o">.</span><span class="n">prompt</span><span class="o">.</span><span class="n">prompt_collection_folder</span></div>
 
 
 
 <div class="viewcode-block" id="get_prompt_configuration_filepath">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.core.api.html#danoan.llm_assistant.prompt.core.api.get_prompt_configuration_filepath">[docs]</a>
 <span class="k">def</span> <span class="nf">get_prompt_configuration_filepath</span><span class="p">(</span><span class="n">prompt_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return path to prompt configuration file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">get_prompts_folder</span><span class="p">()</span> <span class="o">/</span> <span class="n">prompt_name</span> <span class="o">/</span> <span class="s2">&quot;config.toml&quot;</span></div>
 
 
@@ -130,8 +138,12 @@ window.addEventListener("load", () => mermaid.run());
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check if a path points to a prompt repository.</span>
 
-<span class="sd">    A prompt repository must contain a `config.toml`</span>
-<span class="sd">    that contains some mandatory keys.</span>
+<span class="sd">    A prompt repository must have a `config.toml`</span>
+<span class="sd">    that must have the following keys.</span>
+
+<span class="sd">    - user_prompt</span>
+<span class="sd">    - system_prompt</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">configuration_prompt_path</span> <span class="o">=</span> <span class="n">path</span> <span class="o">/</span> <span class="s2">&quot;config.toml&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">configuration_prompt_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
@@ -154,19 +166,21 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">    Return a TrackedPrompt from the prompt repository.</span>
 
 <span class="sd">    Raises:</span>
-<span class="sd">        FileNotFoundError if prompt does not exist.</span>
+<span class="sd">        FileNotFoundError: if prompt folder does not exist.</span>
+<span class="sd">        AttributeError: if head points to an invalid object or referece.</span>
+<span class="sd">        git.exc.InvalidGitRepositoryError: if prompt folder is not a valid git repository.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">repository_folder</span> <span class="o">=</span> <span class="n">get_prompts_folder</span><span class="p">()</span> <span class="o">/</span> <span class="n">repository_name</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">repository_folder</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">()</span>
     <span class="n">repository</span> <span class="o">=</span> <span class="n">git</span><span class="o">.</span><span class="n">Repo</span><span class="p">(</span><span class="n">repository_folder</span><span class="p">)</span>
+    <span class="n">current_tag</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="n">repository</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
         <span class="n">current_commit</span> <span class="o">=</span> <span class="n">repository</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">commit</span>
-        <span class="n">current_tag</span> <span class="o">=</span> <span class="s2">&quot;no-tag&quot;</span>
         <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">repository</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">commit</span> <span class="o">==</span> <span class="n">current_commit</span><span class="p">:</span>
                 <span class="n">current_tag</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">name</span>
-        <span class="n">branches</span> <span class="o">=</span> <span class="p">[</span><span class="n">b</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">repository</span><span class="o">.</span><span class="n">branches</span> <span class="k">if</span> <span class="n">b</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;master&quot;</span><span class="p">]]</span>
+    <span class="n">branches</span> <span class="o">=</span> <span class="p">[</span><span class="n">b</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">repository</span><span class="o">.</span><span class="n">branches</span> <span class="k">if</span> <span class="n">b</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;master&quot;</span><span class="p">]]</span>
     <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">TrackedPrompt</span><span class="p">(</span>
         <span class="n">repository_name</span><span class="p">,</span> <span class="n">repository_folder</span><span class="p">,</span> <span class="n">current_tag</span><span class="p">,</span> <span class="n">branches</span>
     <span class="p">)</span></div>
@@ -206,12 +220,17 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="sync">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.core.api.html#danoan.llm_assistant.prompt.core.api.sync">[docs]</a>
 <span class="k">def</span> <span class="nf">sync</span><span class="p">(</span><span class="n">repo_config</span><span class="p">:</span> <span class="n">PromptRepositoryConfiguration</span><span class="p">,</span> <span class="n">progress_callback</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read prompt repository configuration file and sync local folder</span>
+<span class="sd">    with the specified prompt version.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">class</span> <span class="nc">Events</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
         <span class="n">SYNC_CONFIG</span> <span class="o">=</span> <span class="s2">&quot;sync_config&quot;</span>
         <span class="n">FETCH</span> <span class="o">=</span> <span class="s2">&quot;fetch&quot;</span>
         <span class="n">CHECKOUT</span> <span class="o">=</span> <span class="s2">&quot;checkout&quot;</span>
         <span class="n">SYNCED</span> <span class="o">=</span> <span class="s2">&quot;synced&quot;</span>
-        <span class="n">SYNC_LOCAL_FOLDER</span> <span class="o">=</span> <span class="s2">&quot;sync_local_folder&quot;</span>
+        <span class="n">SYNC_LOCAL_FOLDER</span> <span class="o">=</span> <span class="s2">&quot;sync_prompt_collection_folder&quot;</span>
         <span class="n">NOT_TRACKED</span> <span class="o">=</span> <span class="s2">&quot;not_tracked&quot;</span>
         <span class="n">NOT_PROMPT_REPOSITORY</span> <span class="o">=</span> <span class="s2">&quot;not_prompt_repository&quot;</span>
         <span class="n">GIT</span> <span class="o">=</span> <span class="s2">&quot;git&quot;</span>
@@ -270,13 +289,14 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">else</span><span class="p">:</span>
             <span class="n">repo</span> <span class="o">=</span> <span class="n">git</span><span class="o">.</span><span class="n">Repo</span><span class="p">(</span><span class="n">prompt_folder</span><span class="p">)</span>
 
+        <span class="n">repo</span><span class="o">.</span><span class="n">remote</span><span class="p">()</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">_progress_callback</span><span class="p">(</span><span class="n">SyncItem</span><span class="p">(</span><span class="n">Events</span><span class="o">.</span><span class="n">CHECKOUT</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">,</span> <span class="n">version</span><span class="p">))</span>
         <span class="n">repo</span><span class="o">.</span><span class="n">git</span><span class="o">.</span><span class="n">checkout</span><span class="p">(</span><span class="n">version</span><span class="p">)</span>
 
     <span class="c1"># Sync prompt repository local folder</span>
     <span class="n">updated_repo_config</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">repo_config</span><span class="p">)</span>
     <span class="n">_progress_callback</span><span class="p">(</span><span class="n">SyncItem</span><span class="p">(</span><span class="n">Events</span><span class="o">.</span><span class="n">SYNC_LOCAL_FOLDER</span><span class="p">))</span>
-    <span class="k">for</span> <span class="n">prompt_folder</span> <span class="ow">in</span> <span class="n">repo_config</span><span class="o">.</span><span class="n">local_folder</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">prompt_folder</span> <span class="ow">in</span> <span class="n">repo_config</span><span class="o">.</span><span class="n">prompt_collection_folder</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
         <span class="n">_progress_callback</span><span class="p">(</span><span class="n">SyncItem</span><span class="p">(</span><span class="n">Events</span><span class="o">.</span><span class="n">SYNC_LOCAL_FOLDER</span><span class="p">,</span> <span class="s2">&quot;folder&quot;</span><span class="p">,</span> <span class="n">prompt_folder</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">is_prompt_repository</span><span class="p">(</span><span class="n">prompt_folder</span><span class="p">):</span>
             <span class="n">prompt_name</span> <span class="o">=</span> <span class="n">prompt_folder</span><span class="o">.</span><span class="n">stem</span>
@@ -296,6 +316,169 @@ window.addEventListener("load", () => mermaid.run());
 
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get_configuration_filepath</span><span class="p">(),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">toml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">llma_config</span><span class="o">.</span><span class="n">__asdict__</span><span class="p">(),</span> <span class="n">f</span><span class="p">)</span></div>
+
+
+
+<span class="c1">###################################</span>
+<span class="c1"># Prompt Versioning</span>
+<span class="c1">###################################</span>
+
+
+<div class="viewcode-block" id="get_prompt_versions">
+<a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.core.api.html#danoan.llm_assistant.prompt.core.api.get_prompt_versions">[docs]</a>
+<span class="k">def</span> <span class="nf">get_prompt_versions</span><span class="p">(</span><span class="n">repository_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    List all the versions available in a local prompt repository.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">model</span><span class="o">.</span><span class="n">PromptVersion</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_versions</span><span class="p">(</span><span class="n">repository_path</span><span class="p">)])</span>
+    <span class="k">return</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">l</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="get_most_recent_version_before_commit">
+<a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.core.api.html#danoan.llm_assistant.prompt.core.api.get_most_recent_version_before_commit">[docs]</a>
+<span class="k">def</span> <span class="nf">get_most_recent_version_before_commit</span><span class="p">(</span>
+    <span class="n">repository_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">commit_hash</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find the most recent version prior to a given commit hash.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tags</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_most_recent_tags_before_commit</span><span class="p">(</span><span class="n">repository_folder</span><span class="p">,</span> <span class="n">commit_hash</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;v&quot;</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="k">return</span> <span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="get_current_version">
+<a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.core.api.html#danoan.llm_assistant.prompt.core.api.get_current_version">[docs]</a>
+<span class="k">def</span> <span class="nf">get_current_version</span><span class="p">(</span><span class="n">repository_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the most recent version prior to HEAD.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">repo</span> <span class="o">=</span> <span class="n">git</span><span class="o">.</span><span class="n">Repo</span><span class="p">(</span><span class="n">repository_folder</span><span class="p">)</span>
+    <span class="n">current_tags</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_commit_tags</span><span class="p">(</span><span class="n">repository_folder</span><span class="p">,</span> <span class="n">repo</span><span class="o">.</span><span class="n">commit</span><span class="p">())</span>
+
+    <span class="n">no_version_at_all</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">get_most_recent_tags_before_commit</span><span class="p">(</span><span class="n">repository_folder</span><span class="p">,</span> <span class="n">repo</span><span class="o">.</span><span class="n">commit</span><span class="p">()))</span>
+        <span class="o">==</span> <span class="mi">0</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">no_version_at_all</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">current_commit_is_not_versioned</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">current_tags</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">no_version_at_all</span>
+    <span class="n">most_recent_version</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">current_commit_is_not_versioned</span><span class="p">:</span>
+        <span class="n">most_recent_version</span> <span class="o">=</span> <span class="n">get_most_recent_version_before_commit</span><span class="p">(</span>
+            <span class="n">repository_folder</span><span class="p">,</span> <span class="n">repo</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">most_recent_version</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">current_tags</span><span class="p">[</span><span class="mi">0</span><span class="p">])[</span><span class="mi">1</span><span class="p">:]</span>
+
+    <span class="k">return</span> <span class="n">most_recent_version</span></div>
+
+
+
+<div class="viewcode-block" id="suggest_next_version">
+<a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.core.api.html#danoan.llm_assistant.prompt.core.api.suggest_next_version">[docs]</a>
+<span class="k">def</span> <span class="nf">suggest_next_version</span><span class="p">(</span>
+    <span class="n">repository_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">current_version</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cn</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">ChangeNature</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Suggest a new version based on the type of changes.</span>
+
+<span class="sd">    If PromptTweak, increment the fix unit.</span>
+<span class="sd">    If InterfaceUpdate, increment the minor unit.</span>
+<span class="sd">    If ScopeChange, increment the major unit.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sorted_tags</span> <span class="o">=</span> <span class="n">get_prompt_versions</span><span class="p">(</span><span class="n">repository_path</span><span class="p">)</span>
+
+    <span class="n">vi</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">PromptVersion</span><span class="p">(</span><span class="n">current_version</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">PromptVersion</span><span class="o">.</span><span class="n">IncrementerType</span><span class="o">.</span><span class="n">Fix</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cn</span> <span class="o">==</span> <span class="n">model</span><span class="o">.</span><span class="n">ChangeNature</span><span class="o">.</span><span class="n">PromptTweak</span><span class="p">:</span>
+        <span class="n">vi</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">PromptVersion</span><span class="p">(</span>
+            <span class="n">current_version</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">PromptVersion</span><span class="o">.</span><span class="n">IncrementerType</span><span class="o">.</span><span class="n">Fix</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">cn</span> <span class="o">==</span> <span class="n">model</span><span class="o">.</span><span class="n">ChangeNature</span><span class="o">.</span><span class="n">InterfaceUpdate</span><span class="p">:</span>
+        <span class="n">vi</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">PromptVersion</span><span class="p">(</span>
+            <span class="n">current_version</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">PromptVersion</span><span class="o">.</span><span class="n">IncrementerType</span><span class="o">.</span><span class="n">Minor</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">cn</span> <span class="o">==</span> <span class="n">model</span><span class="o">.</span><span class="n">ChangeNature</span><span class="o">.</span><span class="n">ScopeChange</span><span class="p">:</span>
+        <span class="n">vi</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">PromptVersion</span><span class="p">(</span>
+            <span class="n">current_version</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">PromptVersion</span><span class="o">.</span><span class="n">IncrementerType</span><span class="o">.</span><span class="n">Major</span>
+        <span class="p">)</span>
+
+    <span class="k">while</span> <span class="nb">str</span><span class="p">(</span><span class="n">vi</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">sorted_tags</span><span class="p">):</span>
+        <span class="n">vi</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">vi</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="update_changelog">
+<a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.core.api.html#danoan.llm_assistant.prompt.core.api.update_changelog">[docs]</a>
+<span class="k">def</span> <span class="nf">update_changelog</span><span class="p">(</span><span class="n">changelog_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Rewrites the changelog document such that versions are listed in</span>
+<span class="sd">    numerical order and divided by major versions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">get_next_header</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_next_version_header</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;##&quot;</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+
+    <span class="n">p_version_part</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\d+[\.xyz]?&quot;</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">p_version_part</span><span class="si">}{</span><span class="n">p_version_part</span><span class="si">}{</span><span class="n">p_version_part</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+    <span class="n">content_versions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">version_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">start</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">match_start</span> <span class="o">=</span> <span class="n">get_next_version_header</span><span class="p">(</span><span class="n">changelog_str</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match_start</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">changelog_str</span><span class="p">[</span><span class="n">match_start</span><span class="p">:])</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">m</span><span class="p">:</span>
+            <span class="k">break</span>
+
+        <span class="n">content_start</span> <span class="o">=</span> <span class="n">match_start</span> <span class="o">+</span> <span class="n">m</span><span class="o">.</span><span class="n">span</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">content_end</span> <span class="o">=</span> <span class="n">get_next_header</span><span class="p">(</span><span class="n">changelog_str</span><span class="p">,</span> <span class="n">content_start</span><span class="p">)</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">changelog_str</span><span class="p">[</span><span class="n">content_start</span><span class="p">:</span><span class="n">content_end</span><span class="p">]</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">content_end</span>
+
+        <span class="n">version_name</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">version_name</span> <span class="ow">in</span> <span class="n">version_set</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">content_versions</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">model</span><span class="o">.</span><span class="n">PromptVersion</span><span class="p">(</span><span class="n">version_name</span><span class="p">),</span> <span class="n">content</span><span class="p">))</span>
+        <span class="n">version_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">version_name</span><span class="p">)</span>
+
+    <span class="n">sorted_items</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">content_versions</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">current_major_title</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">update_title</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">rewriten_document</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sorted_items</span><span class="p">:</span>
+        <span class="n">version</span><span class="p">,</span> <span class="n">content</span> <span class="o">=</span> <span class="n">item</span>
+
+        <span class="k">if</span> <span class="n">current_major_title</span> <span class="o">!=</span> <span class="n">version</span><span class="o">.</span><span class="n">major</span><span class="p">:</span>
+            <span class="n">current_major_title</span> <span class="o">=</span> <span class="n">version</span><span class="o">.</span><span class="n">major</span>
+            <span class="n">update_title</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">update_title</span><span class="p">:</span>
+            <span class="n">rewriten_document</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;# V</span><span class="si">{</span><span class="n">current_major_title</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="n">update_title</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">rewriten_document</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;## </span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">rewriten_document</span> <span class="o">+=</span> <span class="n">content</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+
+    <span class="k">return</span> <span class="n">rewriten_document</span></div>
 
 </pre></div>
 

@@ -83,16 +83,20 @@ window.addEventListener("load", () => mermaid.run());
            <div itemprop="articleBody">
              
   <h1>Source code for danoan.llm_assistant.common.config</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">danoan.llm_assistant.common</span> <span class="kn">import</span> <span class="n">exception</span><span class="p">,</span> <span class="n">model</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">LLM-assistant configuration API.</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
-
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">toml</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">toml</span>
+
+<span class="kn">from</span> <span class="nn">danoan.llm_assistant.common</span> <span class="kn">import</span> <span class="n">exception</span><span class="p">,</span> <span class="n">model</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
 <span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
@@ -166,6 +170,24 @@ window.addEventListener("load", () => mermaid.run());
 
 
 
+<div class="viewcode-block" id="get_environment_variable_value">
+<a class="viewcode-back" href="../../../../reference/danoan.llm_assistant.common.config.html#danoan.llm_assistant.common.config.get_environment_variable_value">[docs]</a>
+<span class="k">def</span> <span class="nf">get_environment_variable_value</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+    <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    Return the value stored by </span><span class="si">{</span><span class="n">LLM_ASSISTANT_ENV_VARIABLE</span><span class="si">}</span><span class="s2">.</span>
+
+<span class="s2">    Raises:</span>
+<span class="s2">        EnvironmentVariableNotDefinedError: If the LLM_ASSISTANT_ENV_VARIABLE</span>
+<span class="s2">                                            is not defined and a configuration file</span>
+<span class="s2">                                            is not found in the file hierarchy</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">LLM_ASSISTANT_ENV_VARIABLE</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="n">LLM_ASSISTANT_ENV_VARIABLE</span><span class="p">])</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span>
+
+    <span class="k">raise</span> <span class="n">exception</span><span class="o">.</span><span class="n">EnvironmentVariableNotDefinedError</span><span class="p">()</span></div>
+
+
+
 <div class="viewcode-block" id="get_configuration_filepath">
 <a class="viewcode-back" href="../../../../reference/danoan.llm_assistant.common.config.html#danoan.llm_assistant.common.config.get_configuration_filepath">[docs]</a>
 <span class="k">def</span> <span class="nf">get_configuration_filepath</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
@@ -187,7 +209,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">raise</span> <span class="n">exception</span><span class="o">.</span><span class="n">ConfigurationFileDoesNotExistError</span><span class="p">()</span>
 
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_filepath</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">LLMAssistantConfiguration</span><span class="p">(</span><span class="o">**</span><span class="n">toml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">LLMAssistantConfiguration</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="o">**</span><span class="n">toml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">))</span></div>
 
 
 
@@ -198,13 +220,21 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">    Get prompt configuration object.</span>
 
 <span class="sd">    It searches the prompt configuration file within the directory specified</span>
-<span class="sd">    by runner.local_folder setting.</span>
+<span class="sd">    by runner.prompt_collection_folder setting.</span>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        FileNotFoundError: if prompt configuration file is not found.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">config</span> <span class="o">=</span> <span class="n">get_configuration</span><span class="p">()</span>
-    <span class="n">prompt_config_filepath</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">local_folder</span> <span class="o">/</span> <span class="n">prompt_name</span> <span class="o">/</span> <span class="s2">&quot;config.toml&quot;</span>
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">prompt</span><span class="p">:</span>
+        <span class="n">prompt_config_filepath</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">prompt</span><span class="o">.</span><span class="n">prompt_collection_folder</span> <span class="o">/</span> <span class="n">prompt_name</span> <span class="o">/</span> <span class="s2">&quot;config.toml&quot;</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+            <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;File not found&quot;</span><span class="p">,</span> <span class="s2">&quot;prompt collection folder is not specified&quot;</span>
+        <span class="p">)</span>
+
     <span class="k">if</span> <span class="ow">not</span> <span class="n">prompt_config_filepath</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;File not found&quot;</span><span class="p">,</span> <span class="n">prompt_config_filepath</span><span class="p">)</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">prompt_config_filepath</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>

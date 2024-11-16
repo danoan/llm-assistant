@@ -77,6 +77,7 @@
              
   <section id="module-danoan.llm_assistant.common.config">
 <span id="danoan-llm-assistant-common-config-module"></span><h1>danoan.llm_assistant.common.config module<a class="headerlink" href="#module-danoan.llm_assistant.common.config" title="Link to this heading"></a></h1>
+<p>LLM-assistant configuration API.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="danoan.llm_assistant.common.config.get_configuration">
 <span class="sig-prename descclassname"><span class="pre">danoan.llm_assistant.common.config.</span></span><span class="sig-name descname"><span class="pre">get_configuration</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="danoan.llm_assistant.common.model.html#danoan.llm_assistant.common.model.LLMAssistantConfiguration" title="danoan.llm_assistant.common.model.LLMAssistantConfiguration"><span class="pre">LLMAssistantConfiguration</span></a></span></span><a class="reference internal" href="../_modules/danoan/llm_assistant/common/config.html#get_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.common.config.get_configuration" title="Link to this definition"></a></dt>
@@ -122,11 +123,21 @@ value stored in the environment variable LLM_ASSISTANT_ENV_VARIABLE.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="danoan.llm_assistant.common.config.get_environment_variable_value">
+<span class="sig-prename descclassname"><span class="pre">danoan.llm_assistant.common.config.</span></span><span class="sig-name descname"><span class="pre">get_environment_variable_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../_modules/danoan/llm_assistant/common/config.html#get_environment_variable_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.common.config.get_environment_variable_value" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Path</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="danoan.llm_assistant.common.config.get_prompt_configuration">
 <span class="sig-prename descclassname"><span class="pre">danoan.llm_assistant.common.config.</span></span><span class="sig-name descname"><span class="pre">get_prompt_configuration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="danoan.llm_assistant.common.model.html#danoan.llm_assistant.common.model.PromptConfiguration" title="danoan.llm_assistant.common.model.PromptConfiguration"><span class="pre">PromptConfiguration</span></a></span></span><a class="reference internal" href="../_modules/danoan/llm_assistant/common/config.html#get_prompt_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.common.config.get_prompt_configuration" title="Link to this definition"></a></dt>
 <dd><p>Get prompt configuration object.</p>
 <p>It searches the prompt configuration file within the directory specified
-by runner.local_folder setting.</p>
+by runner.prompt_collection_folder setting.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>FileNotFoundError</strong> – if prompt configuration file is not found.</p>

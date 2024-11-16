@@ -95,7 +95,7 @@ window.addEventListener("load", () => mermaid.run());
     <span class="k">try</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;The environment variable </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">LLM_ASSISTANT_ENV_VARIABLE</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot; is set to: </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">get_configuration_folder</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; is set to: </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">get_environment_variable_value</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
     <span class="k">except</span> <span class="n">exception</span><span class="o">.</span><span class="n">EnvironmentVariableNotDefinedError</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span>
