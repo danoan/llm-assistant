@@ -174,7 +174,7 @@ def sync(repo_config: PromptRepositoryConfiguration, progress_callback=None):
         _progress_callback(SyncItem(Events.SYNC_CONFIG, "prompt_name", prompt_name))
         _progress_callback(SyncItem(Events.SYNC_CONFIG, "version", version))
         prompt_folder = get_prompts_folder() / prompt_name
-        prompt_repo_url = f"git@github.com:{repo_config.git_user}/{prompt_name}.git"
+        prompt_repo_url = f"https://github.com/{repo_config.git_user}/{prompt_name}.git"
         repo = None
         if not prompt_folder.exists():
             _progress_callback(SyncItem(Events.FETCH, "prompt", prompt_repo_url))
