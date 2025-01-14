@@ -129,7 +129,10 @@ def get_prompt_configuration(prompt_name: str) -> model.PromptConfiguration:
     config = get_configuration()
     if config.prompt:
         prompt_config_filepath = (
-            config.prompt.prompt_collection_folder / prompt_name / "config.toml"
+            get_configuration_folder()
+            / config.prompt.prompt_collection_folder
+            / prompt_name
+            / "config.toml"
         )
     else:
         raise FileNotFoundError(
