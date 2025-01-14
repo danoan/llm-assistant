@@ -38,7 +38,10 @@ def ensure_prompt_exists(prompt_name: str, logger):
         exit(1)
 
     prompt_config_filepath = (
-        llma_config.prompt.prompt_collection_folder / prompt_name / "config.toml"
+        config.get_configuration_folder()
+        / llma_config.prompt.prompt_collection_folder
+        / prompt_name
+        / "config.toml"
     )
     if not prompt_config_filepath.exists():
         logger.error(
