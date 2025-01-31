@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>danoan.llm_assistant.common.config &mdash; llm-assistant 0.3.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=a3d76245" />
 
@@ -52,6 +52,11 @@ window.addEventListener("load", () => mermaid.run());
 <li class="toctree-l1"><a class="reference internal" href="../../../../getting-started.html">Getting started with LLM Assistant</a></li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../how-to/setup-assistant.html">How to setup llm-assistant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../how-to/run-a-prompt.html">How to run a prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../how-to/sync-and-push-prompts.html">How to sync and push prompts</a></li>
+</ul>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api-reference.html">API Reference</a></li>
 </ul>
 <ul>
@@ -87,16 +92,16 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">LLM-assistant configuration API.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lru_cache</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
 
-<span class="kn">import</span> <span class="nn">toml</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">toml</span>
 
-<span class="kn">from</span> <span class="nn">danoan.llm_assistant.common</span> <span class="kn">import</span> <span class="n">exception</span><span class="p">,</span> <span class="n">model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">danoan.llm_assistant.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">exception</span><span class="p">,</span> <span class="n">model</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
 <span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
@@ -114,7 +119,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@lru_cache</span>
-<span class="k">def</span> <span class="nf">_get_first_configuration_filepath_within_file_hierarchy</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_first_configuration_filepath_within_file_hierarchy</span><span class="p">(</span>
     <span class="n">base_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -139,7 +144,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="get_configuration_folder">
 <a class="viewcode-back" href="../../../../reference/danoan.llm_assistant.common.config.html#danoan.llm_assistant.common.config.get_configuration_folder">[docs]</a>
-<span class="k">def</span> <span class="nf">get_configuration_folder</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_configuration_folder</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return directory where configuration file is stored.</span>
 
@@ -172,7 +177,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="get_environment_variable_value">
 <a class="viewcode-back" href="../../../../reference/danoan.llm_assistant.common.config.html#danoan.llm_assistant.common.config.get_environment_variable_value">[docs]</a>
-<span class="k">def</span> <span class="nf">get_environment_variable_value</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_environment_variable_value</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
     <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">    Return the value stored by </span><span class="si">{</span><span class="n">LLM_ASSISTANT_ENV_VARIABLE</span><span class="si">}</span><span class="s2">.</span>
 
@@ -190,7 +195,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="get_configuration_filepath">
 <a class="viewcode-back" href="../../../../reference/danoan.llm_assistant.common.config.html#danoan.llm_assistant.common.config.get_configuration_filepath">[docs]</a>
-<span class="k">def</span> <span class="nf">get_configuration_filepath</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_configuration_filepath</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return path to llm-assistant configuration file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -200,7 +205,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="get_configuration">
 <a class="viewcode-back" href="../../../../reference/danoan.llm_assistant.common.config.html#danoan.llm_assistant.common.config.get_configuration">[docs]</a>
-<span class="k">def</span> <span class="nf">get_configuration</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">model</span><span class="o">.</span><span class="n">LLMAssistantConfiguration</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_configuration</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">model</span><span class="o">.</span><span class="n">LLMAssistantConfiguration</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return configuration object.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -215,7 +220,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="get_prompt_configuration">
 <a class="viewcode-back" href="../../../../reference/danoan.llm_assistant.common.config.html#danoan.llm_assistant.common.config.get_prompt_configuration">[docs]</a>
-<span class="k">def</span> <span class="nf">get_prompt_configuration</span><span class="p">(</span><span class="n">prompt_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">model</span><span class="o">.</span><span class="n">PromptConfiguration</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_prompt_configuration</span><span class="p">(</span><span class="n">prompt_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">model</span><span class="o">.</span><span class="n">PromptConfiguration</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get prompt configuration object.</span>
 
@@ -228,7 +233,10 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">config</span> <span class="o">=</span> <span class="n">get_configuration</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">prompt</span><span class="p">:</span>
         <span class="n">prompt_config_filepath</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">config</span><span class="o">.</span><span class="n">prompt</span><span class="o">.</span><span class="n">prompt_collection_folder</span> <span class="o">/</span> <span class="n">prompt_name</span> <span class="o">/</span> <span class="s2">&quot;config.toml&quot;</span>
+            <span class="n">get_configuration_folder</span><span class="p">()</span>
+            <span class="o">/</span> <span class="n">config</span><span class="o">.</span><span class="n">prompt</span><span class="o">.</span><span class="n">prompt_collection_folder</span>
+            <span class="o">/</span> <span class="n">prompt_name</span>
+            <span class="o">/</span> <span class="s2">&quot;config.toml&quot;</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>

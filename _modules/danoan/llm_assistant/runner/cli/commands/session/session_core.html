@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>danoan.llm_assistant.runner.cli.commands.session.session_core &mdash; llm-assistant 0.3.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../../../../_static/css/custom.css?v=a3d76245" />
 
@@ -52,6 +52,11 @@ window.addEventListener("load", () => mermaid.run());
 <li class="toctree-l1"><a class="reference internal" href="../../../../../../../getting-started.html">Getting started with LLM Assistant</a></li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../how-to/setup-assistant.html">How to setup llm-assistant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../how-to/run-a-prompt.html">How to run a prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../how-to/sync-and-push-prompts.html">How to sync and push prompts</a></li>
+</ul>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../../../api-reference.html">API Reference</a></li>
 </ul>
 <ul>
@@ -83,21 +88,21 @@ window.addEventListener("load", () => mermaid.run());
            <div itemprop="articleBody">
              
   <h1>Source code for danoan.llm_assistant.runner.cli.commands.session.session_core</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">import</span> <span class="nn">toml</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">toml</span>
 
-<span class="kn">from</span> <span class="nn">danoan.llm_assistant.common</span> <span class="kn">import</span> <span class="n">model</span>
-<span class="kn">from</span> <span class="nn">danoan.llm_assistant.runner.cli</span> <span class="kn">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">cli_utils</span>
-<span class="kn">from</span> <span class="nn">danoan.llm_assistant.runner.cli.commands.session.cli_drawer</span> <span class="kn">import</span> <span class="n">CLIDrawer</span>
-<span class="kn">from</span> <span class="nn">danoan.llm_assistant.runner.cli.commands.session.task_runner</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">danoan.llm_assistant.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">danoan.llm_assistant.runner.cli</span><span class="w"> </span><span class="kn">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">cli_utils</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">danoan.llm_assistant.runner.cli.commands.session.cli_drawer</span><span class="w"> </span><span class="kn">import</span> <span class="n">CLIDrawer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">danoan.llm_assistant.runner.cli.commands.session.task_runner</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Task</span><span class="p">,</span>
     <span class="n">TaskInstruction</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">danoan.llm_assistant.runner.core</span> <span class="kn">import</span> <span class="n">api</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">danoan.llm_assistant.runner.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">api</span>
 
 <span class="c1">#############################################</span>
 <span class="c1"># Local model</span>
@@ -106,7 +111,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="PromptInterruptedError">
 <a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.session_core.html#danoan.llm_assistant.runner.cli.commands.session.session_core.PromptInterruptedError">[docs]</a>
-<span class="k">class</span> <span class="nc">PromptInterruptedError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PromptInterruptedError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
@@ -114,7 +119,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="PromptConfigurationWithLocation">
 <a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.session_core.html#danoan.llm_assistant.runner.cli.commands.session.session_core.PromptConfigurationWithLocation">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">PromptConfigurationWithLocation</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PromptConfigurationWithLocation</span><span class="p">:</span>
     <span class="n">location</span><span class="p">:</span> <span class="n">Path</span>
     <span class="n">prompt_config</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">PromptConfiguration</span></div>
 
@@ -129,7 +134,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="n">PromptFunction</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">str</span><span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">_retry_prompt_until_valid_input</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_retry_prompt_until_valid_input</span><span class="p">(</span>
     <span class="n">prompt_fn</span><span class="p">:</span> <span class="n">PromptFunction</span><span class="p">,</span>
     <span class="n">validation_fn</span><span class="p">:</span> <span class="n">ValidationFunction</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -162,7 +167,7 @@ window.addEventListener("load", () => mermaid.run());
     <span class="k">return</span> <span class="n">entered_value</span>
 
 
-<span class="k">def</span> <span class="nf">_validate_int</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_validate_int</span><span class="p">(</span>
     <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">floor</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">ceiling</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -190,7 +195,7 @@ window.addEventListener("load", () => mermaid.run());
     <span class="k">return</span> <span class="kc">False</span>
 
 
-<span class="k">def</span> <span class="nf">_retry_prompt_until_valid_int</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_retry_prompt_until_valid_int</span><span class="p">(</span>
     <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">floor</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ceiling</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">cliDrawer</span><span class="p">:</span> <span class="n">CLIDrawer</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -204,7 +209,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        task: Task from which the prompt was requested.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">validator</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validator</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_validate_int</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">floor</span><span class="p">,</span> <span class="n">ceiling</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
@@ -214,7 +219,7 @@ window.addEventListener("load", () => mermaid.run());
 
         <span class="k">return</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">prompt_fn</span><span class="p">():</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prompt_fn</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">cliDrawer</span><span class="o">.</span><span class="n">prompt</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">_retry_prompt_until_valid_input</span><span class="p">(</span><span class="n">prompt_fn</span><span class="p">,</span> <span class="n">validator</span><span class="p">)</span>
@@ -222,7 +227,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="TaskName">
 <a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.session_core.html#danoan.llm_assistant.runner.cli.commands.session.session_core.TaskName">[docs]</a>
-<span class="k">class</span> <span class="nc">TaskName</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TaskName</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">NoPromptSelected</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;NoPromptSelected&quot;</span><span class="p">,)</span>
     <span class="n">PromptSelected</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;PromptSelected&quot;</span><span class="p">,)</span>
     <span class="n">NewInstance</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;NewInstance&quot;</span><span class="p">,)</span>
@@ -230,14 +235,14 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">StartChat</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;StartChat&quot;</span><span class="p">,)</span>
     <span class="n">ContinueChat</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;ContinueChat&quot;</span><span class="p">,)</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span></div>
 
 
 
 <div class="viewcode-block" id="register_tasks">
 <a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.session_core.html#danoan.llm_assistant.runner.cli.commands.session.session_core.register_tasks">[docs]</a>
-<span class="k">def</span> <span class="nf">register_tasks</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">register_tasks</span><span class="p">(</span>
     <span class="n">cliDrawer</span><span class="p">:</span> <span class="n">CLIDrawer</span><span class="p">,</span>
     <span class="n">prompt_repository</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
     <span class="n">register_function</span><span class="p">,</span>
@@ -253,7 +258,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@register_function</span><span class="p">(</span><span class="n">TaskName</span><span class="o">.</span><span class="n">NoPromptSelected</span><span class="p">,</span> <span class="n">first_task</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_no_prompt_selected</span><span class="p">(</span><span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TaskInstruction</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_no_prompt_selected</span><span class="p">(</span><span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TaskInstruction</span><span class="p">]:</span>
         <span class="n">list_prompt_config</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">prompt_config_filepath</span> <span class="ow">in</span> <span class="n">prompt_repository</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">&quot;*config.toml&quot;</span><span class="p">):</span>
             <span class="n">_</span><span class="p">,</span> <span class="n">prompt_config</span> <span class="o">=</span> <span class="n">cli_utils</span><span class="o">.</span><span class="n">is_a_prompt_config_file</span><span class="p">(</span><span class="n">prompt_config_filepath</span><span class="p">)</span>
@@ -293,7 +298,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="p">)</span>
 
     <span class="nd">@register_function</span><span class="p">(</span><span class="n">TaskName</span><span class="o">.</span><span class="n">PromptSelected</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_prompt_selected</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prompt_selected</span><span class="p">(</span>
         <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">prompt_config</span><span class="p">:</span> <span class="n">PromptConfigurationWithLocation</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TaskInstruction</span><span class="p">]:</span>
         <span class="n">cliDrawer</span><span class="o">.</span><span class="n">print_panel</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">&quot;Choose an option&quot;</span><span class="p">)</span>
@@ -324,7 +329,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">return</span> <span class="n">TaskInstruction</span><span class="p">(</span><span class="n">next_state</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;prompt_config&quot;</span><span class="p">:</span> <span class="n">prompt_config</span><span class="p">})</span>
 
     <span class="nd">@register_function</span><span class="p">(</span><span class="n">TaskName</span><span class="o">.</span><span class="n">NewInstance</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_new_instance</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_new_instance</span><span class="p">(</span>
         <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">prompt_config</span><span class="p">:</span> <span class="n">PromptConfigurationWithLocation</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TaskInstruction</span><span class="p">]:</span>
         <span class="n">instances_folder</span> <span class="o">=</span> <span class="p">(</span>
@@ -334,7 +339,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">instance_filepaths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">instances_folder</span><span class="o">.</span><span class="n">iterdir</span><span class="p">())</span>
         <span class="n">list_instance_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">stem</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">instance_filepaths</span><span class="p">]</span>
 
-        <span class="k">def</span> <span class="nf">validate_instance_name</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">validate_instance_name</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">False</span>
 
@@ -358,7 +363,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">except</span> <span class="n">PromptInterruptedError</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-        <span class="k">def</span> <span class="nf">validate_assignment</span><span class="p">(</span><span class="n">assignments_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">validate_assignment</span><span class="p">(</span><span class="n">assignments_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">assignments_str</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">False</span>
 
@@ -411,7 +416,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="p">)</span>
 
     <span class="nd">@register_function</span><span class="p">(</span><span class="n">TaskName</span><span class="o">.</span><span class="n">LoadInstance</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_load_instance</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_instance</span><span class="p">(</span>
         <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">prompt_config</span><span class="p">:</span> <span class="n">PromptConfigurationWithLocation</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TaskInstruction</span><span class="p">]:</span>
         <span class="n">instances_folder</span> <span class="o">=</span> <span class="p">(</span>
@@ -453,7 +458,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="p">)</span>
 
     <span class="nd">@register_function</span><span class="p">(</span><span class="n">TaskName</span><span class="o">.</span><span class="n">StartChat</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_start_chat</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_start_chat</span><span class="p">(</span>
         <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">prompt_config</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">PromptConfiguration</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TaskInstruction</span><span class="p">]:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Prompt: </span><span class="si">{</span><span class="n">prompt_config</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="se">\n</span><span class="s2">Instance:</span><span class="si">{</span><span class="n">instance</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -468,7 +473,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="p">)</span>
 
     <span class="nd">@register_function</span><span class="p">(</span><span class="n">TaskName</span><span class="o">.</span><span class="n">ContinueChat</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_continue_chat</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_continue_chat</span><span class="p">(</span>
         <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">prompt_config</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">PromptConfiguration</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TaskInstruction</span><span class="p">]:</span>
         <span class="n">chat_title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prompt_config</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">::</span><span class="si">{</span><span class="n">instance</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>

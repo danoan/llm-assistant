@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>danoan.llm_assistant.prompt.cli.cli &mdash; llm-assistant 0.3.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=a3d76245" />
 
@@ -52,6 +52,11 @@ window.addEventListener("load", () => mermaid.run());
 <li class="toctree-l1"><a class="reference internal" href="../../../../../getting-started.html">Getting started with LLM Assistant</a></li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../how-to/setup-assistant.html">How to setup llm-assistant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../how-to/run-a-prompt.html">How to run a prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../how-to/sync-and-push-prompts.html">How to sync and push prompts</a></li>
+</ul>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api-reference.html">API Reference</a></li>
 </ul>
 <ul>
@@ -83,15 +88,15 @@ window.addEventListener("load", () => mermaid.run());
            <div itemprop="articleBody">
              
   <h1>Source code for danoan.llm_assistant.prompt.cli.cli</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">danoan.llm_assistant.prompt.cli.commands.versioning</span> <span class="kn">import</span> <span class="n">parser</span> <span class="k">as</span> <span class="n">versioning</span>
-<span class="kn">from</span> <span class="nn">danoan.llm_assistant.prompt.cli.commands.evaluate</span> <span class="kn">import</span> <span class="n">parser</span> <span class="k">as</span> <span class="n">evaluate</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">danoan.llm_assistant.prompt.cli.commands.versioning</span><span class="w"> </span><span class="kn">import</span> <span class="n">parser</span> <span class="k">as</span> <span class="n">versioning</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">danoan.llm_assistant.prompt.cli.commands.evaluate</span><span class="w"> </span><span class="kn">import</span> <span class="n">parser</span> <span class="k">as</span> <span class="n">evaluate</span>
 
-<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
 
 
 <div class="viewcode-block" id="main">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.cli.cli.html#danoan.llm_assistant.prompt.cli.cli.main">[docs]</a>
-<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
         <span class="s2">&quot;prompt-evaluator&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Collection of tools to evaluate and versioning prompts&quot;</span><span class="p">,</span>

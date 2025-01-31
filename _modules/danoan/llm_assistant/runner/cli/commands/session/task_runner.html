@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>danoan.llm_assistant.runner.cli.commands.session.task_runner &mdash; llm-assistant 0.3.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../../../../_static/css/custom.css?v=a3d76245" />
 
@@ -52,6 +52,11 @@ window.addEventListener("load", () => mermaid.run());
 <li class="toctree-l1"><a class="reference internal" href="../../../../../../../getting-started.html">Getting started with LLM Assistant</a></li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../how-to/setup-assistant.html">How to setup llm-assistant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../how-to/run-a-prompt.html">How to run a prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../how-to/sync-and-push-prompts.html">How to sync and push prompts</a></li>
+</ul>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../../../api-reference.html">API Reference</a></li>
 </ul>
 <ul>
@@ -83,12 +88,12 @@ window.addEventListener("load", () => mermaid.run());
            <div itemprop="articleBody">
              
   <h1>Source code for danoan.llm_assistant.runner.cli.commands.session.task_runner</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
-<span class="kn">import</span> <span class="nn">threading</span>
-<span class="kn">from</span> <span class="nn">queue</span> <span class="kn">import</span> <span class="n">Queue</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">queue</span><span class="w"> </span><span class="kn">import</span> <span class="n">Queue</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
 
 
 <span class="n">RegisterListenerFunction</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">Any</span><span class="p">]</span>
@@ -97,7 +102,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="EventNotifier">
 <a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.EventNotifier">[docs]</a>
-<span class="k">class</span> <span class="nc">EventNotifier</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EventNotifier</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Helper class that notifies caller when an event is complete.</span>
 
@@ -113,7 +118,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">            do_something()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">event_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">register_fn</span><span class="p">:</span> <span class="n">RegisterListenerFunction</span><span class="p">,</span>
@@ -124,50 +129,50 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">_register</span> <span class="o">=</span> <span class="n">register_fn</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_unregister</span> <span class="o">=</span> <span class="n">unregister_fn</span>
 
-    <span class="k">def</span> <span class="nf">_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_register</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event</span>
 
-    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_unregister</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="TaskListenerNotRegisteredError">
 <a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.TaskListenerNotRegisteredError">[docs]</a>
-<span class="k">class</span> <span class="nc">TaskListenerNotRegisteredError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TaskListenerNotRegisteredError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="Task">
 <a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.Task">[docs]</a>
-<span class="k">class</span> <span class="nc">Task</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Task</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represent a task of TaskRunner.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Task.Event">
 <a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.Task.Event">[docs]</a>
-    <span class="k">class</span> <span class="nc">Event</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Event</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
         <span class="n">Stop</span> <span class="o">=</span> <span class="s2">&quot;stop&quot;</span>
         <span class="n">Complete</span> <span class="o">=</span> <span class="s2">&quot;complete&quot;</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="k">def</span> <span class="nf">_trigger_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_trigger_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">event</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">:</span>
             <span class="k">return</span>
 
         <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="p">[</span><span class="n">event</span><span class="p">]:</span>
             <span class="n">callback</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_trigger_event</span><span class="p">(</span><span class="n">Task</span><span class="o">.</span><span class="n">Event</span><span class="o">.</span><span class="n">Complete</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">output</span>
@@ -175,7 +180,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="Task.run">
 <a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.Task.run">[docs]</a>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The task logic.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -184,7 +189,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="Task.start">
 <a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.Task.start">[docs]</a>
-    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Start executing the task logic.</span>
 
@@ -196,7 +201,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="Task.stop">
 <a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.Task.stop">[docs]</a>
-    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Trigger all listeners of event Task.Event.Stop.</span>
 
@@ -213,7 +218,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="Task.register_listener">
 <a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.Task.register_listener">[docs]</a>
-    <span class="k">def</span> <span class="nf">register_listener</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register_listener</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register a callback function to be called whenever the event is triggered.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -224,7 +229,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="Task.unregister_listener">
 <a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.Task.unregister_listener">[docs]</a>
-    <span class="k">def</span> <span class="nf">unregister_listener</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">unregister_listener</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Unregister a previously registered listener.</span>
 
@@ -240,7 +245,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="Task.get_event_notifier">
 <a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.Task.get_event_notifier">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_event_notifier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EventNotifier</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_event_notifier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EventNotifier</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create EventNotifier for an event.</span>
 
@@ -248,10 +253,10 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        Task.Event.Stop were triggered.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">def</span> <span class="nf">_register</span><span class="p">(</span><span class="n">event_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_register</span><span class="p">(</span><span class="n">event_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">register_listener</span><span class="p">(</span><span class="n">Task</span><span class="o">.</span><span class="n">Event</span><span class="p">(</span><span class="n">event_name</span><span class="p">),</span> <span class="n">callback</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">_unregister</span><span class="p">(</span><span class="n">event_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_unregister</span><span class="p">(</span><span class="n">event_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">unregister_listener</span><span class="p">(</span><span class="n">Task</span><span class="o">.</span><span class="n">Event</span><span class="p">(</span><span class="n">event_name</span><span class="p">),</span> <span class="n">callback</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">EventNotifier</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">_register</span><span class="p">,</span> <span class="n">_unregister</span><span class="p">)</span></div>
@@ -261,7 +266,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="TaskNotRegisteredError">
 <a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.TaskNotRegisteredError">[docs]</a>
-<span class="k">class</span> <span class="nc">TaskNotRegisteredError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TaskNotRegisteredError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
@@ -269,7 +274,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="TaskInstruction">
 <a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.TaskInstruction">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">TaskInstruction</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TaskInstruction</span><span class="p">:</span>
     <span class="n">task_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">task_input</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span></div>
 
@@ -277,7 +282,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="TaskRunner">
 <a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.TaskRunner">[docs]</a>
-<span class="k">class</span> <span class="nc">TaskRunner</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TaskRunner</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Execute TaskInstruction added to its queue until emptness.</span>
 
@@ -295,26 +300,26 @@ window.addEventListener("load", () => mermaid.run());
 
     <span class="n">QuitInstruction</span> <span class="o">=</span> <span class="n">TaskInstruction</span><span class="p">(</span><span class="s2">&quot;quit&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Task</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_task_queue</span><span class="p">:</span> <span class="n">Queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_current_task</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_register_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_register_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">task_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">task</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span><span class="p">[</span><span class="n">task_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">callback</span>
 
 <div class="viewcode-block" id="TaskRunner.register">
 <a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.TaskRunner.register">[docs]</a>
-    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">first_task</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">first_task</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Decorator to register a function as a task.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-            <span class="k">class</span> <span class="nc">_Task</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
-                <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+            <span class="k">class</span><span class="w"> </span><span class="nc">_Task</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+                <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
                     <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_register_task</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">_Task</span><span class="p">(),</span> <span class="n">callback</span><span class="p">)</span>
@@ -327,7 +332,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="TaskRunner.run">
 <a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.TaskRunner.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Traverse the queue executing all tasks there present.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -356,7 +361,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="TaskRunner.next">
 <a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.TaskRunner.next">[docs]</a>
-    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Stop the current task.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -369,7 +374,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="TaskRunner.add">
 <a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.TaskRunner.add">[docs]</a>
-    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">td</span><span class="p">:</span> <span class="n">TaskInstruction</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">td</span><span class="p">:</span> <span class="n">TaskInstruction</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a new TaskInstruction to the queue.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -380,7 +385,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="TaskRunner.stop">
 <a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.TaskRunner.stop">[docs]</a>
-    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Stop all tasks.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -389,7 +394,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="TaskRunner.clear">
 <a class="viewcode-back" href="../../../../../../../reference/danoan.llm_assistant.runner.cli.commands.session.task_runner.html#danoan.llm_assistant.runner.cli.commands.session.task_runner.TaskRunner.clear">[docs]</a>
-    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Clear task queue.</span>
 <span class="sd">        &quot;&quot;&quot;</span>

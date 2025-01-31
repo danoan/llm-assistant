@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>danoan.llm_assistant.prompt.cli.utils &mdash; llm-assistant 0.3.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=a3d76245" />
 
@@ -52,6 +52,11 @@ window.addEventListener("load", () => mermaid.run());
 <li class="toctree-l1"><a class="reference internal" href="../../../../../getting-started.html">Getting started with LLM Assistant</a></li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../how-to/setup-assistant.html">How to setup llm-assistant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../how-to/run-a-prompt.html">How to run a prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../how-to/sync-and-push-prompts.html">How to sync and push prompts</a></li>
+</ul>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api-reference.html">API Reference</a></li>
 </ul>
 <ul>
@@ -83,17 +88,17 @@ window.addEventListener("load", () => mermaid.run());
            <div itemprop="articleBody">
              
   <h1>Source code for danoan.llm_assistant.prompt.cli.utils</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span>
 
-<span class="kn">from</span> <span class="nn">rich</span> <span class="kn">import</span> <span class="nb">print</span>
-<span class="kn">from</span> <span class="nn">rich.columns</span> <span class="kn">import</span> <span class="n">Columns</span>
-<span class="kn">from</span> <span class="nn">rich.console</span> <span class="kn">import</span> <span class="n">Console</span>
-<span class="kn">from</span> <span class="nn">rich.panel</span> <span class="kn">import</span> <span class="n">Panel</span>
-<span class="kn">from</span> <span class="nn">rich.text</span> <span class="kn">import</span> <span class="n">Text</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich</span><span class="w"> </span><span class="kn">import</span> <span class="nb">print</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.columns</span><span class="w"> </span><span class="kn">import</span> <span class="n">Columns</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.console</span><span class="w"> </span><span class="kn">import</span> <span class="n">Console</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.panel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Panel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">Text</span>
 
-<span class="kn">from</span> <span class="nn">danoan.llm_assistant.common</span> <span class="kn">import</span> <span class="n">config</span>
-<span class="kn">from</span> <span class="nn">danoan.llm_assistant.prompt.core</span> <span class="kn">import</span> <span class="n">api</span><span class="p">,</span> <span class="n">utils</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">danoan.llm_assistant.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">danoan.llm_assistant.prompt.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">api</span><span class="p">,</span> <span class="n">utils</span>
 
 <span class="c1">###################################</span>
 <span class="c1"># GUI Primitives</span>
@@ -103,12 +108,12 @@ window.addEventListener("load", () => mermaid.run());
 <span class="n">_console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span>
 
 
-<span class="k">def</span> <span class="nf">_make_numbered_list</span><span class="p">(</span><span class="n">entries</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">padding</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Columns</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_numbered_list</span><span class="p">(</span><span class="n">entries</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">padding</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Columns</span><span class="p">:</span>
     <span class="n">list_elements</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">entries</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
     <span class="k">return</span> <span class="n">Columns</span><span class="p">(</span><span class="n">list_elements</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="n">padding</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_make_numbered_vertical_list</span><span class="p">(</span><span class="n">entries</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Text</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_numbered_vertical_list</span><span class="p">(</span><span class="n">entries</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Text</span><span class="p">:</span>
     <span class="n">text</span> <span class="o">=</span> <span class="n">Text</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">entries</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
         <span class="n">text</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -119,21 +124,21 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="print_list">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.cli.utils.html#danoan.llm_assistant.prompt.cli.utils.print_list">[docs]</a>
-<span class="k">def</span> <span class="nf">print_list</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_list</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">_make_numbered_list</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
 
 
 
 <div class="viewcode-block" id="print_vertical_list">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.cli.utils.html#danoan.llm_assistant.prompt.cli.utils.print_vertical_list">[docs]</a>
-<span class="k">def</span> <span class="nf">print_vertical_list</span><span class="p">(</span><span class="n">entries</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_vertical_list</span><span class="p">(</span><span class="n">entries</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]):</span>
     <span class="n">_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">_make_numbered_vertical_list</span><span class="p">(</span><span class="n">entries</span><span class="p">))</span></div>
 
 
 
 <div class="viewcode-block" id="print_panel_list">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.cli.utils.html#danoan.llm_assistant.prompt.cli.utils.print_panel_list">[docs]</a>
-<span class="k">def</span> <span class="nf">print_panel_list</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">entries</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_panel_list</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">entries</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">columns</span> <span class="o">=</span> <span class="n">_make_numbered_list</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span>
     <span class="n">panel</span> <span class="o">=</span> <span class="n">Panel</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">panel</span><span class="p">)</span></div>
@@ -142,7 +147,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="print_vertical_panel_list">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.cli.utils.html#danoan.llm_assistant.prompt.cli.utils.print_vertical_panel_list">[docs]</a>
-<span class="k">def</span> <span class="nf">print_vertical_panel_list</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">entries</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_vertical_panel_list</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">entries</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">panel</span> <span class="o">=</span> <span class="n">Panel</span><span class="p">(</span><span class="n">_make_numbered_vertical_list</span><span class="p">(</span><span class="n">entries</span><span class="p">),</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
     <span class="n">_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">panel</span><span class="p">)</span></div>
 
@@ -150,7 +155,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="print_panel_table">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.cli.utils.html#danoan.llm_assistant.prompt.cli.utils.print_panel_table">[docs]</a>
-<span class="k">def</span> <span class="nf">print_panel_table</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_panel_table</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">table</span> <span class="o">=</span> <span class="n">Columns</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">column_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">panel</span> <span class="o">=</span> <span class="n">Panel</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">panel</span><span class="p">)</span></div>
@@ -164,7 +169,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="print_commits">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.cli.utils.html#danoan.llm_assistant.prompt.cli.utils.print_commits">[docs]</a>
-<span class="k">def</span> <span class="nf">print_commits</span><span class="p">(</span><span class="n">repository_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">commits_hashes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_commits</span><span class="p">(</span><span class="n">repository_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">commits_hashes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Print a summary of the given commit hashes.</span>
 
@@ -186,7 +191,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="print_previous_commit">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.cli.utils.html#danoan.llm_assistant.prompt.cli.utils.print_previous_commit">[docs]</a>
-<span class="k">def</span> <span class="nf">print_previous_commit</span><span class="p">(</span><span class="n">repository_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">commit_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_previous_commit</span><span class="p">(</span><span class="n">repository_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">commit_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Print a summary of all commits previous the given one.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -205,7 +210,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="print_staging_area">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.cli.utils.html#danoan.llm_assistant.prompt.cli.utils.print_staging_area">[docs]</a>
-<span class="k">def</span> <span class="nf">print_staging_area</span><span class="p">(</span><span class="n">repository_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_staging_area</span><span class="p">(</span><span class="n">repository_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Print respoitory staging area.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -219,7 +224,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="print_side_by_side">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.cli.utils.html#danoan.llm_assistant.prompt.cli.utils.print_side_by_side">[docs]</a>
-<span class="k">def</span> <span class="nf">print_side_by_side</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_side_by_side</span><span class="p">(</span>
     <span class="n">left_content</span><span class="p">,</span> <span class="n">right_content</span><span class="p">,</span> <span class="n">left_title</span><span class="o">=</span><span class="s2">&quot;Left&quot;</span><span class="p">,</span> <span class="n">right_title</span><span class="o">=</span><span class="s2">&quot;Right&quot;</span>
 <span class="p">):</span>
     <span class="n">console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span>
@@ -244,7 +249,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ensure_configuration_file_exists">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.cli.utils.html#danoan.llm_assistant.prompt.cli.utils.ensure_configuration_file_exists">[docs]</a>
-<span class="k">def</span> <span class="nf">ensure_configuration_file_exists</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">ensure_configuration_file_exists</span><span class="p">():</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">config</span><span class="o">.</span><span class="n">get_configuration_filepath</span><span class="p">()</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="nb">print</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Configuration file for prompt-evaluator does not exist. It should be located </span><span class="se">\</span>
@@ -256,7 +261,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ensure_prompt_repository_exists">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.cli.utils.html#danoan.llm_assistant.prompt.cli.utils.ensure_prompt_repository_exists">[docs]</a>
-<span class="k">def</span> <span class="nf">ensure_prompt_repository_exists</span><span class="p">(</span><span class="n">repository_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">ensure_prompt_repository_exists</span><span class="p">(</span><span class="n">repository_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="n">repository_folder</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">get_prompts_folder</span><span class="p">()</span> <span class="o">/</span> <span class="n">repository_name</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">api</span><span class="o">.</span><span class="n">is_prompt_repository</span><span class="p">(</span><span class="n">repository_folder</span><span class="p">):</span>

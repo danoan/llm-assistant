@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>danoan.llm_assistant.common.model &mdash; llm-assistant 0.3.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=a3d76245" />
 
@@ -52,6 +52,11 @@ window.addEventListener("load", () => mermaid.run());
 <li class="toctree-l1"><a class="reference internal" href="../../../../getting-started.html">Getting started with LLM Assistant</a></li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../how-to/setup-assistant.html">How to setup llm-assistant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../how-to/run-a-prompt.html">How to run a prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../how-to/sync-and-push-prompts.html">How to sync and push prompts</a></li>
+</ul>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api-reference.html">API Reference</a></li>
 </ul>
 <ul>
@@ -87,9 +92,9 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">Data models shared by prompt and runner modules.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="c1">#################################</span>
 <span class="c1"># Configuration data</span>
@@ -99,24 +104,24 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="PromptRepositoryConfiguration">
 <a class="viewcode-back" href="../../../../reference/danoan.llm_assistant.common.model.html#danoan.llm_assistant.common.model.PromptRepositoryConfiguration">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">PromptRepositoryConfiguration</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PromptRepositoryConfiguration</span><span class="p">:</span>
     <span class="n">git_user</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">prompt_collection_folder</span><span class="p">:</span> <span class="n">Path</span>
     <span class="n">versioning</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prompt_collection_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_collection_folder</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__asdict__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__asdict__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">asdict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;prompt_collection_folder&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_collection_folder</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">d</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;git_user: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">git_user</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;prompt_collection_folder: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_collection_folder</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;prompt_collection_folder: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_collection_folder</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;versioning: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">versioning</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span></div>
 
@@ -125,28 +130,28 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="RunnerConfiguration">
 <a class="viewcode-back" href="../../../../reference/danoan.llm_assistant.common.model.html#danoan.llm_assistant.common.model.RunnerConfiguration">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">RunnerConfiguration</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RunnerConfiguration</span><span class="p">:</span>
     <span class="n">openai_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">use_cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">cache_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cache_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache_path</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_path</span> <span class="k">else</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">__asdict__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__asdict__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">asdict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_path</span><span class="p">:</span>
             <span class="n">d</span><span class="p">[</span><span class="s2">&quot;cache_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache_path</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">d</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;openai_key: &lt;&lt;HIDDEN&gt;&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;model: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;use_cache: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">use_cache</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;cache_path: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cache_path</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;cache_path: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache_path</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span></div>
 
 
@@ -154,17 +159,17 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="LLMAssistantConfiguration">
 <a class="viewcode-back" href="../../../../reference/danoan.llm_assistant.common.model.html#danoan.llm_assistant.common.model.LLMAssistantConfiguration">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">LLMAssistantConfiguration</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LLMAssistantConfiguration</span><span class="p">:</span>
     <span class="n">runner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">RunnerConfiguration</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">prompt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PromptRepositoryConfiguration</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Runner configuration</span><span class="se">\n\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;Prompt repository configuration</span><span class="se">\n\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__asdict__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__asdict__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;runner&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">__asdict__</span><span class="p">()</span>
             <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="p">)</span> <span class="ow">is</span> <span class="n">RunnerConfiguration</span>
@@ -177,7 +182,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="LLMAssistantConfiguration.from_dict">
 <a class="viewcode-back" href="../../../../reference/danoan.llm_assistant.common.model.html#danoan.llm_assistant.common.model.LLMAssistantConfiguration.from_dict">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">runner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">prompt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -202,7 +207,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="PromptConfiguration">
 <a class="viewcode-back" href="../../../../reference/danoan.llm_assistant.common.model.html#danoan.llm_assistant.common.model.PromptConfiguration">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">PromptConfiguration</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PromptConfiguration</span><span class="p">:</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">system_prompt</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">user_prompt</span><span class="p">:</span> <span class="nb">str</span>

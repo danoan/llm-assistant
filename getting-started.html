@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Getting started with LLM Assistant &mdash; llm-assistant 0.3.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=a3d76245" />
 
@@ -20,7 +20,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="API Reference" href="api-reference.html" />
+    <link rel="next" title="How to setup llm-assistant" href="how-to/setup-assistant.html" />
     <link rel="prev" title="Welcome to LLM Assistant’s documentation!" href="index.html" /> 
 </head>
 
@@ -57,6 +57,11 @@
 <li class="toctree-l2"><a class="reference internal" href="#contributing">Contributing</a></li>
 </ul>
 </li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="how-to/setup-assistant.html">How to setup llm-assistant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to/run-a-prompt.html">How to run a prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to/sync-and-push-prompts.html">How to sync and push prompts</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api-reference.html">API Reference</a></li>
@@ -122,43 +127,26 @@ to hold runner and prompt settings.</p>
 </pre></div>
 </div>
 <p><strong>Configuration file search</strong>: The application backtracks the current working directory searching for the
-<code class="docutils literal notranslate"><span class="pre">llm-assistant-config.toml</span></code> file starting from CWD. If not such file is found, it searches in the location
-specified by the environment variable <code class="docutils literal notranslate"><span class="pre">LLM_ASSISTANT_CONFIGURATION_FOLDER</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">llm-assistant-config.toml</span></code> file starting from the current working directory. If no configuration file
+is found, it searches in the location specified by the environment variable <code class="docutils literal notranslate"><span class="pre">LLM_ASSISTANT_CONFIGURATION_FOLDER</span></code>.</p>
 <p>You can check which configuration file is being used by running</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>llm-assistant<span class="w"> </span>setup
 </pre></div>
 </div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>For different strategies regarding <code class="docutils literal notranslate"><span class="pre">llm-assistant</span></code> configuration, check the guide <a class="reference internal" href="how-to/setup-assistant.html"><span class="std std-doc">How to setup llm-assistant</span></a>.</p>
+</div>
 </section>
 <section id="running-a-prompt">
 <h3>Running a prompt<a class="headerlink" href="#running-a-prompt" title="Link to this heading"></a></h3>
-<p>Consider the <code class="docutils literal notranslate"><span class="pre">alternative-expression</span></code> prompt configuration file:</p>
-<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Alternative Expressions&quot;</span>
+<p>First thing is to define your prompt <code class="docutils literal notranslate"><span class="pre">config.toml</span></code> file and store them in the prompt collection folder.</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="c1"># prompt-collection-folder/alternative-expression/config.toml</span>
+<span class="n">name</span><span class="o">=</span><span class="s2">&quot;Alternative Expression&quot;</span>
 <span class="n">system_prompt</span><span class="o">=</span><span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">You are fluent speaker of the {language} language and your task is to list at most five expressions that encodes the meaning of a sentence or a word enclosed by double angle brackets.</span>
 
 <span class="s1">Your response must be given as a json list and the items must be written in {language}.</span>
-
-<span class="s1">Examples</span>
-<span class="s1">--------</span>
-
-<span class="s1">Language: English.</span>
-<span class="s1">Sentence: &lt;&lt;It is an unusual day today.&gt;&gt;</span>
-<span class="s1">Response: [</span>
-<span class="s1">    &quot;It is an odd day today&quot;,</span>
-<span class="s1">    &quot;Today is quite unusual&quot;,</span>
-<span class="s1">    &quot;It is an atypical day&quot;,</span>
-<span class="s1">    &quot;Today feels out of the ordinary&quot;,</span>
-<span class="s1">    &quot;Today stands out differently&quot;</span>
-<span class="s1">]</span>
-<span class="s1">--</span>
-
-<span class="s1">Language: french</span>
-<span class="s1">Sentence: &lt;&lt;gentil&gt;&gt;</span>
-<span class="s1">Response: [</span>
-<span class="s1">    &quot;aimable&quot;,</span>
-<span class="s1">    &quot;doux&quot;</span>
-<span class="s1">]</span>
-<span class="s1">--</span>
 
 <span class="s1">&#39;&#39;&#39;</span>
 <span class="n">user_prompt</span><span class="o">=</span><span class="s1">&#39;&#39;&#39;</span>
@@ -166,12 +154,11 @@ specified by the environment variable <code class="docutils literal notranslate"
 <span class="s1">Sentence: &lt;&lt;{message}&gt;&gt;</span>
 <span class="s1">Response:</span>
 <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">&#39;&#39;&#39;</span>
 </pre></div>
 </div>
-<p>It is possible to run the prompt in three different ways</p>
+<p>Then, you can run this prompt by executing</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;{}&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>llm-assistant<span class="w"> </span>run<span class="w"> </span>alternative-expression<span class="w"> </span>--p<span class="w"> </span>language<span class="w"> </span>portuguese<span class="w"> </span>--p<span class="w"> </span>message<span class="w"> </span><span class="s2">&quot;ganhar a vida&quot;</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;{&quot;message&quot;:&quot;ganhar a vida&quot;}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>llm-assistant<span class="w"> </span>run<span class="w"> </span>alternative-expression<span class="w"> </span>--p<span class="w"> </span>language<span class="w"> </span>portuguese
-<span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;{&quot;message&quot;:&quot;ganhar a vida&quot;, &quot;language&quot;:&quot;portuguese&quot;}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>llm-assistant<span class="w"> </span>run<span class="w"> </span>alternative-expression
 </pre></div>
 </div>
 </section>
@@ -181,10 +168,6 @@ specified by the environment variable <code class="docutils literal notranslate"
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>llm-assistant<span class="w"> </span>session
 </pre></div>
 </div>
-<p>You are invited to select one of the prompts located at <code class="docutils literal notranslate"><span class="pre">prompt.prompt_collection_folder</span></code> and then to load or
-create a new instance for the prompt.</p>
-<p><strong>Prompt Instance</strong>: A prompt instance is a subset of pre-defined prompt variables. For example, in the alternative-expression
-prompt, we could have a french instance (language=french) and a portuguese instance (language=portuguese).</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>╭────────────────────────────────────────────────────────────────────────────────────────╮
 │<span class="w"> </span>Select<span class="w"> </span>prompt<span class="w">                                                                          </span>│
 ╰────────────────────────────────────────────────────────────────────────────────────────╯
@@ -223,7 +206,7 @@ Enter<span class="w"> </span>message:<span class="w"> </span><span class="nv">$$
 <h3>Syncing prompts<a class="headerlink" href="#syncing-prompts" title="Link to this heading"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">sync</span></code> feature allows to fetch the most recent updates from the remote prompt repository
 and to update the local view.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>prompt-manager<span class="w"> </span>sync
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>prompt-manager<span class="w"> </span>versioning<span class="w"> </span>sync
 </pre></div>
 </div>
 <p>The synchronization is done according with the <code class="docutils literal notranslate"><span class="pre">prompt.versioning</span></code> settings.</p>
@@ -236,7 +219,7 @@ and to update the local view.</p>
 <span class="n">word-definition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;v1.0.0&quot;</span>
 </pre></div>
 </div>
-<p>For the settings above, the sync will seach for the repositories:</p>
+<p>For the settings above, the sync will search for the repositories:</p>
 <ul class="simple">
 <li><p>danoan-prompts/alternative-expression</p></li>
 <li><p>danoan-prompts/word-definition</p></li>
@@ -246,7 +229,9 @@ and to update the local view.</p>
 <section id="push-prompt-version-assistant">
 <h3>Push prompt version assistant<a class="headerlink" href="#push-prompt-version-assistant" title="Link to this heading"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">prompt-manager</span> <span class="pre">versioning</span> <span class="pre">push</span></code> commands guides the user to the creation of a
-new prompt version.</p>
+new prompt version, helping to keep your prompts organized and following a versioning
+policy.</p>
+<p>Check the guide <a class="reference internal" href="how-to/run-a-prompt.html"><span class="std std-doc">How to run a prompt</span></a> for more information.</p>
 </section>
 </section>
 <section id="contributing">
@@ -260,7 +245,7 @@ new prompt version.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="index.html" class="btn btn-neutral float-left" title="Welcome to LLM Assistant’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="api-reference.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="how-to/setup-assistant.html" class="btn btn-neutral float-right" title="How to setup llm-assistant" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

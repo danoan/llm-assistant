@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>danoan.llm_assistant.runner.cli.utils &mdash; llm-assistant 0.3.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=a3d76245" />
 
@@ -52,6 +52,11 @@ window.addEventListener("load", () => mermaid.run());
 <li class="toctree-l1"><a class="reference internal" href="../../../../../getting-started.html">Getting started with LLM Assistant</a></li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../how-to/setup-assistant.html">How to setup llm-assistant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../how-to/run-a-prompt.html">How to run a prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../how-to/sync-and-push-prompts.html">How to sync and push prompts</a></li>
+</ul>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api-reference.html">API Reference</a></li>
 </ul>
 <ul>
@@ -83,18 +88,18 @@ window.addEventListener("load", () => mermaid.run());
            <div itemprop="articleBody">
              
   <h1>Source code for danoan.llm_assistant.runner.cli.utils</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">import</span> <span class="nn">toml</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">toml</span>
 
-<span class="kn">from</span> <span class="nn">danoan.llm_assistant.common</span> <span class="kn">import</span> <span class="n">config</span><span class="p">,</span> <span class="n">exception</span><span class="p">,</span> <span class="n">model</span>
-<span class="kn">from</span> <span class="nn">danoan.llm_assistant.runner.core</span> <span class="kn">import</span> <span class="n">api</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">danoan.llm_assistant.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">config</span><span class="p">,</span> <span class="n">exception</span><span class="p">,</span> <span class="n">model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">danoan.llm_assistant.runner.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">api</span>
 
 
 <div class="viewcode-block" id="ensure_environment_variable_is_defined">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.runner.cli.utils.html#danoan.llm_assistant.runner.cli.utils.ensure_environment_variable_is_defined">[docs]</a>
-<span class="k">def</span> <span class="nf">ensure_environment_variable_is_defined</span><span class="p">(</span><span class="n">logger</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">ensure_environment_variable_is_defined</span><span class="p">(</span><span class="n">logger</span><span class="p">):</span>
     <span class="c1"># Not necessqry anymore</span>
     <span class="k">pass</span></div>
 
@@ -109,7 +114,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ensure_configuration_file_exists">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.runner.cli.utils.html#danoan.llm_assistant.runner.cli.utils.ensure_configuration_file_exists">[docs]</a>
-<span class="k">def</span> <span class="nf">ensure_configuration_file_exists</span><span class="p">(</span><span class="n">logger</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">ensure_configuration_file_exists</span><span class="p">(</span><span class="n">logger</span><span class="p">):</span>
     <span class="n">ensure_environment_variable_is_defined</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">config</span><span class="o">.</span><span class="n">get_configuration</span><span class="p">()</span>
@@ -123,7 +128,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ensure_prompt_exists">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.runner.cli.utils.html#danoan.llm_assistant.runner.cli.utils.ensure_prompt_exists">[docs]</a>
-<span class="k">def</span> <span class="nf">ensure_prompt_exists</span><span class="p">(</span><span class="n">prompt_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">logger</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">ensure_prompt_exists</span><span class="p">(</span><span class="n">prompt_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">logger</span><span class="p">):</span>
     <span class="n">llma_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get_configuration</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">llma_config</span><span class="o">.</span><span class="n">prompt</span><span class="p">:</span>
@@ -131,7 +136,10 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="n">prompt_config_filepath</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">llma_config</span><span class="o">.</span><span class="n">prompt</span><span class="o">.</span><span class="n">prompt_collection_folder</span> <span class="o">/</span> <span class="n">prompt_name</span> <span class="o">/</span> <span class="s2">&quot;config.toml&quot;</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">get_configuration_folder</span><span class="p">()</span>
+        <span class="o">/</span> <span class="n">llma_config</span><span class="o">.</span><span class="n">prompt</span><span class="o">.</span><span class="n">prompt_collection_folder</span>
+        <span class="o">/</span> <span class="n">prompt_name</span>
+        <span class="o">/</span> <span class="s2">&quot;config.toml&quot;</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">prompt_config_filepath</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
@@ -143,14 +151,14 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="normalize_name">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.runner.cli.utils.html#danoan.llm_assistant.runner.cli.utils.normalize_name">[docs]</a>
-<span class="k">def</span> <span class="nf">normalize_name</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">normalize_name</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="value_or_default">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.runner.cli.utils.html#danoan.llm_assistant.runner.cli.utils.value_or_default">[docs]</a>
-<span class="k">def</span> <span class="nf">value_or_default</span><span class="p">(</span><span class="n">data_dict</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">value_or_default</span><span class="p">(</span><span class="n">data_dict</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">data_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
@@ -160,7 +168,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="is_a_prompt_config_file">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.runner.cli.utils.html#danoan.llm_assistant.runner.cli.utils.is_a_prompt_config_file">[docs]</a>
-<span class="k">def</span> <span class="nf">is_a_prompt_config_file</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_a_prompt_config_file</span><span class="p">(</span>
     <span class="n">filepath</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">PromptConfiguration</span><span class="p">]:</span>
     <span class="k">try</span><span class="p">:</span>

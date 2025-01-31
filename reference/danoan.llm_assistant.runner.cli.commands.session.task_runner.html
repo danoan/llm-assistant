@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>danoan.llm_assistant.runner.cli.commands.session.task_runner module &mdash; llm-assistant 0.3.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=a3d76245" />
 
@@ -43,6 +43,11 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting started with LLM Assistant</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../how-to/setup-assistant.html">How to setup llm-assistant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how-to/run-a-prompt.html">How to run a prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how-to/sync-and-push-prompts.html">How to sync and push prompts</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../api-reference.html">API Reference</a></li>
@@ -115,9 +120,8 @@ the value of the notifier.</p>
 <p>Represent a task of TaskRunner.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="danoan.llm_assistant.runner.cli.commands.session.task_runner.Task.Event">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/danoan/llm_assistant/runner/cli/commands/session/task_runner.html#Task.Event"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.runner.cli.commands.session.task_runner.Task.Event" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names=&lt;not</span> <span class="pre">given&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/danoan/llm_assistant/runner/cli/commands/session/task_runner.html#Task.Event"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#danoan.llm_assistant.runner.cli.commands.session.task_runner.Task.Event" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
-<p>An enumeration.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="danoan.llm_assistant.runner.cli.commands.session.task_runner.Task.Event.Complete">
 <span class="sig-name descname"><span class="pre">Complete</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'complete'</span></em><a class="headerlink" href="#danoan.llm_assistant.runner.cli.commands.session.task_runner.Task.Event.Complete" title="Link to this definition"></a></dt>

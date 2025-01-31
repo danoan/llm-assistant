@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>danoan.llm_assistant.prompt.cli.commands.versioning.commands.sync.action &mdash; llm-assistant 0.3.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../../../../../../_static/css/custom.css?v=a3d76245" />
 
@@ -52,6 +52,11 @@ window.addEventListener("load", () => mermaid.run());
 <li class="toctree-l1"><a class="reference internal" href="../../../../../../../../../getting-started.html">Getting started with LLM Assistant</a></li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../../../how-to/setup-assistant.html">How to setup llm-assistant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../../../how-to/run-a-prompt.html">How to run a prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../../../how-to/sync-and-push-prompts.html">How to sync and push prompts</a></li>
+</ul>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../../../../../api-reference.html">API Reference</a></li>
 </ul>
 <ul>
@@ -83,15 +88,15 @@ window.addEventListener("load", () => mermaid.run());
            <div itemprop="articleBody">
              
   <h1>Source code for danoan.llm_assistant.prompt.cli.commands.versioning.commands.sync.action</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span>
 
-<span class="kn">from</span> <span class="nn">git.remote</span> <span class="kn">import</span> <span class="n">RemoteProgress</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">git.remote</span><span class="w"> </span><span class="kn">import</span> <span class="n">RemoteProgress</span>
 
-<span class="kn">from</span> <span class="nn">danoan.llm_assistant.common</span> <span class="kn">import</span> <span class="n">config</span>
-<span class="kn">from</span> <span class="nn">danoan.llm_assistant.prompt.core</span> <span class="kn">import</span> <span class="n">api</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">danoan.llm_assistant.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">danoan.llm_assistant.prompt.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">api</span>
 
 
-<span class="k">def</span> <span class="nf">__git_event_processor__</span><span class="p">(</span><span class="n">op_code</span><span class="p">,</span> <span class="n">cur_count</span><span class="p">,</span> <span class="n">max_count</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">__git_event_processor__</span><span class="p">(</span><span class="n">op_code</span><span class="p">,</span> <span class="n">cur_count</span><span class="p">,</span> <span class="n">max_count</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
     <span class="n">d</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">op_code</span> <span class="o">&amp;</span> <span class="n">RemoteProgress</span><span class="o">.</span><span class="n">RECEIVING</span><span class="p">:</span>
         <span class="k">return</span>
@@ -101,11 +106,11 @@ window.addEventListener("load", () => mermaid.run());
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">d</span><span class="o">*</span><span class="mi">4</span><span class="si">}</span><span class="s2">Progress: </span><span class="si">{</span><span class="n">percent</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">% - </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">__get_sync_events_processor__</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">__get_sync_events_processor__</span><span class="p">():</span>
     <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">action</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">inner</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">inner</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">nonlocal</span> <span class="n">params</span>
         <span class="k">nonlocal</span> <span class="n">action</span>
         <span class="n">d</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span>
@@ -147,7 +152,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="sync">
 <a class="viewcode-back" href="../../../../../../../../../reference/danoan.llm_assistant.prompt.cli.commands.versioning.commands.sync.action.html#danoan.llm_assistant.prompt.cli.commands.versioning.commands.sync.action.sync">[docs]</a>
-<span class="k">def</span> <span class="nf">sync</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sync</span><span class="p">():</span>
     <span class="n">llma_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get_configuration</span><span class="p">()</span>
     <span class="n">api</span><span class="o">.</span><span class="n">sync</span><span class="p">(</span><span class="n">llma_config</span><span class="o">.</span><span class="n">prompt</span><span class="p">,</span> <span class="n">__get_sync_events_processor__</span><span class="p">())</span></div>
 

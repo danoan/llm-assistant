@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>danoan.llm_assistant.prompt.core.api &mdash; llm-assistant 0.3.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=a3d76245" />
 
@@ -52,6 +52,11 @@ window.addEventListener("load", () => mermaid.run());
 <li class="toctree-l1"><a class="reference internal" href="../../../../../getting-started.html">Getting started with LLM Assistant</a></li>
 </ul>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../how-to/setup-assistant.html">How to setup llm-assistant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../how-to/run-a-prompt.html">How to run a prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../how-to/sync-and-push-prompts.html">How to sync and push prompts</a></li>
+</ul>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api-reference.html">API Reference</a></li>
 </ul>
 <ul>
@@ -87,21 +92,21 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">prompt-manager interface.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">import</span> <span class="nn">git</span>
-<span class="kn">import</span> <span class="nn">toml</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">git</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">toml</span>
 
-<span class="kn">from</span> <span class="nn">danoan.llm_assistant.common</span> <span class="kn">import</span> <span class="n">config</span>
-<span class="kn">from</span> <span class="nn">danoan.llm_assistant.common.model</span> <span class="kn">import</span> <span class="n">PromptRepositoryConfiguration</span>
-<span class="kn">from</span> <span class="nn">danoan.llm_assistant.prompt.core</span> <span class="kn">import</span> <span class="n">model</span><span class="p">,</span> <span class="n">utils</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">danoan.llm_assistant.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">danoan.llm_assistant.common.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">PromptRepositoryConfiguration</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">danoan.llm_assistant.prompt.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">model</span><span class="p">,</span> <span class="n">utils</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
 <span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
@@ -113,7 +118,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="get_prompts_folder">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.core.api.html#danoan.llm_assistant.prompt.core.api.get_prompts_folder">[docs]</a>
-<span class="k">def</span> <span class="nf">get_prompts_folder</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_prompts_folder</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return path to the folder where all tracked prompts are located.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -124,7 +129,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="get_prompt_configuration_filepath">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.core.api.html#danoan.llm_assistant.prompt.core.api.get_prompt_configuration_filepath">[docs]</a>
-<span class="k">def</span> <span class="nf">get_prompt_configuration_filepath</span><span class="p">(</span><span class="n">prompt_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_prompt_configuration_filepath</span><span class="p">(</span><span class="n">prompt_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return path to prompt configuration file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -134,7 +139,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="is_prompt_repository">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.core.api.html#danoan.llm_assistant.prompt.core.api.is_prompt_repository">[docs]</a>
-<span class="k">def</span> <span class="nf">is_prompt_repository</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_prompt_repository</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check if a path points to a prompt repository.</span>
 
@@ -161,7 +166,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="get_tracked_prompt">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.core.api.html#danoan.llm_assistant.prompt.core.api.get_tracked_prompt">[docs]</a>
-<span class="k">def</span> <span class="nf">get_tracked_prompt</span><span class="p">(</span><span class="n">repository_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">model</span><span class="o">.</span><span class="n">TrackedPrompt</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_tracked_prompt</span><span class="p">(</span><span class="n">repository_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">model</span><span class="o">.</span><span class="n">TrackedPrompt</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return a TrackedPrompt from the prompt repository.</span>
 
@@ -189,7 +194,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="get_tracked_prompts">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.core.api.html#danoan.llm_assistant.prompt.core.api.get_tracked_prompts">[docs]</a>
-<span class="k">def</span> <span class="nf">get_tracked_prompts</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">model</span><span class="o">.</span><span class="n">TrackedPrompt</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_tracked_prompts</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">model</span><span class="o">.</span><span class="n">TrackedPrompt</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return a list of all prompts tracked by the tool.</span>
 
@@ -209,7 +214,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="get_prompt_test_regression_filepath">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.core.api.html#danoan.llm_assistant.prompt.core.api.get_prompt_test_regression_filepath">[docs]</a>
-<span class="k">def</span> <span class="nf">get_prompt_test_regression_filepath</span><span class="p">(</span><span class="n">prompt_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_prompt_test_regression_filepath</span><span class="p">(</span><span class="n">prompt_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get regression test file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -217,15 +222,25 @@ window.addEventListener("load", () => mermaid.run());
 
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">__resolve_version__</span><span class="p">(</span><span class="n">prompt_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">tp</span> <span class="o">=</span> <span class="n">get_tracked_prompt</span><span class="p">(</span><span class="n">prompt_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">version</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">or</span> <span class="n">version</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;last&quot;</span><span class="p">:</span>
+        <span class="n">all_versions</span> <span class="o">=</span> <span class="n">get_prompt_versions</span><span class="p">(</span><span class="n">tp</span><span class="o">.</span><span class="n">repository_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_versions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">version</span>
+        <span class="k">return</span> <span class="n">all_versions</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">version</span>
+
+
 <div class="viewcode-block" id="sync">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.core.api.html#danoan.llm_assistant.prompt.core.api.sync">[docs]</a>
-<span class="k">def</span> <span class="nf">sync</span><span class="p">(</span><span class="n">repo_config</span><span class="p">:</span> <span class="n">PromptRepositoryConfiguration</span><span class="p">,</span> <span class="n">progress_callback</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sync</span><span class="p">(</span><span class="n">repo_config</span><span class="p">:</span> <span class="n">PromptRepositoryConfiguration</span><span class="p">,</span> <span class="n">progress_callback</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read prompt repository configuration file and sync local folder</span>
 <span class="sd">    with the specified prompt version.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">class</span> <span class="nc">Events</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Events</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
         <span class="n">SYNC_CONFIG</span> <span class="o">=</span> <span class="s2">&quot;sync_config&quot;</span>
         <span class="n">FETCH</span> <span class="o">=</span> <span class="s2">&quot;fetch&quot;</span>
         <span class="n">CHECKOUT</span> <span class="o">=</span> <span class="s2">&quot;checkout&quot;</span>
@@ -239,7 +254,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">END</span> <span class="o">=</span> <span class="s2">&quot;end&quot;</span>
 
     <span class="nd">@dataclass</span>
-    <span class="k">class</span> <span class="nc">SyncItem</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">SyncItem</span><span class="p">:</span>
         <span class="n">event</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span>
             <span class="n">Events</span><span class="o">.</span><span class="n">SYNC_CONFIG</span><span class="p">,</span>
             <span class="n">Events</span><span class="o">.</span><span class="n">FETCH</span><span class="p">,</span>
@@ -256,7 +271,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_progress_callback</span><span class="p">(</span><span class="n">sync_item</span><span class="p">:</span> <span class="n">SyncItem</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_progress_callback</span><span class="p">(</span><span class="n">sync_item</span><span class="p">:</span> <span class="n">SyncItem</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">progress_callback</span><span class="p">:</span>
             <span class="n">d</span> <span class="o">=</span> <span class="n">asdict</span><span class="p">(</span><span class="n">sync_item</span><span class="p">)</span>
             <span class="n">d</span><span class="p">[</span><span class="s2">&quot;event&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sync_item</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">value</span>
@@ -264,7 +279,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span>
 
-    <span class="k">def</span> <span class="nf">_git_progress_callback</span><span class="p">(</span><span class="n">op_code</span><span class="p">,</span> <span class="n">cur_count</span><span class="p">,</span> <span class="n">max_count</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_git_progress_callback</span><span class="p">(</span><span class="n">op_code</span><span class="p">,</span> <span class="n">cur_count</span><span class="p">,</span> <span class="n">max_count</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
         <span class="n">_progress_callback</span><span class="p">(</span><span class="n">SyncItem</span><span class="p">(</span><span class="n">Events</span><span class="o">.</span><span class="n">GIT</span><span class="p">))</span>
         <span class="n">_progress_callback</span><span class="p">(</span><span class="n">SyncItem</span><span class="p">(</span><span class="n">Events</span><span class="o">.</span><span class="n">BEGIN</span><span class="p">))</span>
         <span class="n">_progress_callback</span><span class="p">(</span><span class="n">SyncItem</span><span class="p">(</span><span class="n">Events</span><span class="o">.</span><span class="n">ITEM</span><span class="p">,</span> <span class="s2">&quot;op_code&quot;</span><span class="p">,</span> <span class="n">op_code</span><span class="p">))</span>
@@ -279,7 +294,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">_progress_callback</span><span class="p">(</span><span class="n">SyncItem</span><span class="p">(</span><span class="n">Events</span><span class="o">.</span><span class="n">SYNC_CONFIG</span><span class="p">,</span> <span class="s2">&quot;prompt_name&quot;</span><span class="p">,</span> <span class="n">prompt_name</span><span class="p">))</span>
         <span class="n">_progress_callback</span><span class="p">(</span><span class="n">SyncItem</span><span class="p">(</span><span class="n">Events</span><span class="o">.</span><span class="n">SYNC_CONFIG</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">,</span> <span class="n">version</span><span class="p">))</span>
         <span class="n">prompt_folder</span> <span class="o">=</span> <span class="n">get_prompts_folder</span><span class="p">()</span> <span class="o">/</span> <span class="n">prompt_name</span>
-        <span class="n">prompt_repo_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;git@github.com:</span><span class="si">{</span><span class="n">repo_config</span><span class="o">.</span><span class="n">git_user</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">prompt_name</span><span class="si">}</span><span class="s2">.git&quot;</span>
+        <span class="n">prompt_repo_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://github.com/</span><span class="si">{</span><span class="n">repo_config</span><span class="o">.</span><span class="n">git_user</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">prompt_name</span><span class="si">}</span><span class="s2">.git&quot;</span>
         <span class="n">repo</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">prompt_folder</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
             <span class="n">_progress_callback</span><span class="p">(</span><span class="n">SyncItem</span><span class="p">(</span><span class="n">Events</span><span class="o">.</span><span class="n">FETCH</span><span class="p">,</span> <span class="s2">&quot;prompt&quot;</span><span class="p">,</span> <span class="n">prompt_repo_url</span><span class="p">))</span>
@@ -288,10 +303,10 @@ window.addEventListener("load", () => mermaid.run());
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">repo</span> <span class="o">=</span> <span class="n">git</span><span class="o">.</span><span class="n">Repo</span><span class="p">(</span><span class="n">prompt_folder</span><span class="p">)</span>
-
+        <span class="n">version</span> <span class="o">=</span> <span class="n">__resolve_version__</span><span class="p">(</span><span class="n">prompt_name</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
         <span class="n">repo</span><span class="o">.</span><span class="n">remote</span><span class="p">()</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">_progress_callback</span><span class="p">(</span><span class="n">SyncItem</span><span class="p">(</span><span class="n">Events</span><span class="o">.</span><span class="n">CHECKOUT</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">,</span> <span class="n">version</span><span class="p">))</span>
-        <span class="n">repo</span><span class="o">.</span><span class="n">git</span><span class="o">.</span><span class="n">checkout</span><span class="p">(</span><span class="n">version</span><span class="p">)</span>
+        <span class="n">repo</span><span class="o">.</span><span class="n">git</span><span class="o">.</span><span class="n">checkout</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;tags/v</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="c1"># Sync prompt repository local folder</span>
     <span class="n">updated_repo_config</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">repo_config</span><span class="p">)</span>
@@ -326,7 +341,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="get_prompt_versions">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.core.api.html#danoan.llm_assistant.prompt.core.api.get_prompt_versions">[docs]</a>
-<span class="k">def</span> <span class="nf">get_prompt_versions</span><span class="p">(</span><span class="n">repository_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_prompt_versions</span><span class="p">(</span><span class="n">repository_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    List all the versions available in a local prompt repository.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -337,7 +352,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="get_most_recent_version_before_commit">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.core.api.html#danoan.llm_assistant.prompt.core.api.get_most_recent_version_before_commit">[docs]</a>
-<span class="k">def</span> <span class="nf">get_most_recent_version_before_commit</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_most_recent_version_before_commit</span><span class="p">(</span>
     <span class="n">repository_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">commit_hash</span><span class="p">:</span> <span class="nb">str</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -355,7 +370,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="get_current_version">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.core.api.html#danoan.llm_assistant.prompt.core.api.get_current_version">[docs]</a>
-<span class="k">def</span> <span class="nf">get_current_version</span><span class="p">(</span><span class="n">repository_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_current_version</span><span class="p">(</span><span class="n">repository_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the most recent version prior to HEAD.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -385,7 +400,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="suggest_next_version">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.core.api.html#danoan.llm_assistant.prompt.core.api.suggest_next_version">[docs]</a>
-<span class="k">def</span> <span class="nf">suggest_next_version</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">suggest_next_version</span><span class="p">(</span>
     <span class="n">repository_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">current_version</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cn</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">ChangeNature</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -420,16 +435,16 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="update_changelog">
 <a class="viewcode-back" href="../../../../../reference/danoan.llm_assistant.prompt.core.api.html#danoan.llm_assistant.prompt.core.api.update_changelog">[docs]</a>
-<span class="k">def</span> <span class="nf">update_changelog</span><span class="p">(</span><span class="n">changelog_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_changelog</span><span class="p">(</span><span class="n">changelog_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Rewrites the changelog document such that versions are listed in</span>
 <span class="sd">    numerical order and divided by major versions.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">get_next_header</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_next_header</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_next_version_header</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_next_version_header</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;##&quot;</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
 
     <span class="n">p_version_part</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\d+[\.xyz]?&quot;</span>
