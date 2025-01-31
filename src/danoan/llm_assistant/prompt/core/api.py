@@ -114,6 +114,16 @@ def get_prompt_test_regression_filepath(prompt_name: str) -> Path:
     return get_prompts_folder() / prompt_name / "tests" / "regression.json"
 
 
+def __resolve_version__(prompt_name: str, version: str):
+    tp = get_tracked_prompt(prompt_name)
+    if version.strip() == "" or version.lower() == "last":
+        all_versions = get_prompt_versions(tp.repository_path)
+        if len(all_versions) == 0:
+            return version
+        return all_versions[-1]
+    return version
+
+
 def sync(repo_config: PromptRepositoryConfiguration, progress_callback=None):
     """
     Read prompt repository configuration file and sync local folder
@@ -183,10 +193,10 @@ def sync(repo_config: PromptRepositoryConfiguration, progress_callback=None):
             )
         else:
             repo = git.Repo(prompt_folder)
-
+        version = __resolve_version__(prompt_name, version)
         repo.remote().fetch(tags=True)
         _progress_callback(SyncItem(Events.CHECKOUT, "version", version))
-        repo.git.checkout(version)
+        repo.git.checkout(f"tags/v{version}")
 
     # Sync prompt repository local folder
     updated_repo_config = copy.deepcopy(repo_config)
