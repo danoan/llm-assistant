@@ -29,7 +29,7 @@ class PromptRepositoryConfiguration:
     def __str__(self):
         return (
             f"git_user: {self.git_user}\n"
-            f"prompt_collection_folder: {self.prompt_collection_folder}\n"
+            f"prompt_collection_folder: {str(self.prompt_collection_folder)}\n"
             f"versioning: {self.versioning}\n"
         )
 
@@ -56,7 +56,7 @@ class RunnerConfiguration:
             f"openai_key: <<HIDDEN>>\n"
             f"model: {self.model}\n"
             f"use_cache: {self.use_cache}\n"
-            f"cache_path: {self.cache_path}\n"
+            f"cache_path: {str(self.cache_path)}\n"
         )
 
 

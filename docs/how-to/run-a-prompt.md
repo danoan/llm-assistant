@@ -47,7 +47,7 @@ help of `prompt-manager`. Check [](sync-and-push-prompts.md) for more informatio
 
 ## Running a custom prompt
 
-To run a prompt, the same must be located in the prompt-collection folder. Consider the 
+To run a prompt, the same must be located in the prompt-collection folder. Consider the
 `alternative-expression` prompt given in the previous section. There are three alternatives
 to run it.
 
@@ -124,4 +124,3 @@ data = {
 
 api.custom(prompt_configuration, **data)
 ```
-

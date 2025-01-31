@@ -33,7 +33,7 @@ word-definition = "v1.0.0"
 ```
 
 **Configuration file search**: The application backtracks the current working directory searching for the
-`llm-assistant-config.toml` file starting from the current working directory. If no configuration file 
+`llm-assistant-config.toml` file starting from the current working directory. If no configuration file
 is found, it searches in the location specified by the environment variable `LLM_ASSISTANT_CONFIGURATION_FOLDER`.
 
 You can check which configuration file is being used by running
@@ -147,7 +147,7 @@ on github and then fetch the specified version.
 ### Push prompt version assistant
 
 The `prompt-manager versioning push` commands guides the user to the creation of a
-new prompt version, helping to keep your prompts organized and following a versioning 
+new prompt version, helping to keep your prompts organized and following a versioning
 policy.
 
 Check the guide [](/how-to/run-a-prompt.md) for more information.
