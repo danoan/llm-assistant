@@ -35,16 +35,20 @@ def test_get_configuration_folder_parent_cwd(monkeypatch):
 def test_get_configuration_folder_envvar(monkeypatch):
     # Configuration file defined by environment variable
     with tempfile.TemporaryDirectory() as _envvar_dir:
-        envvar_dir = Path(_envvar_dir)
-        monkeypatch.setenv(config.LLM_ASSISTANT_ENV_VARIABLE, str(envvar_dir))
+        with tempfile.TemporaryDirectory() as temp_dir:
+            monkeypatch.chdir(temp_dir)
+            envvar_dir = Path(_envvar_dir)
+            monkeypatch.setenv(config.LLM_ASSISTANT_ENV_VARIABLE, str(envvar_dir))
 
-        assert config.get_configuration_folder() == envvar_dir
+            assert config.get_configuration_folder() == envvar_dir
 
 
-def test_get_configuration_folder_error():
+def test_get_configuration_folder_error(monkeypatch):
     # No configuration file and not environment variable defined
     with pytest.raises(exception.EnvironmentVariableNotDefinedError) as ex:
-        config.get_configuration_folder()
+        with tempfile.TemporaryDirectory() as temp_dir:
+            monkeypatch.chdir(temp_dir)
+            config.get_configuration_folder()
 
 
 def test_get_configuration_filepath(monkeypatch):
