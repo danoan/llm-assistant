@@ -55,12 +55,12 @@ class PromptVersion:
 
     def __lt__(self, other):
         if not isinstance(other, PromptVersion):
-            raise NotImplemented
+            raise NotImplementedError()
         return self.__version_id__() < other.__version_id__()
 
     def __eq__(self, other):
         if not isinstance(other, PromptVersion):
-            raise NotImplemented
+            raise NotImplementedError()
         return self.__version_id__() == other.__version_id__()
 
     def __hash__(self):
