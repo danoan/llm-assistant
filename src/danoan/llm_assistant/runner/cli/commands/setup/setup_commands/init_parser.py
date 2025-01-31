@@ -1,4 +1,5 @@
 from danoan.llm_assistant.runner.cli import utils as cli_utils
+from danoan.llm_assistant.common.config import LLM_ASSISTANT_ENV_VARIABLE
 
 import argparse
 import logging
@@ -11,7 +12,9 @@ handler.setLevel(logging.INFO)
 logger.addHandler(handler)
 
 
-def __init_llm_assistant__(*args, **kwargs):
+def __init_llm_assistant__(
+    reset: bool = False, use_env_var: bool = False, *args, **kwargs
+):
     """
     Initialize llm-assistant configuration.
 
@@ -21,7 +24,7 @@ def __init_llm_assistant__(*args, **kwargs):
     from danoan.llm_assistant.runner.cli.commands.setup.setup_commands import init as M
 
     cli_utils.ensure_environment_variable_is_defined(logger)
-    M.init()
+    M.init(reset=reset, use_env_var=use_env_var)
 
 
 def extend_parser(subparser_action=None):
@@ -43,6 +46,18 @@ def extend_parser(subparser_action=None):
             formatter_class=argparse.RawDescriptionHelpFormatter,
         )
 
+    parser.add_argument(
+        "--env",
+        dest="use_env_var",
+        action="store_true",
+        help=f"Creates configuration file in the directory pointed by the environment variable {LLM_ASSISTANT_ENV_VARIABLE}",
+    )
+    parser.add_argument(
+        "--force",
+        dest="reset",
+        action="store_true",
+        help="Rewrites the configuration file",
+    )
     parser.set_defaults(func=__init_llm_assistant__, subcommand_help=parser.print_help)
 
     return parser
