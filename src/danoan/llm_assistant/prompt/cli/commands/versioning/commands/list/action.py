@@ -13,4 +13,5 @@ def __list_prompts__() -> List[str]:
 
 
 def list_prompts():
+    cli_utils.ensure_prompt_collection_folder_exists()
     cli_utils.print_panel_list("Tracked Prompts", __list_prompts__())
