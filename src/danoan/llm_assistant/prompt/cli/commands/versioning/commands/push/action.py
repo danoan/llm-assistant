@@ -115,21 +115,21 @@ def __describe_changes__(tp: model.TrackedPrompt) -> str:
 def __update_changelog__(
     tp: model.TrackedPrompt, changes_description: str, version: model.PromptVersion
 ) -> List[Callable[[], None]]:
-    readme_file = tp.repository_path / "README.md"
+    def rewrite_readme_file():
+        readme_file = tp.repository_path / "README.md"
 
-    with open(readme_file) as f:
-        readme = f.read()
+        with open(readme_file) as f:
+            readme = f.read()
 
-    readme += f"\n## {version}\n\n{changes_description}\n"
-    rewriten_readme = api.update_changelog(readme)
-
-    def rewrite_file():
+        readme += f"\n## {version}\n\n{changes_description}\n"
+        rewriten_readme = api.update_changelog(readme)
+    
         with open(readme_file, "w") as f:
             f.write(rewriten_readme)
 
     git_commands = [
         checkout_existing_branch(tp.repository_path, "master"),
-        rewrite_file,
+        rewrite_readme_file,
         add_file(tp.repository_path, "README.md"),
         commit_message(tp.repository_path, message=f"Update changelog: Add {version}"),
         push_branch(tp.repository_path),
@@ -189,7 +189,7 @@ def __suggest_version__(tp: model.TrackedPrompt) -> Tuple[str, model.ChangeNatur
     return suggested_version, cn
 
 
-def __create_tag__(
+def __commit_changes__(
     tp: model.TrackedPrompt,
     changes_nature: model.ChangeNature,
     changes_description: str,
@@ -208,12 +208,28 @@ def __create_tag__(
     message = f"Release version {version}"
     git_commands.append(commit_message(tp.repository_path, message))
 
+    return git_commands
+
+
+def __create_tag__(
+    tp: model.TrackedPrompt,
+    changes_nature: model.ChangeNature,
+    changes_description: str,
+    version: model.PromptVersion,
+) -> List[Callable[[], None]]:
+    git_commands = []
+
+    branch_name = f"v{version.major}.{version.minor}"
+    if branch_name in utils.get_branches_names(tp.repository_path):
+        git_commands.append(checkout_existing_branch(tp.repository_path, branch_name))
+    else:
+        git_commands.append(checkout_new_branch(tp.repository_path, branch_name))
+
     git_commands.append(push_branch(tp.repository_path))
 
     message = f"Release version {version}\n\n{changes_description}"
     git_commands.append(push_tag(tp.repository_path, str(version), message))
     return git_commands
-
 
 ###################################
 # Main
@@ -233,6 +249,7 @@ def push(prompt_name: str, version: Optional[str] = None, *args, **kwargs):
     pv = model.PromptVersion(suggested_version)
 
     git_commands = []
+    git_commands.extend(__commit_changes__(tp, changes_nature, changes_description, pv))
     git_commands.extend(__update_changelog__(tp, changes_description, pv))
     git_commands.extend(__create_tag__(tp, changes_nature, changes_description, pv))
 
