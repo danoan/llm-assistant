@@ -34,7 +34,7 @@ class PromptVersion:
         self, version: str, incrementer_type: IncrementerType = IncrementerType.Major
     ):
         self.incrementer_type = incrementer_type
-        self.major, self.minor, self.fix = [int(x) for x in version.split(".")]
+        self.major, self.minor, self.fix = [int(x) for x in str(version).split(".")]
 
     def __version_id__(self) -> int:
         v = int(self.major) * 1e5 + int(self.minor) * 1e4 + int(self.fix) * 1e3
