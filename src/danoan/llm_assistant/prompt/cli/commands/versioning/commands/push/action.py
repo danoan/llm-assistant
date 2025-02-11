@@ -91,6 +91,34 @@ def push_tag(repository_path: Path, tag_name: str, message: str):
     repo.remote().push(tag)
 
 
+@action
+def stash_save(repository_path: Path):
+    repo = git.Repo(repository_path)
+    repo.git.stash("save", "current changes")
+
+
+@action
+def stash_pop(repository_path: Path):
+    repo = git.Repo(repository_path)
+    repo.git.stash("pop")
+
+
+@action
+def rewrite_readme_file(
+    tp: model.TrackedPrompt, version: model.PromptVersion, changes_description: str
+):
+    readme_file = tp.repository_path / "README.md"
+
+    with open(readme_file) as f:
+        readme = f.read()
+
+    readme += f"\n## {version}\n\n{changes_description}\n"
+    rewriten_readme = api.update_changelog(readme)
+
+    with open(readme_file, "w") as f:
+        f.write(rewriten_readme)
+
+
 ###################################
 # Helpers
 ###################################
@@ -113,23 +141,14 @@ def __describe_changes__(tp: model.TrackedPrompt) -> str:
 
 
 def __update_changelog__(
-    tp: model.TrackedPrompt, changes_description: str, version: model.PromptVersion
+    tp: model.TrackedPrompt,
+    changes_description: str,
+    version: model.PromptVersion,
+    branch_name: str,
 ) -> List[Callable[[], None]]:
-    def rewrite_readme_file():
-        readme_file = tp.repository_path / "README.md"
-
-        with open(readme_file) as f:
-            readme = f.read()
-
-        readme += f"\n## {version}\n\n{changes_description}\n"
-        rewriten_readme = api.update_changelog(readme)
-
-        with open(readme_file, "w") as f:
-            f.write(rewriten_readme)
-
     git_commands = [
-        checkout_existing_branch(tp.repository_path, "master"),
-        rewrite_readme_file,
+        checkout_existing_branch(tp.repository_path, branch_name),
+        rewrite_readme_file(tp, version, changes_description),
         add_file(tp.repository_path, "README.md"),
         commit_message(tp.repository_path, message=f"Update changelog: Add {version}"),
         push_branch(tp.repository_path),
@@ -198,13 +217,27 @@ def __commit_changes__(
     git_commands = []
 
     branch_name = f"v{version.major}.{version.minor}"
-    if branch_name in utils.get_branches_names(tp.repository_path):
-        git_commands.append(checkout_existing_branch(tp.repository_path, branch_name))
-    else:
-        git_commands.append(checkout_new_branch(tp.repository_path, branch_name))
+    repo = git.Repo(tp.repository_path)
+    current_branch = repo.active_branch.name
+    if current_branch != branch_name:
+        print(
+            f"You should first move to branch {branch_name} and resolve all eventual conflicts before continue."
+        )
+        exit(1)
 
+    # Start git add interactive
     git_commands.append(interactive_add(tp.repository_path))
 
+    # Update changelog
+
+    git_commands.extend(
+        [
+            rewrite_readme_file(tp, version, changes_description),
+            add_file(tp.repository_path, "README.md"),
+        ]
+    )
+
+    # Commit the changes
     message = f"Release version {version}"
     git_commands.append(commit_message(tp.repository_path, message))
 
@@ -220,10 +253,7 @@ def __create_tag__(
     git_commands = []
 
     branch_name = f"v{version.major}.{version.minor}"
-    if branch_name in utils.get_branches_names(tp.repository_path):
-        git_commands.append(checkout_existing_branch(tp.repository_path, branch_name))
-    else:
-        git_commands.append(checkout_new_branch(tp.repository_path, branch_name))
+    git_commands.append(checkout_existing_branch(tp.repository_path, branch_name))
 
     git_commands.append(push_branch(tp.repository_path))
 
@@ -251,7 +281,7 @@ def push(prompt_name: str, version: Optional[str] = None, *args, **kwargs):
 
     git_commands = []
     git_commands.extend(__commit_changes__(tp, changes_nature, changes_description, pv))
-    git_commands.extend(__update_changelog__(tp, changes_description, pv))
+    git_commands.extend(__update_changelog__(tp, changes_description, pv, "master"))
     git_commands.extend(__create_tag__(tp, changes_nature, changes_description, pv))
 
     for command in git_commands:
