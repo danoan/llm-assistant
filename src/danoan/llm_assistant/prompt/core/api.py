@@ -111,7 +111,9 @@ def get_prompt_test_regression_filepath(prompt_name: str) -> Path:
     """
     Get regression test file.
     """
-    return get_prompts_folder() / prompt_name / "tests" / "regression.json"
+    return (
+        get_prompts_folder() / prompt_name / "tests" / "regression" / "regression.json"
+    )
 
 
 def __resolve_version__(prompt_name: str, version: str):

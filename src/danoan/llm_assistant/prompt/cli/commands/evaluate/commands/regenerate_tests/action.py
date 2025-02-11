@@ -1,29 +1,43 @@
-import json
-from typing import Any
-
 from danoan.llm_assistant.common import config
 from danoan.llm_assistant.prompt.core import api
 from danoan.llm_assistant.runner.core import api as runner
+from danoan.llm_assistant.runner.core import api as llma
+
+from copy import deepcopy
+import json
+from typing import Any
 
 
 def __regenerate_tests__(prompt_name: str) -> Any:
-    runner.LLMAssistant().setup(config.get_configuration().runner)
+    runner_configuration = config.get_configuration().runner
+    runner.LLMAssistant().setup(runner_configuration)
     prompt_config = config.get_prompt_configuration(prompt_name)
 
-    regression_test_fp = api.get_prompt_test_regression_filepath(prompt_name)
-    updated_data = None
-    with open(regression_test_fp, "r") as f:
-        data = json.load(f)
-        for entry in data:
-            response = runner.custom(prompt_config, **entry["input"])
-            entry["output"] = json.loads(response.content)
+    test_model = api.get_prompt_test_regression_filepath(prompt_name)
+    test_run_fp = test_model.parent / runner_configuration.model / test_model.name
 
-        updated_data = data
+    test_run_fp.parent.mkdir(parents=True, exist_ok=True)
 
-    with open(regression_test_fp, "w") as f:
-        json.dump(updated_data, f, indent=2, ensure_ascii=False)
+    output_obj = []
+    with open(test_model, "r") as fi:
+        input_obj = json.load(fi)
 
-    return updated_data
+        for entry in input_obj:
+            response = llma.custom(prompt_config, **entry["input"])
+
+            try:
+                response_obj = json.loads(response.content)
+            except:
+                response_obj = response.content
+
+            output_entry = deepcopy(entry)
+            output_entry["output"] = response_obj
+            output_obj.append(output_entry)
+
+    with open(test_run_fp, "w") as fo:
+        json.dump(output_obj, fo,ensure_ascii=False,indent=2)
+
+    return output_obj
 
 
 def regenerate_tests(prompt_name: str):
