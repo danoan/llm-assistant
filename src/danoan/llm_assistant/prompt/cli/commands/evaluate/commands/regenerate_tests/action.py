@@ -35,7 +35,7 @@ def __regenerate_tests__(prompt_name: str) -> Any:
             output_obj.append(output_entry)
 
     with open(test_run_fp, "w") as fo:
-        json.dump(output_obj, fo,ensure_ascii=False,indent=2)
+        json.dump(output_obj, fo, ensure_ascii=False, indent=2)
 
     return output_obj
 

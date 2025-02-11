@@ -16,6 +16,7 @@ handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
 logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 
+
 def __run_tests__(runner_configuration: RunnerConfiguration, prompt_name: str):
     llma.LLMAssistant().setup(runner_configuration)
     prompt_config = config.get_prompt_configuration(prompt_name)
@@ -24,7 +25,7 @@ def __run_tests__(runner_configuration: RunnerConfiguration, prompt_name: str):
     test_run = test_model.parent / runner_configuration.model / test_model.name
     if not test_run.exists():
         logger.error(
-            f"No test run file for prompt {prompt_config.name} and model {runner_configuration.model} was generated yet. You need to generate one first using the rengerate command."
+            f"No test run file for prompt {prompt_config.name} and model {runner_configuration.model} was generated yet. You need to generate one first using the rengerate-tests command."
         )
         exit(1)
 
