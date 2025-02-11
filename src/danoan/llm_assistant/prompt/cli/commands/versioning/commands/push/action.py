@@ -123,7 +123,7 @@ def __update_changelog__(
 
         readme += f"\n## {version}\n\n{changes_description}\n"
         rewriten_readme = api.update_changelog(readme)
-    
+
         with open(readme_file, "w") as f:
             f.write(rewriten_readme)
 
@@ -230,6 +230,7 @@ def __create_tag__(
     message = f"Release version {version}\n\n{changes_description}"
     git_commands.append(push_tag(tp.repository_path, str(version), message))
     return git_commands
+
 
 ###################################
 # Main
