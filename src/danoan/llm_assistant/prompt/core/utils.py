@@ -2,10 +2,16 @@
 prompt-manager utility tools.
 """
 
+from danoan.llm_assistant.common.logging_config import setup_logging
+
 from functools import lru_cache
 import git
+import logging
 from pathlib import Path
 from typing import Any, List
+
+setup_logging()
+logger = logging.getLogger(__name__)
 
 ###################################
 # GIT Helpers

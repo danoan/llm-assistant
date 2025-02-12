@@ -1,18 +1,14 @@
-import logging
-import os
-import sys
-
-from pathlib import Path
-import toml
-
+from danoan.llm_assistant.common.logging_config import setup_logging
 from danoan.llm_assistant.common import config
 from danoan.llm_assistant.common import model
 
+import logging
+import os
+from pathlib import Path
+import toml
+
+setup_logging()
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-handler = logging.StreamHandler(sys.stdout)
-handler.setLevel(logging.INFO)
-logger.addHandler(handler)
 
 
 def __create_configuration_model__():
@@ -38,10 +34,10 @@ def init(reset: bool = False, use_env_var: bool = False):
         config_path = Path(os.getcwd()) / config.LLM_ASSISTANT_CONFIGURATION_FILENAME
 
     if config_path.exists() and not reset:
-        print(f"The configuration file: {config_path} exists already.")
+        logger.info(f"The configuration file: {config_path} exists already.")
 
     if config_path.exists() and reset:
-        print(f"Reseting the current configuration file: {config_path}.")
+        logger.info(f"Reseting the current configuration file: {config_path}.")
 
     if not config_path.exists() or reset:
         llma_config = __create_configuration_model__()

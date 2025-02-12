@@ -1,16 +1,4 @@
-import fcntl
-import os
-import selectors
-import sys
-from pathlib import Path
-
-from pynput import keyboard
-from pynput.keyboard import Controller, Key
-from rich.columns import Columns
-from rich.console import Console as RichConsole
-from rich.panel import Panel
-from rich.text import Text
-
+from danoan.llm_assistant.common.logging_config import setup_logging
 from danoan.llm_assistant.common import config
 from danoan.llm_assistant.runner.cli import utils
 from danoan.llm_assistant.runner.cli.commands.session import session_core as core
@@ -21,6 +9,25 @@ from danoan.llm_assistant.runner.cli.commands.session.task_runner import (
     TaskRunner,
 )
 from danoan.llm_assistant.runner.core import api
+
+import fcntl
+import logging
+import os
+from pathlib import Path
+import selectors
+import sys
+
+from pynput import keyboard
+from pynput.keyboard import Controller, Key
+
+from rich.columns import Columns
+from rich.console import Console as RichConsole
+from rich.panel import Panel
+from rich.text import Text
+
+
+setup_logging()
+logger = logging.getLogger(__name__)
 
 
 def create_non_blocking_input():
@@ -166,11 +173,13 @@ def start_session():
     llma_config = config.get_configuration()
 
     if not llma_config.runner:
-        print("Runner is not configured. Please use the setup command")
+        logger.error("Runner is not configured. Please use the setup command")
         exit(1)
 
     if not llma_config.prompt:
-        print("Prompt repository path is not configured. Please use the setup command")
+        logger.error(
+            "Prompt repository path is not configured. Please use the setup command"
+        )
         exit(1)
 
     api.LLMAssistant().setup(llma_config.runner)
@@ -178,7 +187,7 @@ def start_session():
         Path(llma_config.prompt.prompt_collection_folder)
     )
     if not prompt_repository.exists():
-        print("Pront repository does not exist. Please use the setup command")
+        logger.error("Pront repository does not exist. Please use the setup command")
         exit(1)
     cliDrawer = _RichCLIDrawer()
     tr = TaskRunner()

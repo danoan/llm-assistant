@@ -1,9 +1,14 @@
-import argparse
-
+from danoan.llm_assistant.common.logging_config import setup_logging
 from danoan.llm_assistant.common import config, exception
 from danoan.llm_assistant.runner.cli.commands.setup.setup_commands import (
     init_parser as init,
 )
+
+import argparse
+import logging
+
+setup_logging()
+logger = logging.getLogger(__name__)
 
 
 def __setup__(*args, **kwargs):
@@ -13,7 +18,7 @@ def __setup__(*args, **kwargs):
             f" is set to: {config.get_environment_variable_value()}"
         )
     except exception.EnvironmentVariableNotDefinedError:
-        print(
+        logger.error(
             f"The environment variable: {config.LLM_ASSISTANT_ENV_VARIABLE} is not set"
         )
         exit(1)

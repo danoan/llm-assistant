@@ -1,3 +1,4 @@
+from danoan.llm_assistant.common.logging_config import setup_logging
 from danoan.llm_assistant.runner.cli import utils as cli_utils
 from danoan.llm_assistant.common import config as config
 
@@ -9,16 +10,8 @@ import logging
 import sys
 from typing import List, Optional, TextIO
 
-logger = logging.getLogger(__file__)
-handler = logging.StreamHandler(sys.stderr)
-handler.setLevel(logging.INFO)
-handler.setFormatter(
-    logging.Formatter(
-        "%(asctime)s %(levelname)s %(message)s",
-    )
-)
-logger.addHandler(handler)
-logger.setLevel(logging.INFO)
+setup_logging()
+logger = logging.getLogger(__name__)
 
 
 def __run__(

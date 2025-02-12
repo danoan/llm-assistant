@@ -1,24 +1,18 @@
 """
 LLM-assistant configuration API.
 """
+from danoan.llm_assistant.common import exception, model
+from danoan.llm_assistant.common.logging_config import setup_logging
 
 import logging
 import os
-import sys
 from functools import lru_cache
 from pathlib import Path
+import toml
 from typing import Optional
 
-import toml
-
-from danoan.llm_assistant.common import exception, model
-
-logger = logging.getLogger(__file__)
-handler = logging.StreamHandler(sys.stderr)
-handler.setLevel(logging.DEBUG)
-handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
-logger.addHandler(handler)
-logger.setLevel(logging.DEBUG)
+setup_logging()
+logger = logging.getLogger(__name__)
 
 ########################################
 # Configuration files
@@ -42,6 +36,7 @@ def _get_first_configuration_filepath_within_file_hierarchy(
         cur_folder = folders_to_visit.pop()
         if cur_folder in visited:
             break
+        logger.debug(f"Visiting {cur_folder}")
         visited.add(cur_folder)
         folders_to_visit.append(cur_folder.parent)
         for p in cur_folder.iterdir():
@@ -70,12 +65,16 @@ def get_configuration_folder() -> Path:
                                             is not defined and a configuration file
                                             is not found in the file hierarchy
     """
+    logger.debug("Start hierarchical search of configuation file")
     config_filepath = _get_first_configuration_filepath_within_file_hierarchy(
         Path(os.getcwd())
     )
     if config_filepath:
         return config_filepath.parent
 
+    logger.debug(
+        "Hierarchical search failed. Check environment variable {LLM_ASSISTANT_ENV_VARIABLE}"
+    )
     if LLM_ASSISTANT_ENV_VARIABLE in os.environ:
         return Path(os.environ[LLM_ASSISTANT_ENV_VARIABLE]).expanduser()
 
@@ -143,6 +142,12 @@ def get_prompt_configuration(prompt_name: str) -> model.PromptConfiguration:
 
 
 def get_absolute_configuration_path(path: Path):
+    """
+    Get absolute path of a configuration parameter.
+
+    Paths in the configuration file are given relative to the location of
+    the configuration file. This function resolves to its absolute path.
+    """
     if path.is_absolute():
         return path
     else:

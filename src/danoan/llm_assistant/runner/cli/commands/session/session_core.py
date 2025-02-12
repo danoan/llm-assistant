@@ -1,10 +1,3 @@
-from dataclasses import dataclass
-from enum import Enum
-from pathlib import Path
-from typing import Any, Callable, Dict, Optional
-
-import toml
-
 from danoan.llm_assistant.common import model
 from danoan.llm_assistant.runner.cli import utils as cli_utils
 from danoan.llm_assistant.runner.cli.commands.session.cli_drawer import CLIDrawer
@@ -13,6 +6,13 @@ from danoan.llm_assistant.runner.cli.commands.session.task_runner import (
     TaskInstruction,
 )
 from danoan.llm_assistant.runner.core import api
+
+from dataclasses import dataclass
+from enum import Enum
+from pathlib import Path
+import toml
+from typing import Any, Callable, Dict, Optional
+
 
 #############################################
 # Local model

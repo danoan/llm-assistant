@@ -1,15 +1,12 @@
+from danoan.llm_assistant.common.logging_config import setup_logging
 from danoan.llm_assistant.runner.cli import utils as cli_utils
 from danoan.llm_assistant.common.config import LLM_ASSISTANT_ENV_VARIABLE
 
 import argparse
 import logging
-import sys
 
+setup_logging()
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-handler = logging.StreamHandler(sys.stdout)
-handler.setLevel(logging.INFO)
-logger.addHandler(handler)
 
 
 def __init_llm_assistant__(

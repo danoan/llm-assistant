@@ -1,5 +1,5 @@
+from danoan.llm_assistant.common.logging_config import setup_logging
 from danoan.llm_assistant.common.model import PromptConfiguration, RunnerConfiguration
-
 from danoan.llm_assistant.common import config
 from danoan.llm_assistant.prompt.cli import utils as cli_utils
 from danoan.llm_assistant.prompt.core import api
@@ -12,12 +12,8 @@ import sys
 import toml
 from tempfile import TemporaryDirectory
 
-logger = logging.getLogger(__file__)
-handler = logging.StreamHandler(sys.stderr)
-handler.setLevel(logging.INFO)
-handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
-logger.addHandler(handler)
-logger.setLevel(logging.INFO)
+setup_logging()
+logger = logging.getLogger(__name__)
 
 
 def __load_prompt_configuration_version__(
