@@ -49,7 +49,12 @@ class Context:
 
 def context(number_prompts: int):
     def create_prompt_config(prompt_repository: Path, prompt_name: str):
-        prompt_config = model.PromptConfiguration(prompt_name, "", "", "")
+        prompt_config = model.PromptConfiguration(
+            prompt_name,
+            "rewrite the sentence",
+            "Language:{language}\nSentence:{message}",
+            "llm-model",
+        )
         filepath = prompt_repository / prompt_name / "config.toml"
         filepath.parent.mkdir()
         with open(filepath, "w") as f_out:
@@ -230,9 +235,11 @@ def test_new_instance():
         )
         tr.stop()
         cliDrawer.push_prompt_value("my-instance")
-        cliDrawer.push_prompt_value("language=portuguese")
+        cliDrawer.push_prompt_value("portuguese")  # language
+        cliDrawer.push_prompt_value("")  # message (skip)
         tr.run()
-        assert len(cliDrawer.events) == 2
+        assert len(cliDrawer.events) == 3
+        assert cliDrawer.events.pop() == "prompt"
         assert cliDrawer.events.pop() == "prompt"
         assert cliDrawer.events.pop() == "prompt"
 
@@ -251,39 +258,13 @@ def test_new_instance():
         tr.stop()
         cliDrawer.push_prompt_value("my-instance")
         cliDrawer.push_prompt_value("my-instance-2")
-        cliDrawer.push_prompt_value("language=portuguese")
+        cliDrawer.push_prompt_value("portuguese")  # language
+        cliDrawer.push_prompt_value("")  # message (skip)
         tr.run()
         assert cliDrawer.events.pop() == "prompt"
         assert cliDrawer.events.pop() == "print_error"
         assert cliDrawer.events.pop() == "prompt"
         assert cliDrawer.events.pop() == "prompt"
-
-        # # Assignment error
-        tr.clear()
-        tr.add(
-            task_runner.TaskInstruction(
-                core.TaskName.NewInstance,
-                {
-                    "prompt_config": get_prompt_config_with_location(
-                        context.prompt_repository
-                    )
-                },
-            )
-        )
-        tr.stop()
-        cliDrawer.push_prompt_value("my-instance-3")
-        cliDrawer.push_prompt_value("language")
-        cliDrawer.push_prompt_value("language=portuguese,=")
-        cliDrawer.push_prompt_value("language=portuguese,name=")
-        cliDrawer.push_prompt_value("language=portuguese::name=machado")
-        tr.run()
-        assert cliDrawer.events.pop() == "prompt"
-        assert cliDrawer.events.pop() == "prompt"
-        assert cliDrawer.events.pop() == "print_error"
-        assert cliDrawer.events.pop() == "prompt"
-        assert cliDrawer.events.pop() == "print_error"
-        assert cliDrawer.events.pop() == "prompt"
-        assert cliDrawer.events.pop() == "print_error"
         assert cliDrawer.events.pop() == "prompt"
 
     inner()

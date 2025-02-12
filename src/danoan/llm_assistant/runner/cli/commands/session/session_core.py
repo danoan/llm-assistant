@@ -1,3 +1,4 @@
+from copy import deepcopy
 from danoan.llm_assistant.common import model
 from danoan.llm_assistant.runner.cli import utils as cli_utils
 from danoan.llm_assistant.runner.cli.commands.session.cli_drawer import CLIDrawer
@@ -262,40 +263,27 @@ def register_tasks(
         except PromptInterruptedError:
             return None
 
-        def validate_assignment(assignments_str: str) -> bool:
-            if not assignments_str:
-                return False
-
-            assignments = assignments_str.split("::")
-            is_valid = True
-            for e in assignments:
-                try:
-                    k, v = e.split("=")
-                except ValueError:
-                    is_valid = False
-                    break
-
-                if k is None or v is None:
-                    is_valid = False
-                    break
-
-            if not is_valid:
-                cliDrawer.print_error(
-                    callback=None,
-                    message="Each assignment should be in the format a=b and consecutive assignments should be separated by ::",
+        instance_input = {}
+        for input_variable in api.get_prompt_input_variables(
+            prompt_config.prompt_config
+        ):
+            instance_input_value = None
+            try:
+                instance_input_value = cliDrawer.prompt(
+                    message=f"{input_variable} (empty to skip): ", task=task
                 )
+            except PromptInterruptedError:
+                return None
 
-            return is_valid
+            print("input;", instance_input_value)
+            instance_input_value = instance_input_value.strip()
+            if len(instance_input_value) > 0:
+                instance_input[input_variable] = instance_input_value
 
-        try:
-            assignments_str = _retry_prompt_until_valid_input(
-                lambda: cliDrawer.prompt(
-                    message="Enter variable assignment: ", task=task
-                ),
-                validate_assignment,
-            )
-        except PromptInterruptedError:
-            return None
+        assignments_str = "::".join(
+            [f"{name}={value}" for name, value in instance_input.items()]
+        )
+        print("HEYHEYHEY--", assignments_str, "--")
 
         instance_filepath = instances_folder / f"{instance_name}.toml"
 

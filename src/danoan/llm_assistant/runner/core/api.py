@@ -12,6 +12,7 @@ from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 
 import logging
+from typing import List
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -56,8 +57,24 @@ class LLMAssistant:
 
 
 ################################################################
-# Commans
+# Commands
 ################################################################
+
+
+def get_prompt_input_variables(
+    prompt_configuration: model.PromptConfiguration,
+) -> List[str]:
+    """
+    Get input variables of a prompt.
+    """
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", prompt_configuration.system_prompt),
+            ("user", prompt_configuration.user_prompt),
+        ]
+    )
+
+    return prompt.input_variables
 
 
 def custom(
