@@ -31,7 +31,9 @@ def get_prompts_folder() -> Path:
     Return path to the folder where all tracked prompts are located.
     """
     llma_config = config.get_configuration()
-    return llma_config.prompt.prompt_collection_folder
+    return config.get_absolute_configuration_path(
+        llma_config.prompt.prompt_collection_folder
+    )
 
 
 def get_prompt_configuration_filepath(prompt_name: str) -> Path:
@@ -203,7 +205,8 @@ def sync(repo_config: PromptRepositoryConfiguration, progress_callback=None):
     # Sync prompt repository local folder
     updated_repo_config = copy.deepcopy(repo_config)
     _progress_callback(SyncItem(Events.SYNC_LOCAL_FOLDER))
-    for prompt_folder in repo_config.prompt_collection_folder.iterdir():
+
+    for prompt_folder in get_prompts_folder().iterdir():
         _progress_callback(SyncItem(Events.SYNC_LOCAL_FOLDER, "folder", prompt_folder))
         if is_prompt_repository(prompt_folder):
             prompt_name = prompt_folder.stem
