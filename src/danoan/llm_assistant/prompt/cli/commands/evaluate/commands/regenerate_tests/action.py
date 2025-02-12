@@ -47,4 +47,6 @@ def __regenerate_tests__(prompt_name: str) -> Any:
 
 
 def regenerate_tests(prompt_name: str):
-    json.dump(__regenerate_tests__(prompt_name), sys.stdout, ensure_ascii=False, indent=2)
+    json.dump(
+        __regenerate_tests__(prompt_name), sys.stdout, ensure_ascii=False, indent=2
+    )
