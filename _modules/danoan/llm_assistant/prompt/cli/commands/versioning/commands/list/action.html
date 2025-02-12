@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>danoan.llm_assistant.prompt.cli.commands.versioning.commands.list.action &mdash; llm-assistant 0.4.0 documentation</title>
+  <title>danoan.llm_assistant.prompt.cli.commands.versioning.commands.list.action &mdash; llm-assistant 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../../../../../../_static/css/custom.css?v=a3d76245" />
@@ -13,7 +13,7 @@
   
       <script src="../../../../../../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../../../../../../_static/documentation_options.js?v=6c02275b"></script>
+      <script src="../../../../../../../../../_static/documentation_options.js?v=1dd76d02"></script>
       <script src="../../../../../../../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
@@ -105,6 +105,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="list_prompts">
 <a class="viewcode-back" href="../../../../../../../../../reference/danoan.llm_assistant.prompt.cli.commands.versioning.commands.list.action.html#danoan.llm_assistant.prompt.cli.commands.versioning.commands.list.action.list_prompts">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">list_prompts</span><span class="p">():</span>
+    <span class="n">cli_utils</span><span class="o">.</span><span class="n">ensure_prompt_collection_folder_exists</span><span class="p">()</span>
     <span class="n">cli_utils</span><span class="o">.</span><span class="n">print_panel_list</span><span class="p">(</span><span class="s2">&quot;Tracked Prompts&quot;</span><span class="p">,</span> <span class="n">__list_prompts__</span><span class="p">())</span></div>
 
 </pre></div>

@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>danoan.llm_assistant.prompt.cli.commands.versioning.commands.sync.action &mdash; llm-assistant 0.4.0 documentation</title>
+  <title>danoan.llm_assistant.prompt.cli.commands.versioning.commands.sync.action &mdash; llm-assistant 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../../../../../../_static/css/custom.css?v=a3d76245" />
@@ -13,7 +13,7 @@
   
       <script src="../../../../../../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../../../../../../_static/documentation_options.js?v=6c02275b"></script>
+      <script src="../../../../../../../../../_static/documentation_options.js?v=1dd76d02"></script>
       <script src="../../../../../../../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
@@ -88,12 +88,16 @@ window.addEventListener("load", () => mermaid.run());
            <div itemprop="articleBody">
              
   <h1>Source code for danoan.llm_assistant.prompt.cli.commands.versioning.commands.sync.action</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">git.remote</span><span class="w"> </span><span class="kn">import</span> <span class="n">RemoteProgress</span>
-
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">danoan.llm_assistant.common.logging_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logging</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">danoan.llm_assistant.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">config</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">danoan.llm_assistant.prompt.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">api</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">git.remote</span><span class="w"> </span><span class="kn">import</span> <span class="n">RemoteProgress</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span>
+
+<span class="n">setup_logging</span><span class="p">()</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">__git_event_processor__</span><span class="p">(</span><span class="n">op_code</span><span class="p">,</span> <span class="n">cur_count</span><span class="p">,</span> <span class="n">max_count</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
@@ -103,7 +107,7 @@ window.addEventListener("load", () => mermaid.run());
 
     <span class="k">if</span> <span class="n">max_count</span><span class="p">:</span>
         <span class="n">percent</span> <span class="o">=</span> <span class="p">(</span><span class="n">cur_count</span> <span class="o">/</span> <span class="n">max_count</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">d</span><span class="o">*</span><span class="mi">4</span><span class="si">}</span><span class="s2">Progress: </span><span class="si">{</span><span class="n">percent</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">% - </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">d</span><span class="o">*</span><span class="mi">4</span><span class="si">}</span><span class="s2">Progress: </span><span class="si">{</span><span class="n">percent</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">% - </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">__get_sync_events_processor__</span><span class="p">():</span>
@@ -116,28 +120,28 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">d</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span>
         <span class="k">if</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;sync_config&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                     <span class="s2">&quot;Starting synchronization of prompt collection folder with configuration file&quot;</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">d</span><span class="o">*</span><span class="mi">2</span><span class="si">}{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">d</span><span class="o">*</span><span class="mi">2</span><span class="si">}{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;fetch&quot;</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">d</span><span class="o">*</span><span class="mi">4</span><span class="si">}</span><span class="s2">Fetching repository: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">d</span><span class="o">*</span><span class="mi">4</span><span class="si">}</span><span class="s2">Fetching repository: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;checkout&quot;</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">d</span><span class="o">*</span><span class="mi">4</span><span class="si">}</span><span class="s2">Checkout version: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">d</span><span class="o">*</span><span class="mi">4</span><span class="si">}</span><span class="s2">Checkout version: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;synced&quot;</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">d</span><span class="o">*</span><span class="mi">4</span><span class="si">}</span><span class="s2">Already synced&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">d</span><span class="o">*</span><span class="mi">4</span><span class="si">}</span><span class="s2">Already synced&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;sync_prompt_collection_folder&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                     <span class="s2">&quot;Starting synchronization of configuration file with prompt collection folder&quot;</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">d</span><span class="o">*</span><span class="mi">2</span><span class="si">}{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">d</span><span class="o">*</span><span class="mi">2</span><span class="si">}{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;not_tracked&quot;</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">d</span><span class="o">*</span><span class="mi">4</span><span class="si">}</span><span class="s2">Prompt not tracked. Registering version: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">d</span><span class="o">*</span><span class="mi">4</span><span class="si">}</span><span class="s2">Prompt not tracked. Registering version: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;not_prompt_repository&quot;</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">d</span><span class="o">*</span><span class="mi">4</span><span class="si">}</span><span class="s2">This is not a prompt repository. Skipping it.&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">d</span><span class="o">*</span><span class="mi">4</span><span class="si">}</span><span class="s2">This is not a prompt repository. Skipping it.&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;git&quot;</span><span class="p">:</span>
             <span class="n">action</span> <span class="o">=</span> <span class="n">__git_event_processor__</span>
         <span class="k">elif</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;begin&quot;</span><span class="p">:</span>

@@ -14,4 +14,5 @@ Submodules
 
    danoan.llm_assistant.common.config
    danoan.llm_assistant.common.exception
+   danoan.llm_assistant.common.logging_config
    danoan.llm_assistant.common.model

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>How to sync and push prompts &mdash; llm-assistant 0.4.0 documentation</title>
+  <title>How to sync and push prompts &mdash; llm-assistant 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=a3d76245" />
@@ -14,7 +14,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=6c02275b"></script>
+      <script src="../_static/documentation_options.js?v=1dd76d02"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -136,20 +136,25 @@ README.md file of the prompt, which also plays the role of a changelog.</p></li>
 <li><p><strong>Nature of Changes</strong>: Whether the suggested version will advance the
 major, the minor or the fix counter.</p></li>
 <li><p><strong>Suggested Version</strong>: To accept the suggested version or enter a new one.</p></li>
-<li><p><strong>Git operations</strong>:</p>
+<li><p><strong>Select the changes to be added</strong>: It is a wrapper around <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">add</span> <span class="pre">-i</span></code>.
+Here it is where you select which changes are going to be part of
+the new version.</p></li>
+<li><p><strong>Commit changes in branch version</strong>:</p>
+<ul class="simple">
+<li><p>Update change log;</p></li>
+<li><p>Commit changes;</p></li>
+</ul>
+</li>
+<li><p><strong>Update the changelog in master</strong>:</p>
 <ul class="simple">
 <li><p>Checkout master;</p></li>
 <li><p>Update the changelog and commit;</p></li>
 <li><p>Push master branch;</p></li>
-<li><p>Checkout to the suggested version branch.</p></li>
 </ul>
 </li>
-<li><p><strong>Select the changes to be added</strong>: It is a wrapper around <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">add</span> <span class="pre">-i</span></code>.
-Here it is where you select which changes are going to be part of
-the new version.</p></li>
-<li><p><strong>Git operations</strong>:</p>
+<li><p><strong>Push the branch version and create the appropriated tag</strong>:</p>
 <ul class="simple">
-<li><p>Commit changes;</p></li>
+<li><p>Checkout to the suggested version branch.</p></li>
 <li><p>Push branch;</p></li>
 <li><p>Create and push tag.</p></li>
 </ul>
@@ -176,11 +181,6 @@ What<span class="w"> </span>is<span class="w"> </span>the<span class="w"> </span
 
 Suggested<span class="w"> </span>version<span class="w"> </span><span class="o">(</span><span class="m">1</span>.0.1<span class="o">)</span>:
 
-Checkout<span class="w"> </span>existing<span class="w"> </span>branch:<span class="w"> </span>master
-Commiting<span class="w"> </span>changes:<span class="w"> </span>Update<span class="w"> </span>changelog:<span class="w"> </span>Add<span class="w"> </span><span class="m">1</span>.0.1
-Pushing<span class="w"> </span>branch:<span class="w"> </span>master
-Checkout<span class="w"> </span>existing<span class="w"> </span>branch:<span class="w"> </span>v1.0
-
 ***<span class="w"> </span>Commands<span class="w"> </span>***
 <span class="w">  </span><span class="m">1</span>:<span class="w"> </span>status<span class="w">	  </span><span class="m">2</span>:<span class="w"> </span>update<span class="w">	  </span><span class="m">3</span>:<span class="w"> </span>revert<span class="w">	  </span><span class="m">4</span>:<span class="w"> </span>add<span class="w"> </span>untracked
 <span class="w">  </span><span class="m">5</span>:<span class="w"> </span>patch<span class="w">	  </span><span class="m">6</span>:<span class="w"> </span>diff<span class="w">	  </span><span class="m">7</span>:<span class="w"> </span>quit<span class="w">	  </span><span class="m">8</span>:<span class="w"> </span><span class="nb">help</span>
@@ -199,6 +199,12 @@ Add<span class="w"> </span>untracked&gt;&gt;
 What<span class="w"> </span>now&gt;<span class="w"> </span><span class="m">7</span>
 Au<span class="w"> </span>revoir.
 Commiting<span class="w"> </span>changes:<span class="w"> </span>Release<span class="w"> </span>version<span class="w"> </span><span class="m">1</span>.0.1
+
+Checkout<span class="w"> </span>existing<span class="w"> </span>branch:<span class="w"> </span>master
+Commiting<span class="w"> </span>changes:<span class="w"> </span>Update<span class="w"> </span>changelog:<span class="w"> </span>Add<span class="w"> </span><span class="m">1</span>.0.1
+Pushing<span class="w"> </span>branch:<span class="w"> </span>master
+
+Checkout<span class="w"> </span>existing<span class="w"> </span>branch:<span class="w"> </span>v1.0
 Pushing<span class="w"> </span>branch:<span class="w"> </span>v1.0
 Creating<span class="w"> </span>tag:<span class="w"> </span>v1.0.1
 </pre></div>
