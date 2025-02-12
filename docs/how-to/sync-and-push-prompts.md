@@ -58,16 +58,18 @@ to start the wizard. The following steps will be taken:
 3. **Nature of Changes**: Whether the suggested version will advance the
    major, the minor or the fix counter.
 4. **Suggested Version**: To accept the suggested version or enter a new one.
-5. **Git operations**:
+5. **Select the changes to be added**: It is a wrapper around `git add -i`.
+   Here it is where you select which changes are going to be part of
+   the new version.
+6. **Commit changes in branch version**:
+     - Update change log;
+     - Commit changes;
+7. **Update the changelog in master**:
     - Checkout master;
     - Update the changelog and commit;
     - Push master branch;
+8. **Push the branch version and create the appropriated tag**:
     - Checkout to the suggested version branch.
-6. **Select the changes to be added**: It is a wrapper around `git add -i`.
-   Here it is where you select which changes are going to be part of
-   the new version.
-7. **Git operations**:
-    - Commit changes;
     - Push branch;
     - Create and push tag.
 
@@ -94,11 +96,6 @@ What is the nature of the changes? 1
 
 Suggested version (1.0.1):
 
-Checkout existing branch: master
-Commiting changes: Update changelog: Add 1.0.1
-Pushing branch: master
-Checkout existing branch: v1.0
-
 *** Commands ***
   1: status	  2: update	  3: revert	  4: add untracked
   5: patch	  6: diff	  7: quit	  8: help
@@ -117,6 +114,12 @@ Add untracked>>
 What now> 7
 Au revoir.
 Commiting changes: Release version 1.0.1
+
+Checkout existing branch: master
+Commiting changes: Update changelog: Add 1.0.1
+Pushing branch: master
+
+Checkout existing branch: v1.0
 Pushing branch: v1.0
 Creating tag: v1.0.1
 ```
