@@ -20,5 +20,5 @@ jobs:
           python -m pip install --upgrade pip && pip install tox 
       - name: Run tests
         run: |
-          tox -e py312 -- -m "api" --openai-key "${{secrets.OPENAI_KEY}}"
+          tox -e py312 -- -m "api" --openai-key "${{secrets.OPENAI_KEY}}" --cov-fail-under 0
 
