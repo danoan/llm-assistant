@@ -128,11 +128,8 @@ def get_prompt_configuration(prompt_name: str) -> model.PromptConfiguration:
     """
     config = get_configuration()
     if config.prompt:
-        prompt_config_filepath = (
-            get_configuration_folder()
-            / config.prompt.prompt_collection_folder
-            / prompt_name
-            / "config.toml"
+        prompt_config_filepath = get_absolute_configuration_path(
+            config.prompt.prompt_collection_folder / prompt_name / "config.toml"
         )
     else:
         raise FileNotFoundError(
@@ -143,3 +140,10 @@ def get_prompt_configuration(prompt_name: str) -> model.PromptConfiguration:
         raise FileNotFoundError(2, "File not found", prompt_config_filepath)
     with open(prompt_config_filepath) as f:
         return model.PromptConfiguration(**toml.load(f))
+
+
+def get_absolute_configuration_path(path: Path):
+    if path.is_absolute():
+        return path
+    else:
+        return get_configuration_folder() / path

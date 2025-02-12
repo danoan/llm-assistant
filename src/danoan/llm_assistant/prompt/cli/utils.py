@@ -138,12 +138,16 @@ def ensure_configuration_file_exists():
         )
         exit(1)
 
+
 def ensure_prompt_collection_folder_exists():
     prompt_collection_folder = api.get_prompts_folder()
 
     if not prompt_collection_folder.exists():
-        print(f"The prompt collection folder {prompt_collection_folder} does not exist. Try to run sync first")
+        print(
+            f"The prompt collection folder {prompt_collection_folder} does not exist. Try to run sync first"
+        )
         exit(1)
+
 
 def ensure_prompt_repository_exists(repository_name: str):
     repository_folder = api.get_prompts_folder() / repository_name

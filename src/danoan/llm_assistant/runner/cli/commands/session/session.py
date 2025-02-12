@@ -174,7 +174,9 @@ def start_session():
         exit(1)
 
     api.LLMAssistant().setup(llma_config.runner)
-    prompt_repository = Path(llma_config.prompt.prompt_collection_folder)
+    prompt_repository = config.get_absolute_configuration_path(
+        Path(llma_config.prompt.prompt_collection_folder)
+    )
     if not prompt_repository.exists():
         print("Pront repository does not exist. Please use the setup command")
         exit(1)
