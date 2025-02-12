@@ -4,21 +4,17 @@ runner interface.
 
 from danoan.llm_assistant.common import model
 from danoan.llm_assistant.common.config import get_absolute_configuration_path
+from danoan.llm_assistant.common.logging_config import setup_logging
+
 from danoan.llm_assistant.runner.core import exception
 
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 
 import logging
-import sys
 
-logger = logging.getLogger(__file__)
-handler = logging.StreamHandler(sys.stderr)
-handler.setLevel(logging.DEBUG)
-handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
-logger.addHandler(handler)
-logger.setLevel(logging.DEBUG)
-
+setup_logging()
+logger = logging.getLogger(__name__)
 
 ################################################################
 # LLM Assistant Instance
@@ -89,6 +85,7 @@ def custom(
         ]
     )
 
+    logger.debug(f"Running prompt\n{prompt}")
     chain = prompt | llm
     response = chain.invoke(prompt_variables)
 

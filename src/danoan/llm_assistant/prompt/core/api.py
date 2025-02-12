@@ -2,28 +2,23 @@
 prompt-manager interface.
 """
 
-import copy
-import logging
-import re
-import sys
-from dataclasses import asdict, dataclass
-from enum import Enum
-from pathlib import Path
-from typing import Generator, List, Literal, Optional
-
-import git
-import toml
-
 from danoan.llm_assistant.common import config
+from danoan.llm_assistant.common.logging_config import setup_logging
 from danoan.llm_assistant.common.model import PromptRepositoryConfiguration
 from danoan.llm_assistant.prompt.core import model, utils
 
-logger = logging.getLogger(__file__)
-handler = logging.StreamHandler(sys.stderr)
-handler.setLevel(logging.DEBUG)
-handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
-logger.addHandler(handler)
-logger.setLevel(logging.DEBUG)
+import copy
+from dataclasses import asdict, dataclass
+from enum import Enum
+import git
+import logging
+from pathlib import Path
+import re
+import toml
+from typing import Generator, List, Literal, Optional
+
+setup_logging()
+logger = logging.getLogger(__name__)
 
 
 def get_prompts_folder() -> Path:
@@ -57,12 +52,13 @@ def is_prompt_repository(path: Path) -> bool:
     configuration_prompt_path = path / "config.toml"
     if not configuration_prompt_path.exists():
         return False
+
     logger.debug(f"Loading: {configuration_prompt_path}")
     obj = toml.load(configuration_prompt_path)
     mandatory_keys = ["user_prompt", "system_prompt"]
     for key in mandatory_keys:
         if key not in obj:
-            logger.debug(key)
+            logger.debug(f"Missing mandatory key {key}")
             return False
     return True
 
@@ -87,6 +83,7 @@ def get_tracked_prompt(repository_name: str) -> model.TrackedPrompt:
             if tag.commit == current_commit:
                 current_tag = tag.name
     branches = [b for b in repository.branches if b.name not in ["master"]]
+    logger.debug(f"Branches of {repository_name}: {branches}")
     return model.TrackedPrompt(
         repository_name, repository_folder, current_tag, branches
     )
@@ -183,8 +180,11 @@ def sync(repo_config: PromptRepositoryConfiguration, progress_callback=None):
         _progress_callback(SyncItem(Events.END))
 
     # Sync prompt repository configuration
+    logger.debug("Align prompt collection folder with configuration file")
     _progress_callback(SyncItem(Events.SYNC_CONFIG))
     for prompt_name, version in repo_config.versioning.items():
+        logger.debug(f"Start syncing of {prompt_name} {version}")
+
         _progress_callback(SyncItem(Events.SYNC_CONFIG, "prompt_name", prompt_name))
         _progress_callback(SyncItem(Events.SYNC_CONFIG, "version", version))
         prompt_folder = get_prompts_folder() / prompt_name
@@ -203,6 +203,7 @@ def sync(repo_config: PromptRepositoryConfiguration, progress_callback=None):
         repo.git.checkout(f"tags/v{version}")
 
     # Sync prompt repository local folder
+    logger.debug("Align configuration file with prompt collection folder")
     updated_repo_config = copy.deepcopy(repo_config)
     _progress_callback(SyncItem(Events.SYNC_LOCAL_FOLDER))
 

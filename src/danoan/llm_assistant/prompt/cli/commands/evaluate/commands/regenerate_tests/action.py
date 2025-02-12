@@ -1,3 +1,4 @@
+from danoan.llm_assistant.common.logging_config import setup_logging
 from danoan.llm_assistant.common import config
 from danoan.llm_assistant.prompt.core import api
 from danoan.llm_assistant.runner.core import api as runner
@@ -5,7 +6,12 @@ from danoan.llm_assistant.runner.core import api as llma
 
 from copy import deepcopy
 import json
+import logging
+import sys
 from typing import Any
+
+setup_logging()
+logger = logging.getLogger(__name__)
 
 
 def __regenerate_tests__(prompt_name: str) -> Any:
@@ -41,4 +47,4 @@ def __regenerate_tests__(prompt_name: str) -> Any:
 
 
 def regenerate_tests(prompt_name: str):
-    print(__regenerate_tests__(prompt_name))
+    json.dump(__regenerate_tests__(prompt_name), sys.stdout, ensure_ascii=False, indent=2)

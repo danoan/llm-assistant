@@ -1,25 +1,15 @@
+from danoan.llm_assistant.common.logging_config import setup_logging
 from danoan.llm_assistant.prompt.core import api, model, utils
 from danoan.llm_assistant.prompt.cli import utils as cli_utils
-
 
 import git
 import logging
 from pathlib import Path
 import subprocess
-import sys
 from typing import Callable, List, Optional, Tuple
 
-
-logger = logging.getLogger(__file__)
-handler = logging.StreamHandler(sys.stderr)
-handler.setLevel(logging.INFO)
-handler.setFormatter(
-    logging.Formatter(
-        "%(asctime)s %(levelname)s %(message)s",
-    )
-)
-logger.addHandler(handler)
-logger.setLevel(logging.INFO)
+setup_logging()
+logger = logging.getLogger(__name__)
 
 ###################################
 # Lazy Actions
@@ -39,14 +29,14 @@ def action(fn):
 @action
 def checkout_existing_branch(repository_path: Path, branch_name: str):
     repo = git.Repo(repository_path)
-    print(f"Checkout existing branch: {branch_name}")
+    logger.info(f"Checkout existing branch: {branch_name}")
     repo.git.checkout(branch_name)
 
 
 @action
 def checkout_new_branch(repository_path: Path, branch_name: str):
     repo = git.Repo(repository_path)
-    print(f"Creating branch: {branch_name}")
+    logger.info(f"Creating branch: {branch_name}")
     repo.git.checkout(b=branch_name)
 
 
@@ -71,14 +61,14 @@ def add_file(repository_path: Path, filename: str):
 @action
 def commit_message(repository_path: Path, message: str):
     repo = git.Repo(repository_path)
-    print(f"Commiting changes: {message}")
+    logger.info(f"Commiting changes: {message}")
     repo.git.commit(m=f"{message}")
 
 
 @action
 def push_branch(repository_path: Path):
     repo = git.Repo(repository_path)
-    print(f"Pushing branch: {repo.active_branch}")
+    logger.info(f"Pushing branch: {repo.active_branch}")
     repo.remote().push(repo.active_branch)
 
 
@@ -86,7 +76,7 @@ def push_branch(repository_path: Path):
 def push_tag(repository_path: Path, tag_name: str, message: str):
     repo = git.Repo(repository_path)
     tag_name = f"v{tag_name}"
-    print(f"Creating tag: {tag_name}")
+    logger.info(f"Creating tag: {tag_name}")
     tag = repo.create_tag(tag_name, repo.commit(), message=message)
     repo.remote().push(tag)
 
@@ -126,12 +116,12 @@ def rewrite_readme_file(
 
 def __fetch_remote_data__(tp: model.TrackedPrompt):
     repo = git.Repo(tp.repository_path)
-    print("Fetching repository data")
+    logger.info("Fetching repository data")
     repo.remote().fetch(tags=True)
 
 
 def __describe_changes__(tp: model.TrackedPrompt) -> str:
-    print("Describe the changes (finish the input by outputing a line with $$)")
+    logger.info("Describe the changes (finish the input by outputing a line with $$)")
     description = ""
     v = input()
     while v != "$$":
@@ -199,7 +189,7 @@ def __suggest_version__(tp: model.TrackedPrompt) -> Tuple[str, model.ChangeNatur
             suggested_version = model.PromptVersion(sv_str, cn)
 
         if suggested_version in set(sorted_tags):
-            print(
+            logger.info(
                 f"Version {suggested_version} exists already. Please choose another one"
             )
         else:
@@ -220,7 +210,7 @@ def __commit_changes__(
     repo = git.Repo(tp.repository_path)
     current_branch = repo.active_branch.name
     if current_branch != branch_name:
-        print(
+        logger.error(
             f"You should first move to branch {branch_name} and resolve all eventual conflicts before continue."
         )
         exit(1)
