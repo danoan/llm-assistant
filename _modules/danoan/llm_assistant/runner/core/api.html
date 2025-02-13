@@ -93,7 +93,6 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">danoan.llm_assistant.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">model</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">danoan.llm_assistant.common.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_absolute_configuration_path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">danoan.llm_assistant.common.logging_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logging</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">danoan.llm_assistant.runner.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">exception</span>
@@ -136,10 +135,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="kn">from</span><span class="w"> </span><span class="nn">langchain.globals</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_llm_cache</span>
             <span class="kn">from</span><span class="w"> </span><span class="nn">langchain_community.cache</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLiteCache</span>
 
-            <span class="n">absolute_cache_path</span> <span class="o">=</span> <span class="n">get_absolute_configuration_path</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">cache_path</span>
-            <span class="p">)</span>
-            <span class="n">set_llm_cache</span><span class="p">(</span><span class="n">SQLiteCache</span><span class="p">(</span><span class="n">database_path</span><span class="o">=</span><span class="n">absolute_cache_path</span><span class="p">))</span>
+            <span class="n">set_llm_cache</span><span class="p">(</span><span class="n">SQLiteCache</span><span class="p">(</span><span class="n">database_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">cache_path</span><span class="p">))</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">model</span><span class="o">.</span><span class="n">LLMAssistantConfiguration</span><span class="p">:</span>
