@@ -1,6 +1,8 @@
 from danoan.llm_assistant.common.logging_config import setup_logging
 from danoan.llm_assistant.common.model import PromptConfiguration, RunnerConfiguration
 from danoan.llm_assistant.common import config
+from danoan.llm_assistant.common import utils
+
 from danoan.llm_assistant.prompt.cli import utils as cli_utils
 from danoan.llm_assistant.prompt.core import api
 from danoan.llm_assistant.runner.core import api as llma
@@ -79,7 +81,9 @@ def run_tests(
 ):
     runner_configuration = config.get_configuration().runner
     runner_configuration.use_cache = use_cache
-    llma.LLMAssistant().setup(runner_configuration)
+    llma.LLMAssistant().setup(
+        utils.generate_absolute_runner_config(runner_configuration)
+    )
 
     try:
         for base_response_str, compare_response_str in __run_tests__(

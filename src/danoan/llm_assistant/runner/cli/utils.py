@@ -7,20 +7,7 @@ from danoan.llm_assistant.common import config, exception, model
 from danoan.llm_assistant.runner.core import api
 
 
-def ensure_environment_variable_is_defined(logger):
-    # Not necessqry anymore
-    pass
-    # try:
-    #     config.get_configuration_folder()
-    # except exception.EnvironmentVariableNotDefinedError:
-    #     logger.error(
-    #         f"The environment variable {api.LLM_ASSISTANT_ENV_VARIABLE} is not defined. Please define it before proceeding."
-    #     )
-    #     exit(1)
-
-
 def ensure_configuration_file_exists(logger):
-    ensure_environment_variable_is_defined(logger)
     try:
         config.get_configuration()
     except exception.ConfigurationFileDoesNotExistError:
