@@ -1,6 +1,6 @@
 from danoan.llm_assistant.common.logging_config import setup_logging
-from danoan.llm_assistant.common import config
-from danoan.llm_assistant.runner.cli import utils
+from danoan.llm_assistant.common import config, utils
+from danoan.llm_assistant.runner.cli import utils as cli_utils
 from danoan.llm_assistant.runner.cli.commands.session import session_core as core
 from danoan.llm_assistant.runner.cli.commands.session.cli_drawer import CLIDrawer
 from danoan.llm_assistant.runner.cli.commands.session.task_runner import (
@@ -74,15 +74,15 @@ class _RichCLIDrawer(CLIDrawer):
 
     def print_panel(self, **kwargs):
         message = kwargs["message"]
-        title = utils.value_or_default(kwargs, "title", None)
-        color = utils.value_or_default(kwargs, "color", "")
+        title = cli_utils.value_or_default(kwargs, "title", None)
+        color = cli_utils.value_or_default(kwargs, "color", "")
 
         panel = Panel(message, style=color, title=title)
         self._console.print(panel)
 
     def print_list(self, **kwargs):
         list_elements = kwargs["list_elements"]
-        numbered = utils.value_or_default(kwargs, "numbered", True)
+        numbered = cli_utils.value_or_default(kwargs, "numbered", True)
 
         if numbered:
             list_elements = [f"{i}. {s}" for i, s in enumerate(list_elements, 1)]
@@ -182,7 +182,7 @@ def start_session():
         )
         exit(1)
 
-    api.LLMAssistant().setup(llma_config.runner)
+    api.LLMAssistant().setup(utils.generate_absolute_runner_config(llma_config.runner))
     prompt_repository = config.get_absolute_configuration_path(
         Path(llma_config.prompt.prompt_collection_folder)
     )

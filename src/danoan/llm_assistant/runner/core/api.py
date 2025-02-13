@@ -3,7 +3,6 @@ runner interface.
 """
 
 from danoan.llm_assistant.common import model
-from danoan.llm_assistant.common.config import get_absolute_configuration_path
 from danoan.llm_assistant.common.logging_config import setup_logging
 
 from danoan.llm_assistant.runner.core import exception
@@ -44,10 +43,7 @@ class LLMAssistant:
             from langchain.globals import set_llm_cache
             from langchain_community.cache import SQLiteCache
 
-            absolute_cache_path = get_absolute_configuration_path(
-                self._config.cache_path
-            )
-            set_llm_cache(SQLiteCache(database_path=absolute_cache_path))
+            set_llm_cache(SQLiteCache(database_path=self._config.cache_path))
 
     @property
     def config(self) -> model.LLMAssistantConfiguration:

@@ -1,5 +1,6 @@
 from danoan.llm_assistant.common.logging_config import setup_logging
 from danoan.llm_assistant.common import config
+from danoan.llm_assistant.common import utils
 from danoan.llm_assistant.prompt.core import api
 from danoan.llm_assistant.runner.core import api as runner
 from danoan.llm_assistant.runner.core import api as llma
@@ -16,7 +17,9 @@ logger = logging.getLogger(__name__)
 
 def __regenerate_tests__(prompt_name: str) -> Any:
     runner_configuration = config.get_configuration().runner
-    runner.LLMAssistant().setup(runner_configuration)
+    runner.LLMAssistant().setup(
+        utils.generate_absolute_runner_config(runner_configuration)
+    )
     prompt_config = config.get_prompt_configuration(prompt_name)
 
     test_model = api.get_prompt_test_regression_filepath(prompt_name)
