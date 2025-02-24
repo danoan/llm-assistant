@@ -3,8 +3,8 @@ danoan.llm\_assistant.prompt package
 
 .. automodule:: danoan.llm_assistant.prompt
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Subpackages
 -----------

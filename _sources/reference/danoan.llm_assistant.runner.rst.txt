@@ -3,8 +3,8 @@ danoan.llm\_assistant.runner package
 
 .. automodule:: danoan.llm_assistant.runner
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Subpackages
 -----------

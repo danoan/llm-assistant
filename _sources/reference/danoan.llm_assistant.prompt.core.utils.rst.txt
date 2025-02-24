@@ -3,5 +3,5 @@ danoan.llm\_assistant.prompt.core.utils module
 
 .. automodule:: danoan.llm_assistant.prompt.core.utils
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
